@@ -1427,7 +1427,7 @@ function renderCoF(){
   const svg=document.getElementById('cof'),cx=240,cy=240,R=225,r=163,ri=108;let h='';
   for(let i=0;i<12;i++){
     const a0=(i*30-90)*Math.PI/180,a1=((i+1)*30-90)*Math.PI/180,am=(i*30+15-90)*Math.PI/180;
-    const ni=MJ_IDX[i],mni=(ni+9)%12,isSel=ni===S.root,isMin=mni===S.root;
+    const ni=MJ_IDX[i],mni=(ni+9)%12,isSel=ni===S.root,isMin=mni===S.root||(S.root+3)%12===ni&&S.mode!=='Majeur'&&ni!==S.root;
     const hue=i*30;
     const x1=cx+R*Math.cos(a0),y1=cy+R*Math.sin(a0),x2=cx+R*Math.cos(a1),y2=cy+R*Math.sin(a1),x3=cx+r*Math.cos(a1),y3=cy+r*Math.sin(a1),x4=cx+r*Math.cos(a0),y4=cy+r*Math.sin(a0);
     h+=`<path d="M${x1} ${y1}A${R} ${R} 0 0 1 ${x2} ${y2}L${x3} ${y3}A${r} ${r} 0 0 0 ${x4} ${y4}Z" fill="${isSel?'hsl('+hue+',55%,22%)':'hsl('+hue+',20%,10%)'}" stroke="${isSel?'hsl('+hue+',70%,50%)':'#1e2d45'}" stroke-width="${isSel?2.5:1}" onclick="goKey(${ni},'Majeur')" style="cursor:pointer;transition:fill .2s"/>`;
