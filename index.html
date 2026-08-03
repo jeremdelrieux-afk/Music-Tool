@@ -819,7 +819,7 @@ function stab(pnl,id,btn){
   btn.parentElement.querySelectorAll('.stb').forEach(b=>b.classList.remove('on'));
   document.getElementById(prefix+id).classList.add('on');
   btn.classList.add('on');
-  if(id==='cercle')renderCoF();
+  if(id==='cercle'){renderCoF();renderModInfo(noteArr()[S.root]);}
   if(id==='compat')analyzeCompat();
 }
 document.addEventListener('click', function(e) {
