@@ -201,6 +201,39 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-h
         Accord selectionne
       </div>
     </div>
+    <div id="arp-container" style="display:none;margin-top:13px;background:var(--card2);border:1px solid var(--b);border-radius:9px;padding:12px">
+      <div class="ct">Arpégiateur <span class="ct-sub" id="arp-title"></span></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px">
+        <div style="font-size:11px;color:var(--mu);min-width:60px">Vitesse</div>
+        <div style="display:flex;gap:4px" id="arp-speed-btns">
+          <button class="divbtn on" data-mul="1" onclick="setArp('speed',this)">1/4</button>
+          <button class="divbtn" data-mul="0.5" onclick="setArp('speed',this)">1/8</button>
+          <button class="divbtn" data-mul="0.25" onclick="setArp('speed',this)">1/16</button>
+          <button class="divbtn" data-mul="0.333" onclick="setArp('speed',this)">1/8T</button>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px">
+        <div style="font-size:11px;color:var(--mu);min-width:60px">Sens</div>
+        <div style="display:flex;gap:4px" id="arp-dir-btns">
+          <button class="divbtn on" data-dir="up" onclick="setArp('dir',this)">↑ Montant</button>
+          <button class="divbtn" data-dir="down" onclick="setArp('dir',this)">↓ Descendant</button>
+          <button class="divbtn" data-dir="alt" onclick="setArp('dir',this)">↑↓ Alterné</button>
+          <button class="divbtn" data-dir="rand" onclick="setArp('dir',this)">? Aléatoire</button>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px">
+        <div style="font-size:11px;color:var(--mu);min-width:60px">Octaves</div>
+        <div style="display:flex;gap:4px" id="arp-oct-btns">
+          <button class="divbtn on" data-oct="1" onclick="setArp('oct',this)">1</button>
+          <button class="divbtn" data-oct="2" onclick="setArp('oct',this)">2</button>
+          <button class="divbtn" data-oct="3" onclick="setArp('oct',this)">3</button>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button id="arp-play-btn" onclick="toggleArp()" style="padding:8px 18px;background:var(--acc2);border:none;border-radius:7px;color:#000;font:600 13px DM Sans,sans-serif;cursor:pointer">▶ Play</button>
+        <button onclick="exportMidi()" style="padding:8px 18px;background:var(--b2);border:1px solid var(--b);border-radius:7px;color:var(--tx);font:600 13px DM Sans,sans-serif;cursor:pointer">⬇ Export MIDI</button>
+      </div>
+    </div>
     <div id="mel-container" style="display:none;margin-top:13px">
       <div class="ct">Guide melodie <span class="ct-sub" id="mel-title"></span></div>
       <div class="mg2" id="mel-guide"></div>
@@ -701,6 +734,129 @@ function copyVal(val, btn) {
   });
 }
 
+
+// ARPEGIATEUR
+const ARP = { speed: 1, dir: 'up', oct: 1, playing: false, timer: null, step: 0, altDir: 1, notes: [] };
+
+function setArp(type, btn) {
+  const grp = btn.parentElement;
+  grp.querySelectorAll('.divbtn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  if (type === 'speed') ARP.speed = parseFloat(btn.dataset.mul);
+  if (type === 'dir')   ARP.dir   = btn.dataset.dir;
+  if (type === 'oct')   ARP.oct   = parseInt(btn.dataset.oct);
+}
+
+function buildArpNotes(baseNis) {
+  const notes = [];
+  for (let o = 0; o < ARP.oct; o++) {
+    baseNis.forEach(ni => notes.push(ni + o * 12));
+  }
+  return notes;
+}
+
+function getNextNote(notes) {
+  const len = notes.length;
+  let idx;
+  if (ARP.dir === 'up')   { idx = ARP.step % len; ARP.step++; }
+  else if (ARP.dir === 'down') { idx = len - 1 - (ARP.step % len); ARP.step++; }
+  else if (ARP.dir === 'alt') {
+    idx = ARP.step % len;
+    ARP.step += ARP.altDir;
+    if (ARP.step >= len || ARP.step < 0) { ARP.altDir *= -1; ARP.step += ARP.altDir * 2; }
+  }
+  else { idx = Math.floor(Math.random() * len); }
+  return notes[Math.max(0, Math.min(idx, len - 1))];
+}
+
+function toggleArp() {
+  if (ARP.playing) stopArp();
+  else startArp();
+}
+
+function startArp() {
+  if (!ARP.notes.length) return;
+  ARP.playing = true;
+  ARP.step = 0;
+  ARP.altDir = 1;
+  document.getElementById('arp-play-btn').textContent = '■ Stop';
+  document.getElementById('arp-play-btn').style.background = 'var(--acc)';
+  const interval = (60000 / curBPM()) * ARP.speed;
+  function tick() {
+    const ni = getNextNote(buildArpNotes(ARP.notes));
+    const ctx = getCtx(), t = ctx.currentTime;
+    tone(noteFreq(ni % 12, 3 + Math.floor(ni / 12)), t, interval / 1000 * 0.8, 0.2);
+    ARP.timer = setTimeout(tick, interval);
+  }
+  tick();
+}
+
+function stopArp() {
+  ARP.playing = false;
+  clearTimeout(ARP.timer);
+  document.getElementById('arp-play-btn').textContent = '▶ Play';
+  document.getElementById('arp-play-btn').style.background = 'var(--acc2)';
+}
+
+function updateArp(nis, name) {
+  ARP.notes = nis;
+  if (ARP.playing) { stopArp(); startArp(); }
+  document.getElementById('arp-title').textContent = name;
+  document.getElementById('arp-container').style.display = 'block';
+}
+
+// EXPORT MIDI
+function exportMidi() {
+  if (!ARP.notes.length) return;
+  const notes = buildArpNotes(ARP.notes);
+  const bpm = curBPM();
+  const ticksPerBeat = 480;
+  const interval = ARP.speed;
+  const noteDur = Math.round(ticksPerBeat * interval * 0.8);
+  const noteGap = Math.round(ticksPerBeat * interval);
+
+  function writeVarLen(val) {
+    const b = [];
+    b.unshift(val & 0x7F);
+    val >>= 7;
+    while (val > 0) { b.unshift((val & 0x7F) | 0x80); val >>= 7; }
+    return b;
+  }
+
+  function num4(v) { return [(v>>24)&0xFF,(v>>16)&0xFF,(v>>8)&0xFF,v&0xFF]; }
+  function num2(v) { return [(v>>8)&0xFF,v&0xFF]; }
+
+  const usPerBeat = Math.round(60000000 / bpm);
+  const tempoEvt = [0x00, 0xFF, 0x51, 0x03, ...[(usPerBeat>>16)&0xFF,(usPerBeat>>8)&0xFF,usPerBeat&0xFF]];
+
+  const trackEvents = [...tempoEvt];
+  const loopNotes = [];
+  for (let i = 0; i < notes.length * ARP.oct; i++) {
+    loopNotes.push(notes[i % notes.length]);
+  }
+  const seqNotes = ARP.dir === 'down' ? [...loopNotes].reverse() : loopNotes;
+
+  let tick = 0;
+  seqNotes.forEach(ni => {
+    const midiNote = 48 + (ni % 12) + Math.floor(ni / 12) * 12;
+    trackEvents.push(...writeVarLen(0), 0x90, midiNote, 100);
+    trackEvents.push(...writeVarLen(noteDur), 0x80, midiNote, 0);
+    tick += noteGap;
+  });
+  trackEvents.push(0x00, 0xFF, 0x2F, 0x00);
+
+  const header = [0x4D,0x54,0x68,0x64,0,0,0,6,0,0,0,1,...num2(ticksPerBeat)];
+  const trackLen = num4(trackEvents.length);
+  const track = [0x4D,0x54,0x72,0x6B,...trackLen,...trackEvents];
+  const midi = new Uint8Array([...header,...track]);
+
+  const blob = new Blob([midi], {type:'audio/midi'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'harmonylab-arp.mid';
+  a.click();
+}
+
 // DATA
 const NS=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
 const NF=['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B'];
@@ -865,10 +1021,11 @@ function render(){
   });
   if(selC){
     const g=melodyGuide(sn,selC);
-    document.getElementById('mel-title').textContent=selC.root.name+selC.suffix+' - notes disponibles';
+    updateArp(selC.nis, selC.root.name+selC.suffix);
+  document.getElementById('mel-title').textContent=selC.root.name+selC.suffix+' - notes disponibles';
     document.getElementById('mel-guide').innerHTML=g.map(n=>'<div class="mn '+n.cat+'"><span class="mn-n">'+n.name+'</span><span class="mn-r">'+n.lbl+'</span></div>').join('');
     document.getElementById('mel-container').style.display='block';
-  }else{document.getElementById('mel-container').style.display='none';}
+  }else{document.getElementById('mel-container').style.display='none';document.getElementById('arp-container').style.display='none';stopArp();}
   const bor=borrowedChords(sn);
   document.getElementById('borrowed').innerHTML=bor.length?bor.map(b=>'<div class="bc" style="border-color:'+b.col+'45" onclick="playChord('+JSON.stringify(b.nis)+',true)"><div class="bcn" style="color:'+b.col+'">'+b.name+b.suf+'</div><div class="bcd">'+b.desc+'</div></div>').join(''):'<div class="tx-m">Aucun accord emprunte pour ce mode.</div>';
   renderModInfo(rname);
