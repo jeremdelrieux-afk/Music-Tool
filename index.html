@@ -411,6 +411,13 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-h
       </div>
     </div>
     <div style="display:none" id="dir-btns"></div>
+    <div style="margin-top:12px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <label style="font-size:12px;color:var(--mu)">Désaccordage initial du sample</label>
+      <input type="number" id="tp-detune" value="0" min="-100" max="100" step="1"
+        style="width:80px;background:var(--card2);border:1px solid var(--b);color:var(--tx);font:600 14px JetBrains Mono,monospace;padding:6px 10px;border-radius:7px;text-align:center"
+        oninput="if(S.tpSrc!==null&&S.tpTgt!==null)calcTranspo()">
+      <span style="font-size:12px;color:var(--mu)">cents &nbsp;|&nbsp; Valeur mesurée avec un tuner ou SPAN sur le sample original</span>
+    </div>
     <div id="tp-result" style="display:none">
       <div class="tp-result">
         <div class="tp-cell"><div class="tp-cell-val" id="tp-semi">--</div><button class="copy-btn" onclick="copyVal(document.getElementById('tp-semi').textContent,this)">📋</button><div class="tp-cell-lbl">Demi-tons a appliquer</div></div>
@@ -1039,11 +1046,16 @@ function calcTranspo(){
   else if(S.tpDir==='up'){while(semi<0)semi+=12;if(semi===0)semi=12;}
   else{while(semi>0)semi-=12;if(semi===0)semi=-12;}
   const ratio=Math.pow(2,semi/12);
+  const detune = parseInt(document.getElementById('tp-detune').value) || 0;
   const cents=semi*100;
+  const centsTotal = cents - detune;
   const sign=semi>=0?'+':'';
   document.getElementById('tp-result').style.display='block';
   document.getElementById('tp-semi').textContent=sign+semi+' demi-tons';
-  document.getElementById('tp-cents').textContent=sign+cents+' cents';document.getElementById('tp-cents-copy').onclick=()=>copyVal(sign+cents,document.getElementById('tp-cents-copy'));
+  const signTotal = centsTotal >= 0 ? '+' : '';
+  document.getElementById('tp-cents').textContent = centsTotal === cents
+    ? sign+cents+' cents'
+    : sign+cents+' cents ('+signTotal+centsTotal+' avec correction détunage)';document.getElementById('tp-cents-copy').onclick=()=>copyVal(sign+cents,document.getElementById('tp-cents-copy'));
   document.getElementById('tp-ratio').textContent=ratio.toFixed(5);
   document.getElementById('tp-speed').textContent=sign+((ratio-1)*100).toFixed(2)+'%';
   document.getElementById('tp-fl-neo').textContent=sign+semi+' semitones (champ Pitch)';
