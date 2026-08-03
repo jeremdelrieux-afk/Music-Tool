@@ -431,6 +431,36 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-h
     <div class="ct">Table de timing complete</div>
     <table class="tt" id="bpm-table"></table>
   </div>
+  <div class="card">
+    <div class="ct">Fréquences des notes par octave <span class="ct-sub">Hz et période — utile pour SPAN, EQ, calage fondamentale</span></div>
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap">
+      <label style="font-size:12px;color:var(--mu)">Octave</label>
+      <div style="display:flex;gap:4px" id="freq-oct-btns">
+        <button class="divbtn" data-oct="0" onclick="setFreqOct(this)">0</button>
+        <button class="divbtn" data-oct="1" onclick="setFreqOct(this)">1</button>
+        <button class="divbtn on" data-oct="2" onclick="setFreqOct(this)">2</button>
+        <button class="divbtn" data-oct="3" onclick="setFreqOct(this)">3</button>
+        <button class="divbtn" data-oct="4" onclick="setFreqOct(this)">4</button>
+        <button class="divbtn" data-oct="5" onclick="setFreqOct(this)">5</button>
+        <button class="divbtn" data-oct="6" onclick="setFreqOct(this)">6</button>
+        <button class="divbtn" data-oct="7" onclick="setFreqOct(this)">7</button>
+        <button class="divbtn" data-oct="8" onclick="setFreqOct(this)">8</button>
+      </div>
+      <label style="font-size:12px;color:var(--mu);margin-left:12px">Diapason A4</label>
+      <input type="number" id="freq-a4" value="440" min="400" max="480" step="1"
+        style="width:70px;background:var(--card2);border:1px solid var(--b);color:var(--tx);font:600 13px JetBrains Mono,monospace;padding:5px 8px;border-radius:6px;text-align:center"
+        oninput="renderFreqTable()">
+      <span style="font-size:11px;color:var(--mu)">Hz (standard = 440, 432 Hz pour certains)</span>
+    </div>
+    <table class="tt" id="freq-table"></table>
+    <div style="background:var(--bg);border:1px solid var(--b2);border-radius:8px;padding:10px 14px;margin-top:10px">
+      <div style="font:700 11px Syne,sans-serif;color:var(--acc);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Repères pratiques</div>
+      <div class="cmp-row"><span style="color:var(--tx)">Sub bass (kick, basse sub)</span><span class="cmp-val">C1 = 32.7 Hz / C2 = 65.4 Hz</span></div>
+      <div class="cmp-row"><span style="color:var(--tx)">Basse principale</span><span class="cmp-val">C2–C3 = 65–131 Hz</span></div>
+      <div class="cmp-row"><span style="color:var(--tx)">Médiums instruments</span><span class="cmp-val">C3–C5 = 131–523 Hz</span></div>
+      <div class="cmp-row"><span style="color:var(--tx)">Présence / Air</span><span class="cmp-val">C5–C8 = 523–4186 Hz</span></div>
+    </div>
+  </div>
 </div>
 
 <!-- TRANSPOSITION -->
@@ -803,6 +833,42 @@ function exportChordMidi(name, nis) {
   a.click();
 }
 
+
+
+// FREQUENCES NOTES
+let freqOct = 2;
+function setFreqOct(btn) {
+  freqOct = parseInt(btn.dataset.oct);
+  document.querySelectorAll('#freq-oct-btns .divbtn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  renderFreqTable();
+}
+function renderFreqTable() {
+  const a4 = parseFloat(document.getElementById('freq-a4').value) || 440;
+  const notes = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+  const tbl = document.getElementById('freq-table');
+  if (!tbl) return;
+  tbl.innerHTML = '<thead><tr><th>Note</th><th>Fréquence (Hz)</th><th>Période (ms)</th><th>Utilité</th><th></th></tr></thead><tbody>' +
+    notes.map(n => {
+      const semi = notes.indexOf(n) + (freqOct - 4) * 12 - 9;
+      const freq = a4 * Math.pow(2, semi / 12);
+      const period = (1000 / freq).toFixed(2);
+      let use = '';
+      if (freq < 40) use = 'Infra-son';
+      else if (freq < 80) use = 'Sub bass';
+      else if (freq < 160) use = 'Basse';
+      else if (freq < 320) use = 'Bas-médium';
+      else if (freq < 640) use = 'Médium';
+      else if (freq < 1280) use = 'Haut-médium';
+      else if (freq < 5000) use = 'Présence';
+      else use = 'Air';
+      return '<tr><td style="font:600 13px JetBrains Mono,monospace;color:var(--tx)">' + n + freqOct + '</td>' +
+        '<td style="font:600 13px JetBrains Mono,monospace;color:var(--acc2)">' + freq.toFixed(2) + ' Hz <button class="copy-btn" onclick="copyVal('' + freq.toFixed(2) + '',this)">📋</button></td>' +
+        '<td style="font-family:JetBrains Mono,monospace;color:var(--mu)">' + period + ' ms</td>' +
+        '<td style="font-size:11px;color:var(--mu)">' + use + '</td>' +
+        '<td></td></tr>';
+    }).join('') + '</tbody>';
+}
 
 // TAP TEMPO
 const TAP = { times: [], max: 8 };
@@ -1457,7 +1523,7 @@ document.getElementById('mode-grid').addEventListener('click',function(e){
 
 render();
 initStudio();
-setBPM(174);
+setBPM(174);renderFreqTable();
 initTuning();
 </script>
 </body>
