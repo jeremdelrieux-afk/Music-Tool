@@ -863,7 +863,7 @@ function renderFreqTable() {
       else if (freq < 5000) use = 'Présence';
       else use = 'Air';
       return '<tr><td style="font:600 13px JetBrains Mono,monospace;color:var(--tx)">' + n + freqOct + '</td>' +
-        '<td style="font:600 13px JetBrains Mono,monospace;color:var(--acc2)">' + freq.toFixed(2) + ' Hz <button class="copy-btn" onclick="copyVal('' + freq.toFixed(2) + '',this)">📋</button></td>' +
+        '<td style="font:600 13px JetBrains Mono,monospace;color:var(--acc2)">' + freq.toFixed(2) + ' Hz <button class="copy-btn" onclick="copyVal(this.dataset.v,this)" data-v="' + freq.toFixed(2) + '">📋</button></td>' +
         '<td style="font-family:JetBrains Mono,monospace;color:var(--mu)">' + period + ' ms</td>' +
         '<td style="font-size:11px;color:var(--mu)">' + use + '</td>' +
         '<td></td></tr>';
