@@ -636,11 +636,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-h
     <div style="background:var(--bg);border:1px solid var(--b2);border-radius:8px;padding:10px 14px;margin-top:12px">
       <div style="font:700 11px 'Syne',sans-serif;color:var(--acc);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Micro-tuning — désaccordage initial</div>
       <div style="font-size:11px;color:var(--mu);line-height:1.8">
-        Certains samples ne sont pas exactement calés sur le diapason standard A440 — vinyle, synthé analogique, enregistrement vintage.<br><br>
-        <b style="color:var(--tx)">Exemple :</b> sample de basse root Do, désaccordé à +18 cents. Tu veux l'utiliser en Ré.<br>
-        Sans correction : Do → Ré = +200 cents, mais le sample reste désaccordé de +18 cents → sonne faux dans le mix.<br>
-        Avec micro-tuning : entre +18 dans le champ désaccordage → l'outil calcule <b style="color:var(--acc2)">+182 cents à appliquer</b> dans Newtone.<br><br>
-        <b style="color:var(--tx)">Comment mesurer le désaccordage :</b> charge le sample dans FL Studio, joue-le sans pitch shift, lis la fondamentale dans SPAN ou un tuner — la différence en cents par rapport à la note théorique est ton désaccordage initial.
+        Quand vous echantillonnez un disque vinyle, un vieux synthe ou un enregistrement analogique, la note jouee n'est souvent pas exactement juste par rapport au standard numerique. Par exemple votre sample sonne "presque Do" mais est en realite a +18 cents au-dessus.<br><br>
+        <b style="color:var(--tx)">Le probleme :</b> si vous transposez Do → Re (+200 cents) sans tenir compte de ce decalage, votre Re sera juste en terme de hauteur mais toujours desaccorde de +18 cents — ca sonne faux dans le mix.<br><br>
+        <b style="color:var(--tx)">La solution :</b> entrez +18 dans le champ. L'outil soustrait ce decalage et vous donne la valeur exacte a entrer dans Newtone : <b style="color:var(--acc2)">+182 cents</b> au lieu de +200.<br><br>
+        <b style="color:var(--tx)">Comment trouver la valeur :</b> ouvrez le sample dans FL Studio sans le modifier, regardez dans SPAN quelle frequence domine. Comparez avec la frequence theorique de la note — la difference en cents est votre desaccordage.
       </div>
     </div>
     <div style="display:none">
