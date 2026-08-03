@@ -61,5 +61,4 @@ Ou télécharger `index.html` et double-cliquer — fonctionne sans connexion in
 
 ## Auteur
 
-**Jérémy Delrieux** — Producteur DnB / Neurofunk / Hi-Tech Minimal  
-Projet personnel — usage libre
+**Jérémy Delrieux**
