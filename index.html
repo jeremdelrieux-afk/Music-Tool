@@ -511,6 +511,25 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-h
     </div>
     <div id="sc-result"></div>
   </div>
+  <div class="card">
+    <div class="ct">Harmoniques et sous-harmoniques <span class="ct-sub">conflits frequentiels kick / basse</span></div>
+    <div style="display:flex;gap:12px;align-items:center;margin-bottom:14px;flex-wrap:wrap">
+      <div>
+        <label style="font-size:12px;color:var(--mu);display:block;margin-bottom:4px">Frequence fondamentale (Hz)</label>
+        <input type="number" id="harm-freq" value="73.4" min="20" max="2000" step="0.1"
+          style="width:110px;background:var(--card2);border:1px solid var(--b);color:var(--tx);font:600 15px JetBrains Mono,monospace;padding:7px 10px;border-radius:7px;text-align:center"
+          oninput="renderHarmonics()">
+      </div>
+      <div>
+        <label style="font-size:12px;color:var(--mu);display:block;margin-bottom:4px">Frequence kick (Hz)</label>
+        <input type="number" id="harm-kick" value="55" min="20" max="200" step="0.1"
+          style="width:110px;background:var(--card2);border:1px solid var(--b);color:var(--tx);font:600 15px JetBrains Mono,monospace;padding:7px 10px;border-radius:7px;text-align:center"
+          oninput="renderHarmonics()">
+      </div>
+      <div id="harm-note" style="font:700 18px JetBrains Mono,monospace;color:var(--acc2);padding-top:18px"></div>
+    </div>
+    <div id="harm-result"></div>
+  </div>
 </div>
 
 <!-- TRANSPOSITION -->
@@ -1118,6 +1137,100 @@ function renderSidechain() {
     '<div style="background:rgba(0,200,160,.07);border:1px solid rgba(0,200,160,.2);border-radius:8px;padding:10px 14px">'+
     '<div style="font:700 11px Syne,sans-serif;color:var(--acc2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px">Alternative recommandée</div>'+
     '<div style="font-size:12px;color:var(--mu)">'+g.alt+'</div></div>';
+}
+
+
+// HARMONIQUES
+function freqToNote(freq) {
+  const A4 = 440;
+  const notes = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+  const semi = Math.round(12 * Math.log2(freq / A4)) + 69;
+  const oct = Math.floor(semi / 12) - 1;
+  const note = notes[((semi % 12) + 12) % 12];
+  const cents = Math.round((12 * Math.log2(freq / A4) + 69 - semi) * 100);
+  return { note: note + oct, cents: cents };
+}
+
+function renderHarmonics() {
+  const fund = parseFloat(document.getElementById('harm-freq').value) || 73.4;
+  const kick = parseFloat(document.getElementById('harm-kick').value) || 55;
+  const tolerance = 15; // cents de tolerance pour conflit
+
+  const noteInfo = freqToNote(fund);
+  document.getElementById('harm-note').textContent = noteInfo.note + (noteInfo.cents !== 0 ? ' ' + (noteInfo.cents > 0 ? '+' : '') + noteInfo.cents + 'c' : '');
+
+  const kickNote = freqToNote(kick);
+
+  const rows = [];
+
+  // Sous-harmoniques
+  for (let d = 4; d >= 2; d--) {
+    const f = fund / d;
+    if (f < 15) continue;
+    const n = freqToNote(f);
+    const kickConflict = Math.abs(12 * Math.log2(f / kick) * 100) < tolerance * 6;
+    rows.push({ f, n, label: 'Sous-harm. /'+d, type: 'sub', conflict: kickConflict });
+  }
+
+  // Fondamentale
+  rows.push({ f: fund, n: noteInfo, label: 'Fondamentale', type: 'fund', conflict: false });
+
+  // Harmoniques
+  for (let m = 2; m <= 8; m++) {
+    const f = fund * m;
+    if (f > 20000) break;
+    const n = freqToNote(f);
+    const kickDist = Math.abs(12 * Math.log2(f / kick) * 100);
+    const kickConflict = kickDist < tolerance * 6;
+    const harmName = ['','','2e','3e','4e','5e','6e','7e','8e'][m];
+    rows.push({ f, n, label: harmName + ' harmonique (x'+m+')', type: m <= 4 ? 'low' : 'high', conflict: kickConflict });
+  }
+
+  // Zone kick
+  const kickRows = [];
+  for (let m = 1; m <= 5; m++) {
+    kickRows.push({ f: kick * m, label: m === 1 ? 'Fondamentale kick' : m + 'e harm. kick' });
+  }
+
+  let html = '<div style="display:grid;grid-template-columns:1fr 300px;gap:12px">';
+
+  // Tableau principal
+  html += '<div><table class="tt"><thead><tr><th>Harmonique</th><th>Frequence</th><th>Note</th><th>Cents</th><th>Zone</th><th>Conflit kick</th></tr></thead><tbody>';
+  rows.forEach(r => {
+    const zone = r.f < 60 ? 'Sub' : r.f < 120 ? 'Basse' : r.f < 250 ? 'Bas-med' : r.f < 500 ? 'Medium' : r.f < 2000 ? 'Presence' : 'Air';
+    const zoneCol = r.f < 60 ? '#6090ff' : r.f < 120 ? '#40c080' : r.f < 250 ? '#c0a030' : '#888';
+    const isFund = r.type === 'fund';
+    const isSub = r.type === 'sub';
+    html += '<tr style="'+(isFund?'background:rgba(255,112,48,.08)':'')+(isSub?'opacity:.7':'')+'">'+
+      '<td style="font-size:11px;color:var(--mu)">'+r.label+'</td>'+
+      '<td style="font:600 13px JetBrains Mono,monospace;color:'+(isFund?'var(--acc)':'var(--tx)')+'">'+r.f.toFixed(1)+' Hz</td>'+
+      '<td style="font:600 12px JetBrains Mono,monospace;color:var(--acc2)">'+r.n.note+'</td>'+
+      '<td style="font-size:11px;color:var(--mu)">'+(r.n.cents>0?'+':'')+r.n.cents+'c</td>'+
+      '<td><span style="font-size:10px;color:'+zoneCol+'">'+zone+'</span></td>'+
+      '<td style="text-align:center">'+(r.conflict?'<span style="color:#ff4060;font-size:12px">⚠ conflit</span>':'<span style="color:var(--mu);font-size:11px">ok</span>')+'</td>'+
+      '</tr>';
+  });
+  html += '</tbody></table></div>';
+
+  // Panel kick
+  html += '<div><div style="background:var(--bg);border:1px solid var(--b2);border-radius:8px;padding:12px">'+
+    '<div style="font:700 11px Syne,sans-serif;color:var(--acc);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Kick — '+kick+' Hz ('+kickNote.note+')</div>'+
+    kickRows.map(k => {
+      const kn = freqToNote(k.f);
+      const dist = Math.abs(12 * Math.log2(k.f / fund) * 100);
+      const conflict = dist < tolerance * 6;
+      return '<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--b);font-size:12px">'+
+        '<span style="color:var(--mu)">'+k.label+'</span>'+
+        '<span style="font-family:JetBrains Mono,monospace;color:'+(conflict?'#ff4060':'var(--acc2)')+'">'+k.f.toFixed(1)+' Hz</span>'+
+        '</div>';
+    }).join('')+
+    '</div>'+
+    '<div style="background:rgba(255,60,60,.07);border:1px solid rgba(255,60,60,.2);border-radius:8px;padding:10px;margin-top:8px;font-size:11px;color:var(--mu);line-height:1.7">'+
+    '<b style="color:#ff6060">Conflits detectes</b> = frequences proches a moins de '+tolerance*6+' cents.<br>'+
+    'Solution : transposez la basse d'un demi-ton, ou taillez un notch EQ sur la frequence du kick dans la basse.</div></div>';
+
+  html += '</div>';
+  document.getElementById('harm-result').innerHTML = html;
 }
 
 // TAP TEMPO
@@ -1773,7 +1886,7 @@ document.getElementById('mode-grid').addEventListener('click',function(e){
 
 render();
 initStudio();
-setBPM(174);renderFreqTable();renderSidechain();
+setBPM(174);renderFreqTable();renderSidechain();renderHarmonics();
 initTuning();
 </script>
 </body>
