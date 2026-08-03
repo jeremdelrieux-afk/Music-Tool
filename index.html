@@ -56,9 +56,8 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 .tip-icon.active{background:var(--acc);color:#fff;border-color:var(--acc)}
 
 /* TOOLTIP */
-.tooltip{position:absolute;bottom:calc(100% + 8px);left:0;background:#0a1525;border:1px solid var(--acc);border-radius:var(--r2);padding:10px 14px;font-size:12px;color:var(--tx);line-height:1.7;width:300px;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,.6);display:none;pointer-events:none}
-.tooltip::after{content:'';position:absolute;top:100%;left:20px;border:6px solid transparent;border-top-color:var(--acc)}
-.tip-icon:hover + .tooltip,.tip-icon.active + .tooltip{display:block}
+.tooltip{position:fixed;background:#0a1525;border:1px solid var(--acc);border-radius:var(--r2);padding:10px 14px;font-size:12px;color:var(--tx);line-height:1.7;width:280px;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,.8);display:none;pointer-events:none}
+.tip-icon.active + .tooltip{display:block}
 
 /* FORMS */
 input[type=range]{width:100%;accent-color:var(--acc);cursor:pointer}
@@ -835,10 +834,21 @@ document.addEventListener('click', function(e) {
     e.stopPropagation();
     const wasActive = icon.classList.contains('active');
     document.querySelectorAll('.tip-icon.active').forEach(i => i.classList.remove('active'));
-    if (!wasActive) icon.classList.add('active');
+    if (!wasActive) {
+      icon.classList.add('active');
+      const tooltip = icon.nextElementSibling;
+      if (tooltip && tooltip.classList.contains('tooltip')) {
+        const rect = icon.getBoundingClientRect();
+        const below = rect.bottom + 12 + 120 < window.innerHeight;
+        tooltip.style.display = 'block';
+        tooltip.style.top = below ? (rect.bottom + 8) + 'px' : (rect.top - tooltip.offsetHeight - 8) + 'px';
+        tooltip.style.left = Math.min(rect.left, window.innerWidth - 296) + 'px';
+      }
+    }
     return;
   }
   document.querySelectorAll('.tip-icon.active').forEach(i => i.classList.remove('active'));
+  document.querySelectorAll('.tooltip').forEach(t => t.style.display = '');
 });
 
 function toggleTips(){
