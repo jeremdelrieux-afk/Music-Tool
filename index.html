@@ -999,6 +999,116 @@ function analyzeCompat() {
     '<div style="background:var(--card2);border:1px solid var(--b);border-radius:8px;padding:10px;font-size:12px;color:var(--mu)">Aucun accord pivot commun — envisagez une note pédale ou une modulation progressive.</div>');
 }
 
+
+// SIDECHAIN PUMPING
+const SC_GENRES = {
+  dnb: {
+    name:'Drum and Bass',
+    bpmRange:'160–180 BPM',
+    desc:'Le sidechain DnB est subtil — il colle la basse au kick sans pumping audible. L'objectif est la cohérence, pas l'effet.',
+    attack:{val:1,tip:'Très court — laisse passer le transitoire du kick pour garder le punch'},
+    release:{subdiv:0.25,tip:'1/16 — la basse remonte avant la prochaine croche pour ne pas perdre l'énergie'},
+    ratio:'4:1 à 6:1',
+    threshold:'-18 à -12 dB',
+    knee:'Soft (10–20 ms)',
+    routing:'Kick → Fruity Peak Controller → Volume knob de la basse / Compresseur sur bus basse',
+    alt:'Automation de volume en dent de scie sur la basse — plus précis qu'un compresseur en DnB',
+    color:'var(--acc3)'
+  },
+  techno: {
+    name:'Techno / Hi-Tek Minimal',
+    bpmRange:'130–150 BPM',
+    desc:'Pumping prononcé et hypnotique — c'est une signature sonore du genre. Le pumping DOIT s'entendre.',
+    attack:{val:1,tip:'1–5 ms — le kick doit claquer fort avant que le sidechain s'engage'},
+    release:{subdiv:1,tip:'1/4 — la basse pompe exactement sur le temps, crée le groove caractéristique'},
+    ratio:'10:1 à ∞',
+    threshold:'-24 à -18 dB',
+    knee:'Hard',
+    routing:'Kick → Sidechain input du compresseur sur bus instruments/basse',
+    alt:'Gross Beat (FL Studio) — automation de volume parfaite pour un pumping régulier et précis',
+    color:'var(--acc)'
+  },
+  house: {
+    name:'House / Deep House',
+    bpmRange:'120–130 BPM',
+    desc:'Pumping doux et musical — donne de la respiration au mix sans agressivité. Le groove vient du sidechain.',
+    attack:{val:5,tip:'5–10 ms — transition douce, le kick respire naturellement'},
+    release:{subdiv:0.75,tip:'Croche pointée — remontée progressive qui crée le groove house'},
+    ratio:'4:1 à 8:1',
+    threshold:'-20 à -14 dB',
+    knee:'Soft (15–25 ms)',
+    routing:'Kick → Sidechain input compresseur sur basse + pad',
+    alt:'LFO Tool (Xfer) — contrôle chirurgical de la forme du pumping',
+    color:'var(--acc2)'
+  },
+  trance: {
+    name:'Trance / Uplifting',
+    bpmRange:'138–145 BPM',
+    desc:'Pumping très marqué sur le pad et les nappes — crée l'effet euphorique caractéristique. La basse reste souvent non-sidechainée.',
+    attack:{val:2,tip:'2–5 ms — engagement rapide pour un effet tranché et euphorique'},
+    release:{subdiv:1,tip:'1/4 — remontée sur le temps suivant, groove régulier'},
+    ratio:'8:1 à ∞',
+    threshold:'-22 à -16 dB',
+    knee:'Hard à Medium',
+    routing:'Kick → Sidechain input compresseur sur pad/nappe — PAS sur la basse en trance',
+    alt:'Kickstart (Nicky Romero) — forme de pumping dédiée trance, plug-and-play',
+    color:'#b060ff'
+  },
+  dnb_neuro: {
+    name:'Neurofunk / DnB Dark',
+    bpmRange:'170–180 BPM',
+    desc:'Double sidechain : kick sur la basse principale + snare sur les éléments mid. Crée une respiration complexe et organique.',
+    attack:{val:1,tip:'1 ms max — les transitoires Neurofunk sont très courts, l'engagement doit être immédiat'},
+    release:{subdiv:0.125,tip:'1/32 — remontée ultra-rapide entre les doubles croches pour garder l'agressivité'},
+    ratio:'6:1 à 10:1',
+    threshold:'-20 à -14 dB',
+    knee:'Hard',
+    routing:'Kick → SC basse principale | Snare → SC mid/reeze | Double chaîne parallèle recommandée',
+    alt:'Fruity Peak Controller avec courbe personnalisée — permet un envelope de sidechain non-linéaire',
+    color:'#ff4060'
+  }
+};
+
+let scGenre = 'dnb';
+
+function setSCGenre(btn) {
+  scGenre = btn.dataset.genre;
+  document.querySelectorAll('#sc-genre-btns .divbtn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  renderSidechain();
+}
+
+function renderSidechain() {
+  const bpm = curBPM();
+  const g = SC_GENRES[scGenre];
+  const releaseMs = Math.round((60000 / bpm) * g.release.subdiv);
+  const beatMs = Math.round(60000 / bpm);
+
+  document.getElementById('sc-result').innerHTML =
+    '<div style="background:var(--bg);border:1px solid '+g.color+'40;border-radius:10px;padding:14px;margin-bottom:12px">'+
+    '<div style="font:700 13px Syne,sans-serif;color:'+g.color+';margin-bottom:4px">'+g.name+' — '+g.bpmRange+'</div>'+
+    '<div style="font-size:12px;color:var(--mu);line-height:1.7">'+g.desc+'</div></div>'+
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">'+
+    '<div style="background:var(--card2);border:1px solid var(--b);border-radius:8px;padding:12px">'+
+    '<div style="font:700 11px Syne,sans-serif;color:var(--mu);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Attack</div>'+
+    '<div style="font:700 22px JetBrains Mono,monospace;color:'+g.color+'">'+g.attack.val+' ms</div>'+
+    '<div style="font-size:11px;color:var(--mu);margin-top:5px">'+g.attack.tip+'</div></div>'+
+    '<div style="background:var(--card2);border:1px solid var(--b);border-radius:8px;padding:12px">'+
+    '<div style="font:700 11px Syne,sans-serif;color:var(--mu);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Release</div>'+
+    '<div style="font:700 22px JetBrains Mono,monospace;color:'+g.color+'">'+releaseMs+' ms <button class="copy-btn" onclick="copyVal(this.dataset.v,this)" data-v="'+releaseMs+'">📋</button></div>'+
+    '<div style="font-size:11px;color:var(--mu);margin-top:5px">'+g.release.tip+' — à '+bpm+' BPM</div></div></div>'+
+    '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px">'+
+    '<div class="cmp-row" style="background:var(--card2);border:1px solid var(--b);border-radius:7px;padding:8px 10px;display:block"><span style="font-size:10px;color:var(--mu);display:block;margin-bottom:3px">RATIO</span><span style="font:600 13px JetBrains Mono,monospace;color:var(--acc2)">'+g.ratio+'</span></div>'+
+    '<div class="cmp-row" style="background:var(--card2);border:1px solid var(--b);border-radius:7px;padding:8px 10px;display:block"><span style="font-size:10px;color:var(--mu);display:block;margin-bottom:3px">THRESHOLD</span><span style="font:600 13px JetBrains Mono,monospace;color:var(--acc2)">'+g.threshold+'</span></div>'+
+    '<div class="cmp-row" style="background:var(--card2);border:1px solid var(--b);border-radius:7px;padding:8px 10px;display:block"><span style="font-size:10px;color:var(--mu);display:block;margin-bottom:3px">KNEE</span><span style="font:600 13px JetBrains Mono,monospace;color:var(--acc2)">'+g.knee+'</span></div></div>'+
+    '<div style="background:var(--bg);border:1px solid var(--b2);border-radius:8px;padding:10px 14px;margin-bottom:8px">'+
+    '<div style="font:700 11px Syne,sans-serif;color:var(--acc);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px">Routing FL Studio</div>'+
+    '<div style="font-size:12px;color:var(--tx)">'+g.routing+'</div></div>'+
+    '<div style="background:rgba(0,200,160,.07);border:1px solid rgba(0,200,160,.2);border-radius:8px;padding:10px 14px">'+
+    '<div style="font:700 11px Syne,sans-serif;color:var(--acc2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px">Alternative recommandée</div>'+
+    '<div style="font-size:12px;color:var(--mu)">'+g.alt+'</div></div>';
+}
+
 // TAP TEMPO
 const TAP = { times: [], max: 8 };
 function tapTempo() {
@@ -1652,7 +1762,7 @@ document.getElementById('mode-grid').addEventListener('click',function(e){
 
 render();
 initStudio();
-setBPM(174);renderFreqTable();
+setBPM(174);renderFreqTable();renderSidechain();
 initTuning();
 </script>
 </body>
