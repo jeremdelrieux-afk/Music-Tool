@@ -211,7 +211,22 @@ tr:hover td{background:rgba(124,92,252,.04)}
   .grid2,.grid3{grid-template-columns:1fr}
   .tp-result-grid{grid-template-columns:1fr}
   .sc-vals{grid-template-columns:1fr 1fr}
-  .cnt{padding:12px}
+  .cnt{padding:10px}
+  .tabs .tb{padding:10px 8px;font-size:12px}
+  /* Tableau accords mobile */
+  table{font-size:12px}
+  th,td{padding:6px 6px}
+  /* Masquer colonne fonction sur mobile */
+  .chord-fn-col{display:none}
+  /* Notes sur une ligne */
+  .chord-notes-cell{white-space:nowrap}
+  /* Boutons play/midi plus compacts */
+  .btn.btn-sm{padding:4px 8px;font-size:11px}
+  /* Header plus compact */
+  .hd{padding:8px 12px}
+  .hd-state{gap:6px;font-size:12px}
+  /* Sub tabs scroll */
+  .sub-tabs{overflow-x:auto;scrollbar-width:none;width:100%}
 }
 </style>
 </head>
@@ -291,7 +306,7 @@ tr:hover td{background:rgba(124,92,252,.04)}
     <div class="card">
       <h2>Accords diatoniques <span class="tip-icon" tabindex="0">?</span><div class="tooltip">Les accords construits sur chaque degré de votre gamme. Ils partagent tous les mêmes notes et sont donc toujours compatibles entre eux — c'est la base de toute progression harmonique. Cliquez une ligne pour sélectionner l'accord, play pour l'écouter, ⬇ pour l'exporter en MIDI.</div></h2>
       <table>
-        <thead><tr><th>Degré</th><th>Accord</th><th>Notes</th><th>Fonction</th><th></th></tr></thead>
+        <thead><tr><th>Degré</th><th>Accord</th><th>Notes</th><th class="chord-fn-col">Fonction</th><th></th></tr></thead>
         <tbody id="chord-rows"></tbody>
       </table>
     </div>
@@ -999,7 +1014,7 @@ function render(){
       <td><span style="font-family:monospace;color:var(--mu2)">${c.roman}</span></td>
       <td><span class="chord-name" style="color:${c.col}">${c.root.name}${c.suf}</span> <span class="badge" style="background:${c.col}18;color:${c.col}">${c.lbl}</span></td>
       <td class="chord-notes-cell">${c.root.name} · ${c.third.name} · ${c.fifth.name}</td>
-      <td style="font-size:11px;color:var(--mu2)">${DEG_FN[i]}</td>
+      <td class="chord-fn-col" style="font-size:11px;color:var(--mu2)">${DEG_FN[i]}</td>
       <td><button class="btn btn-sm" data-action="play">play</button> <button class="btn btn-sm" data-action="midi">⬇</button></td>
     </tr>`
   ).join('');
