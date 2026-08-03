@@ -862,11 +862,15 @@ function renderFreqTable() {
       else if (freq < 1280) use = 'Haut-médium';
       else if (freq < 5000) use = 'Présence';
       else use = 'Air';
-      return '<tr><td style="font:600 13px JetBrains Mono,monospace;color:var(--tx)">' + n + freqOct + '</td>' +
-        '<td style="font:600 13px JetBrains Mono,monospace;color:var(--acc2)">' + freq.toFixed(2) + ' Hz <button class="copy-btn" onclick="copyVal(this.dataset.v,this)" data-v="' + freq.toFixed(2) + '">📋</button></td>' +
-        '<td style="font-family:JetBrains Mono,monospace;color:var(--mu)">' + period + ' ms</td>' +
-        '<td style="font-size:11px;color:var(--mu)">' + use + '</td>' +
-        '<td></td></tr>';
+      const f = freq.toFixed(2);
+      const tr = document.createElement('tr');
+      tr.innerHTML = '<td style="font:600 13px JetBrains Mono,monospace;color:var(--tx)">'+n+freqOct+'</td><td style="font:600 13px JetBrains Mono,monospace;color:var(--acc2)">'+f+' Hz</td><td style="font-family:JetBrains Mono,monospace;color:var(--mu)">'+period+' ms</td><td style="font-size:11px;color:var(--mu)">'+use+'</td><td></td>';
+      const copyBtn = document.createElement('button');
+      copyBtn.className = 'copy-btn';
+      copyBtn.textContent = '📋';
+      copyBtn.addEventListener('click', (function(v){return function(){copyVal(v,this);};})(f));
+      tr.cells[1].appendChild(copyBtn);
+      return tr.outerHTML;
     }).join('') + '</tbody>';
 }
 
