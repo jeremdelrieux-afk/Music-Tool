@@ -685,6 +685,37 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-h
   <!-- WORKFLOW SUGGERE -->
   <div class="card">
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+      <div style="width:4px;height:32px;background:var(--acc2);border-radius:2px"></div>
+      <div>
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:15px">Arpégiateur & Export MIDI</div>
+        <div style="font-size:11px;color:var(--mu)">Lecture rythmique et export vers FL Studio</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div>
+        <div style="font:700 11px 'Syne',sans-serif;color:var(--acc2);text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px">Comment l'utiliser</div>
+        <div style="font-size:12px;color:var(--mu);line-height:1.8">
+          1. Dans l'onglet <b style="color:var(--tx)">Gamme et Accords</b>, cliquez sur un accord dans le tableau "Accords diatoniques".<br>
+          2. Le panel arpégiateur apparait sous le clavier.<br>
+          3. Réglez la <b style="color:var(--tx)">vitesse</b> (1/4, 1/8, 1/16, 1/8T — synchronisée au BPM de l'onglet Studio).<br>
+          4. Choisissez le <b style="color:var(--tx)">sens</b> : montant, descendant, alterné ou aléatoire.<br>
+          5. Choisissez le nombre d'<b style="color:var(--tx)">octaves</b> (1, 2 ou 3).<br>
+          6. Cliquez <b style="color:var(--tx)">Play</b> pour entendre le pattern — Stop pour arrêter.
+        </div>
+      </div>
+      <div>
+        <div style="font:700 11px 'Syne',sans-serif;color:var(--acc2);text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px">Export MIDI</div>
+        <div style="font-size:12px;color:var(--mu);line-height:1.8">
+          Cliquez <b style="color:var(--tx)">⬇ Export MIDI</b> pour télécharger un fichier <b style="color:var(--tx)">.mid</b> du pattern arpégé.<br><br>
+          Dans FL Studio : faites glisser le fichier .mid directement dans la playlist ou le piano roll. Le tempo est intégré dans le fichier — FL Studio le détecte automatiquement.<br><br>
+          Vous pouvez aussi exporter le MIDI de chaque accord individuel depuis le bouton <b style="color:var(--tx)">⬇</b> sur chaque ligne du tableau des accords.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
       <div style="width:4px;height:32px;background:var(--mu);border-radius:2px"></div>
       <div>
         <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:15px">Workflow suggere — session de production</div>
