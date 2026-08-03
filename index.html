@@ -1012,7 +1012,7 @@ function render(){
   document.getElementById('chord-rows').innerHTML=chords.map((c,i)=>
     `<tr class="chord-row ${S.deg===i?'sel':''}" data-idx="${i}">
       <td><span style="font-family:monospace;color:var(--mu2)">${c.roman}</span></td>
-      <td><span class="chord-name" style="color:${c.col}">${c.root.name}${c.suf}</span> <span class="badge" style="background:${c.col}18;color:${c.col}">${c.lbl}</span></td>
+      <td><span class="chord-name" style="color:${c.col}">${c.root.name}${c.suf}</span></td>
       <td class="chord-notes-cell">${c.root.name} · ${c.third.name} · ${c.fifth.name}</td>
       <td class="chord-fn-col" style="font-size:11px;color:var(--mu2)">${DEG_FN[i]}</td>
       <td><button class="btn btn-sm" data-action="play">play</button> <button class="btn btn-sm" data-action="midi">⬇</button></td>
