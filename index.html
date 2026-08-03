@@ -1427,7 +1427,7 @@ function renderCoF(){
   const svg=document.getElementById('cof'),cx=240,cy=240,R=225,r=163,ri=108;let h='';
   for(let i=0;i<12;i++){
     const a0=(i*30-90)*Math.PI/180,a1=((i+1)*30-90)*Math.PI/180,am=(i*30+15-90)*Math.PI/180;
-    const ni=MJ_IDX[i],mni=(ni+9)%12,isSel=ni===S.root,relMajOfRoot=(S.root+3)%12,isMin=mni===S.root||ni===relMajOfRoot;
+    const ni=MJ_IDX[i],mni=(ni+9)%12,curIsMaj=S.mode==='Majeur',isSel=curIsMaj?ni===S.root:ni===(S.root+3)%12,isMin=curIsMaj?ni===S.root:mni===S.root;
     const hue=i*30;
     const x1=cx+R*Math.cos(a0),y1=cy+R*Math.sin(a0),x2=cx+R*Math.cos(a1),y2=cy+R*Math.sin(a1),x3=cx+r*Math.cos(a1),y3=cy+r*Math.sin(a1),x4=cx+r*Math.cos(a0),y4=cy+r*Math.sin(a0);
     h+=`<path d="M${x1} ${y1}A${R} ${R} 0 0 1 ${x2} ${y2}L${x3} ${y3}A${r} ${r} 0 0 0 ${x4} ${y4}Z" fill="${isSel?'hsl('+hue+',55%,22%)':'hsl('+hue+',20%,10%)'}" stroke="${isSel?'hsl('+hue+',70%,50%)':'#1e2d45'}" stroke-width="${isSel?2.5:1}" onclick="goKey(${ni},'Majeur')" style="cursor:pointer;transition:fill .2s"/>`;
@@ -1447,7 +1447,8 @@ function goKey(ni,mn){S.root=ni;S.mode=mn;initKeyGrid();initModeGrid();render();
 function renderModInfo(rname){
   const sn=scaleNotes(),na=noteArr();
   const rIdx=MJ_IDX.indexOf(S.root);
-  const minIv=MODES['Mineur Naturel'].iv;
+  const isMaj=S.mode==='Majeur';
+  const sameIv=MODES[S.mode].iv;
   const targets=[
     {ni:MJ_IDX[(rIdx+1)%12],label:'Quinte haute',col:'var(--acc2)'},
     {ni:MJ_IDX[(rIdx+11)%12],label:'Quinte basse',col:'var(--acc2)'},
@@ -1459,18 +1460,33 @@ function renderModInfo(rname){
   const mt=document.getElementById('mod-targets');if(!mt)return;
   mt.innerHTML=targets.map(t=>{
     const tna=FLAT_R.includes((t.ni+3)%12)?NF:NS;
-    const tsn=getNoteNames(t.ni,minIv);
+    const tsn=getNoteNames(t.ni,sameIv);
     const shared=sn.filter(n=>tsn.some(m=>m.idx===n.idx));
     const chg=sn.filter(n=>!tsn.some(m=>m.idx===n.idx)).map(n=>n.name);
     const newN=tsn.filter(m=>!sn.some(n=>n.idx===m.idx)).map(m=>m.name);
-    return`<div class="harm-row"><div><span style="font-family:monospace;font-weight:700;color:${t.col}">${tna[t.ni]} min</span> <span style="font-size:11px;color:var(--mu2)">${t.label}</span></div><div style="font-size:11px;color:var(--mu2)">${shared.length}/7 communes${chg.length>0?' — remplace '+chg.join(' ')+' par '+newN.join(' '):' — gamme identique'}</div></div>`;
+    const suffix=isMaj?' Maj':' min';
+    return`<div class="harm-row"><div><span style="font-family:monospace;font-weight:700;color:${t.col}">${tna[t.ni]}${suffix}</span> <span style="font-size:11px;color:var(--mu2)">${t.label}</span></div><div style="font-size:11px;color:var(--mu2)">${shared.length}/7 communes${chg.length>0?' — remplace '+chg.join(' ')+' par '+newN.join(' '):' — gamme identique'}</div></div>`;
   }).join('');
-  const relMaj=(S.root+3)%12,relNa=FLAT_R.includes(relMaj)?NF:NS;
-  const paraSn=getNoteNames(S.root,MODES['Majeur'].iv);
-  const paraDiff=sn.filter(n=>!paraSn.some(m=>m.idx===n.idx));
+  // Relations modales selon le mode courant
   const ri=document.getElementById('rel-info');if(!ri)return;
-  ri.innerHTML=`<div class="harm-row"><div><span style="font-family:monospace;font-weight:700;color:var(--warn)">${relNa[relMaj]} Maj</span> <span style="font-size:11px;color:var(--mu2)">Relative majeure</span></div><div style="font-size:11px;color:var(--acc2)">7/7 notes — transition invisible</div></div>
-  <div class="harm-row"><div><span style="font-family:monospace;font-weight:700;color:var(--warn)">${na[S.root]} Maj</span> <span style="font-size:11px;color:var(--mu2)">Parallèle majeure</span></div><div style="font-size:11px;color:var(--mu2)">${7-paraDiff.length}/7 notes communes</div></div>`;
+  if(isMaj){
+    // Majeur : relative = mineur 6 demi-tons en dessous (root-3), parallele = mineur meme tonique
+    const relMin=(S.root+9)%12;
+    const relMinNa=FLAT_R.includes((relMin+3)%12)?NF:NS;
+    const paraSn=getNoteNames(S.root,MODES['Mineur Naturel'].iv);
+    const paraDiff=sn.filter(n=>!paraSn.some(m=>m.idx===n.idx));
+    ri.innerHTML=`<div class="harm-row"><div><span style="font-family:monospace;font-weight:700;color:var(--warn)">${relMinNa[relMin]} min</span> <span style="font-size:11px;color:var(--mu2)">Relative mineure</span></div><div style="font-size:11px;color:var(--acc2)">7/7 notes — transition invisible</div></div>
+    <div class="harm-row"><div><span style="font-family:monospace;font-weight:700;color:var(--warn)">${na[S.root]} min</span> <span style="font-size:11px;color:var(--mu2)">Parallèle mineure</span></div><div style="font-size:11px;color:var(--mu2)">${7-paraDiff.length}/7 notes communes</div></div>`;
+  } else {
+    // Mineur : relative = majeur 3 demi-tons au dessus
+    const relMaj=(S.root+3)%12;
+    const relNa=FLAT_R.includes(relMaj)?NF:NS;
+    const paraSn=getNoteNames(S.root,MODES['Majeur'].iv);
+    const paraDiff=sn.filter(n=>!paraSn.some(m=>m.idx===n.idx));
+    ri.innerHTML=`<div class="harm-row"><div><span style="font-family:monospace;font-weight:700;color:var(--warn)">${relNa[relMaj]} Maj</span> <span style="font-size:11px;color:var(--mu2)">Relative majeure</span></div><div style="font-size:11px;color:var(--acc2)">7/7 notes — transition invisible</div></div>
+    <div class="harm-row"><div><span style="font-family:monospace;font-weight:700;color:var(--warn)">${na[S.root]} Maj</span> <span style="font-size:11px;color:var(--mu2)">Parallèle majeure</span></div><div style="font-size:11px;color:var(--mu2)">${7-paraDiff.length}/7 notes communes</div></div>`;
+  }
+  const minIv=MODES['Mineur Naturel'].iv;
   const myChords=buildChords(sn);
   const adj=[MJ_IDX[(rIdx+1)%12],MJ_IDX[(rIdx+11)%12]];
   let pivots=[],seen=new Set();
