@@ -324,6 +324,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-h
       <input type="range" id="bslider" min="60" max="220" value="174" oninput="setBPM(this.value)">
       <input type="number" id="bnum" value="174" min="40" max="300" oninput="setBPM(this.value)">
     </div>
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap">
+      <button id="tap-btn" onclick="tapTempo()" style="padding:10px 22px;background:var(--acc);border:none;border-radius:8px;color:#fff;font:700 14px Syne,sans-serif;cursor:pointer;letter-spacing:.5px">TAP</button>
+      <span style="font-size:11px;color:var(--mu)">Tapez le rythme (ou barre espace) pour détecter le BPM</span>
+      <button onclick="resetTap()" style="padding:6px 12px;background:var(--card2);border:1px solid var(--b);border-radius:6px;color:var(--mu);font-size:11px;cursor:pointer">Reset</button>
+      <span id="tap-info" style="font-size:11px;color:var(--acc2);font-family:JetBrains Mono,monospace"></span>
+    </div>
     <div class="tx-m">1 noire = <span id="beat-ms" style="color:var(--acc);font-family:'JetBrains Mono',monospace;font-weight:600">345 ms</span><button class="copy-btn" id="beat-ms-copy" onclick="copyVal(document.getElementById('beat-ms').textContent,this)">📋</button></div>
   </div>
   <div class="grid2">
@@ -796,6 +802,36 @@ function exportChordMidi(name, nis) {
   a.download='chord-'+name.replace(/[^a-zA-Z0-9]/g,'')+'.mid';
   a.click();
 }
+
+
+// TAP TEMPO
+const TAP = { times: [], max: 8 };
+function tapTempo() {
+  const now = performance.now();
+  TAP.times.push(now);
+  if (TAP.times.length > TAP.max) TAP.times.shift();
+  if (TAP.times.length < 2) {
+    document.getElementById('tap-info').textContent = 'Continuez...';
+    return;
+  }
+  const intervals = [];
+  for (let i = 1; i < TAP.times.length; i++) intervals.push(TAP.times[i] - TAP.times[i-1]);
+  const avg = intervals.reduce((a,b) => a+b, 0) / intervals.length;
+  const bpm = Math.round(60000 / avg);
+  const clamped = Math.max(40, Math.min(300, bpm));
+  setBPM(clamped);
+  document.getElementById('tap-info').textContent = TAP.times.length + ' taps — ' + clamped + ' BPM';
+}
+function resetTap() {
+  TAP.times = [];
+  document.getElementById('tap-info').textContent = '';
+}
+document.addEventListener('keydown', function(e) {
+  if (e.code === 'Space' && e.target.tagName !== 'INPUT') {
+    e.preventDefault();
+    tapTempo();
+  }
+});
 
 // ARPEGIATEUR
 const ARP = { speed: 1, dir: 'up', oct: 1, playing: false, timer: null, step: 0, altDir: 1, notes: [] };
