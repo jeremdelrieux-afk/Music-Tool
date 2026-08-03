@@ -251,12 +251,12 @@ tr:hover td{background:rgba(124,92,252,.04)}
       <div class="card">
         <h2>Tonalité <span class="tip-icon" tabindex="0">?</span><div class="tooltip">Sélectionnez la note racine de votre morceau. Tout le reste s'adapte automatiquement.</div></h2>
         <div id="key-grid" style="display:grid;grid-template-columns:repeat(12,1fr);gap:4px;margin-bottom:14px"></div>
-        <h2>Mode <span class="tip-icon" tabindex="0">?</span><div class="tooltip">Le mode définit la couleur harmonique. Mineur Naturel = sombre (DnB, Techno). Dorien = jazzy. Majeur = lumineux.</div></h2>
+        <h2>Mode <span class="tip-icon" tabindex="0">?</span><div class="tooltip">Le mode définit la couleur harmonique de votre morceau. Mineur Naturel = sombre et tendu. Phrygien = dark et agressif. Dorien = mineur avec une teinte plus ouverte. Majeur = lumineux et positif.</div></h2>
         <div id="mode-grid" style="display:flex;flex-wrap:wrap;gap:6px"></div>
         <div id="mode-desc" style="font-size:11px;color:var(--mu2);margin-top:8px"></div>
       </div>
       <div class="card">
-        <h2>Notes de la gamme <span class="tip-icon" tabindex="0">?</span><div class="tooltip">Les 7 notes de votre tonalité. La note orange est la tonique — centre harmonique du morceau.</div></h2>
+        <h2>Notes de la gamme <span class="tip-icon" tabindex="0">?</span><div class="tooltip">Les notes qui composent votre tonalité. La note orange est la tonique — la note de repos autour de laquelle s'organise toute l'harmonie. Les autres notes définissent les accords et mélodies disponibles.</div></h2>
         <div class="scale-pills" id="scale-pills"></div>
         <div style="margin-top:10px">
           <table>
@@ -277,7 +277,7 @@ tr:hover td{background:rgba(124,92,252,.04)}
         <div class="key-legend-item"><div class="key-legend-swatch" style="background:#101828"></div>Hors gamme</div>
       </div>
       <div id="mel-container" style="display:none;margin-top:14px">
-        <h2>Guide mélodie <span id="mel-title" style="color:var(--acc2);font-size:11px;text-transform:none;letter-spacing:0;font-weight:400"></span> <span class="tip-icon" tabindex="0">?</span><div class="tooltip">Notes classées par tension harmonique sur l'accord sélectionné. Vert = stable (arpège). Jaune = couleur (tension douce). Rouge = tension forte à résoudre.</div></h2>
+        <h2>Guide mélodie <span id="mel-title" style="color:var(--acc2);font-size:11px;text-transform:none;letter-spacing:0;font-weight:400"></span> <span class="tip-icon" tabindex="0">?</span><div class="tooltip">Quand vous sélectionnez un accord, cet outil vous indique quelles notes de la gamme sonneront bien dessus. Vert = notes de l'accord, stables, utilisables librement. Jaune = notes qui ajoutent de la couleur sans trop de tension. Rouge = notes très tendues qui demandent à être résolues vers une note stable.</div></h2>
         <div class="mel-guide" id="mel-guide"></div>
         <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:8px">
           <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--acc2)"><div style="width:8px;height:8px;border-radius:2px;background:var(--acc2)"></div>Stable</div>
@@ -288,7 +288,7 @@ tr:hover td{background:rgba(124,92,252,.04)}
     </div>
 
     <div class="card">
-      <h2>Accords diatoniques <span class="tip-icon" tabindex="0">?</span><div class="tooltip">Les 7 accords natifs de votre tonalité. Ils partagent toutes les mêmes notes — toujours compatibles entre eux. Cliquez pour sélectionner, play pour écouter, ⬇ pour exporter en MIDI.</div></h2>
+      <h2>Accords diatoniques <span class="tip-icon" tabindex="0">?</span><div class="tooltip">Les accords construits sur chaque degré de votre gamme. Ils partagent tous les mêmes notes et sont donc toujours compatibles entre eux — c'est la base de toute progression harmonique. Cliquez une ligne pour sélectionner l'accord, play pour l'écouter, ⬇ pour l'exporter en MIDI.</div></h2>
       <table>
         <thead><tr><th>Degré</th><th>Accord</th><th>Notes</th><th>Fonction</th><th></th></tr></thead>
         <tbody id="chord-rows"></tbody>
@@ -296,12 +296,12 @@ tr:hover td{background:rgba(124,92,252,.04)}
     </div>
 
     <div class="card">
-      <h2>Accords empruntés <span class="tip-icon" tabindex="0">?</span><div class="tooltip">Accords hors tonalité qui s'intègrent bien — mode parallèle, mineur harmonique. Apportent une couleur inattendue sans rompre l'espace harmonique.</div></h2>
+      <h2>Accords empruntés <span class="tip-icon" tabindex="0">?</span><div class="tooltip">Accords qui ne font pas partie de votre tonalité mais qui sont fréquemment utilisés avec elle en musique — issus du mode parallèle ou du mineur harmonique. Ils apportent une couleur inattendue. Leur intégration dépend du contexte et de vos oreilles — écoutez et jugez.</div></h2>
       <div class="borrowed-grid" id="borrowed"></div>
     </div>
 
     <div class="card">
-      <h2>Suites d'accords <span class="tip-icon" tabindex="0">?</span><div class="tooltip">Progressions typiques par genre. Cliquez pour voir les notes à jouer sur chaque accord.</div></h2>
+      <h2>Suites d'accords <span class="tip-icon" tabindex="0">?</span><div class="tooltip">Progressions d'accords inspirées des couleurs harmoniques typiques de chaque genre — construites à partir des degrés de votre gamme. Ce sont des points de départ, pas des règles. Cliquez sur une progression pour voir les notes à jouer sur chaque accord.</div></h2>
       <div id="progs-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px"></div>
     </div>
 
@@ -340,7 +340,7 @@ tr:hover td{background:rgba(124,92,252,.04)}
   <!-- CERCLE -->
   <div class="spnl" id="spnl-harmonie-cercle">
     <div class="card">
-      <h2>Cercle des Quintes <span class="tip-icon" tabindex="0">?</span><div class="tooltip">Chaque pas = 1 note change. Anneau extérieur = Majeur. Anneau intérieur = Mineur. Cliquez pour naviguer.</div></h2>
+      <h2>Cercle des Quintes <span class="tip-icon" tabindex="0">?</span><div class="tooltip">Outil de navigation harmonique. Cliquez une tonalité pour y aller. Les tonalités voisines partagent le plus de notes en commun — plus facile de transiter entre elles. Le panneau en dessous du cercle vous montre combien de notes changent selon la destination.</div></h2>
       <svg id="cof" width="480" height="480" viewBox="0 0 480 480"></svg>
       <div style="font-size:11px;color:var(--mu2);text-align:center;margin-top:8px">Anneau extérieur = Majeur &nbsp;|&nbsp; Anneau intérieur = Mineur relatif</div>
     </div>
@@ -363,7 +363,7 @@ tr:hover td{background:rgba(124,92,252,.04)}
   <!-- COMPAT -->
   <div class="spnl" id="spnl-harmonie-compat">
     <div class="card">
-      <h2>Analyser deux tonalités <span class="tip-icon" tabindex="0">?</span><div class="tooltip">Comparez deux tonalités pour savoir si elles sont compatibles en mix ou en composition. Utile pour les transitions, les medleys ou le DJ mix harmonique.</div></h2>
+      <h2>Analyser deux tonalités <span class="tip-icon" tabindex="0">?</span><div class="tooltip">Compare les notes de deux tonalités pour évaluer la fluidité d'une transition. Chaque gamme contient 7 notes — plus les deux gammes en partagent, plus le passage de l'une à l'autre sera naturel à l'oreille. L'outil identifie aussi les accords pivot, c'est-à-dire les accords présents dans les deux tonalités, qui permettent de passer de l'une à l'autre sans rupture harmonique.</div></h2>
       <div style="display:grid;grid-template-columns:1fr 60px 1fr;gap:10px;align-items:center;margin-bottom:16px">
         <div>
           <label style="display:block;margin-bottom:6px">Tonalité A</label>
@@ -405,7 +405,7 @@ tr:hover td{background:rgba(124,92,252,.04)}
 <!-- ═══════════════ TEMPO ═══════════════ -->
 <div class="pnl" id="pnl-tempo">
   <div class="card card-accent">
-    <h2>BPM <span class="tip-icon" tabindex="0">?</span><div class="tooltip">Le BPM global synchronise tous les outils : delays, reverbs, compresseur, sidechain, arpégiateur. Réglez-le une fois, tout suit.</div></h2>
+    <h2>BPM <span class="tip-icon" tabindex="0">?</span><div class="tooltip">Le BPM est la référence temporelle globale de l'outil. Une fois réglé, tous les calculs de delay, reverb, compresseur, sidechain et arpégiateur se mettent à jour automatiquement en fonction de ce tempo.</div></h2>
     <div class="row">
       <span class="bpm-num" id="bpmDisplay">174</span>
       <div style="flex:1;min-width:120px">
@@ -423,7 +423,7 @@ tr:hover td{background:rgba(124,92,252,.04)}
 
   <div class="grid2">
     <div class="card">
-      <h2>Subdivisions <span class="tip-icon" tabindex="0">?</span><div class="tooltip">Durée en ms de chaque subdivision rythmique. Utilisez ces valeurs pour caler vos delays, LFO, enveloppes.</div></h2>
+      <h2>Subdivisions <span class="tip-icon" tabindex="0">?</span><div class="tooltip">Tableau de conversion BPM → millisecondes pour chaque valeur rythmique. En production, les plugins de delay, compresseur et LFO acceptent des valeurs en ms — pas en subdivisions musicales. Ce tableau vous donne la valeur exacte à entrer dans votre plugin pour qu'il soit parfaitement synchronisé au tempo de votre projet, sans calcul manuel.</div></h2>
       <table>
         <thead><tr><th>Subdivision</th><th>Normal</th><th>Pointé</th><th>Triolet</th></tr></thead>
         <tbody id="subdiv-body"></tbody>
@@ -461,7 +461,7 @@ tr:hover td{background:rgba(124,92,252,.04)}
   <!-- DELAY -->
   <div class="spnl on" id="spnl-fx-delay">
     <div class="card">
-      <h2>Delay <span class="tip-icon" tabindex="0">?</span><div class="tooltip">Sélectionnez une subdivision rythmique pour obtenir le temps de delay synchronisé à votre BPM. Le ping-pong offset est la moitié du temps pour créer le rebond stéréo.</div></h2>
+      <h2>Delay <span class="tip-icon" tabindex="0">?</span><div class="tooltip">Calcule le temps de delay en ms synchronisé à votre BPM. Le ping-pong offset est la valeur à entrer sur le canal opposé d'un delay stéréo pour que les répétitions alternent gauche/droite. Sous 30ms, ce décalage fusionne en un seul son plus large — c'est l'effet Haas. Au-dessus de 80ms, l'oreille perçoit deux sons distincts et le ping-pong devient un effet rythmique.</div></h2>
       <div class="row">
         <div class="btn-group" id="delay-div-btns">
           <button class="btn btn-sm on" data-mul="1" onclick="setDelayDiv(this)">1/4</button>
@@ -501,7 +501,7 @@ tr:hover td{background:rgba(124,92,252,.04)}
   <!-- REVERB -->
   <div class="spnl" id="spnl-fx-reverb">
     <div class="card">
-      <h2>Reverb <span class="tip-icon" tabindex="0">?</span><div class="tooltip">Le pre-delay crée une séparation entre le son direct et la queue de reverb. RT60 = temps pour décroître de 60dB. Synchronisez le pre-delay sur 1/32 ou 1/16 note.</div></h2>
+      <h2>Reverb <span class="tip-icon" tabindex="0">?</span><div class="tooltip">Le pre-delay est le silence entre le son direct et le début de la réverbération — il permet de garder le son en avant du mix tout en ajoutant de l'espace. Le RT60 (Reverberation Time 60dB) est une mesure acoustique standardisée qui indique le temps que met la queue de réverbération à décroître de 60dB, soit le point où elle devient inaudible. Synchroniser le pre-delay sur 1/32 ou 1/16 note l'aligne proprement sur la grille rythmique. Sur 1/8 note et au-delà, le pre-delay devient perceptible comme un écho distinct — effet créatif sur pads et nappes, mais déconseillé sur les éléments rythmiques.</div></h2>
       <table><thead><tr><th>Type</th><th>Pre-delay</th><th>RT60</th><th>Wet conseillé</th><th>Usage</th></tr></thead>
       <tbody id="reverb-body"></tbody></table>
       <div class="grid2" style="margin-top:14px">
@@ -546,7 +546,7 @@ tr:hover td{background:rgba(124,92,252,.04)}
   <!-- SAT -->
   <div class="spnl" id="spnl-fx-sat">
     <div class="card">
-      <h2>Saturation <span class="tip-icon" tabindex="0">?</span><div class="tooltip">Chaque type de saturation génère des harmoniques différentes. Les harmoniques pairs (Tape, Tube) = chaleur. Les harmoniques impairs (Hard Clip) = agressivité.</div></h2>
+      <h2>Saturation <span class="tip-icon" tabindex="0">?</span><div class="tooltip">La saturation enrichit le signal en ajoutant des harmoniques — des fréquences multiples de la fondamentale qui n'existaient pas dans le signal original. Le Tape et le Tube génèrent principalement des harmoniques paires (2e, 4e) qui donnent chaleur et rondeur. Le Hard Clip génère principalement des harmoniques impaires (3e, 5e, 7e) qui donnent densité et agressivité. Le niveau de drive détermine l'intensité de la saturation — de la légère coloration à la distorsion totale.</div></h2>
       <div class="btn-group" id="sat-btns" style="margin-bottom:14px">
         <button class="btn on" data-sat="tape" onclick="setSat(this)">Tape</button>
         <button class="btn" data-sat="tube" onclick="setSat(this)">Tube</button>
@@ -573,7 +573,7 @@ tr:hover td{background:rgba(124,92,252,.04)}
   <!-- SIDECHAIN -->
   <div class="spnl" id="spnl-fx-sc">
     <div class="card">
-      <h2>Sidechain Pumping <span class="tip-icon" tabindex="0">?</span><div class="tooltip">Valeurs d'attack et release synchronisées au BPM pour votre genre. Le release est la valeur clé — il définit la durée du pumping et le groove.</div></h2>
+      <h2>Sidechain Pumping <span class="tip-icon" tabindex="0">?</span><div class="tooltip">Points de départ suggérés pour les valeurs d'attack et release du compresseur sidechain, synchronisés à votre BPM. Ces valeurs sont des estimations empiriques inspirées des caractéristiques rythmiques de chaque genre — pas des réglages universels. Le release est la valeur la plus importante : il définit la durée du pumping et donc le groove. Ajustez toujours à l'oreille en fonction de votre kick et de votre mix.</div></h2>
       <div class="btn-group" id="sc-genre-btns" style="margin-bottom:16px">
         <button class="btn on" data-genre="dnb" onclick="setSCGenre(this)">Drum & Bass</button>
         <button class="btn" data-genre="dnb_neuro" onclick="setSCGenre(this)">Neurofunk</button>
@@ -598,7 +598,7 @@ tr:hover td{background:rgba(124,92,252,.04)}
   <!-- FREQ -->
   <div class="spnl on" id="spnl-sound-freq">
     <div class="card">
-      <h2>Fréquences des notes <span class="tip-icon" tabindex="0">?</span><div class="tooltip">Utilisez ces fréquences pour identifier une note dans SPAN, caler un filtre ou vérifier qu'une basse sub est dans la bonne octave. Le diapason A4 est réglable (440 Hz standard, 432 Hz alternatif).</div></h2>
+      <h2>Fréquences des notes <span class="tip-icon" tabindex="0">?</span><div class="tooltip">Tableau de référence des fréquences en Hz pour chaque note et chaque octave. Utile pour caler un filtre ou un EQ sur la fréquence exacte d'une note, vérifier qu'une basse sub est dans la bonne octave, ou confirmer une fréquence fondamentale identifiée dans SPAN. Le diapason A4 est réglable — 440 Hz est le standard mondial.</div></h2>
       <div class="row">
         <label>Octave</label>
         <div class="btn-group" id="freq-oct-btns">
@@ -628,7 +628,7 @@ tr:hover td{background:rgba(124,92,252,.04)}
   <!-- HARM -->
   <div class="spnl" id="spnl-sound-harm">
     <div class="card">
-      <h2>Harmoniques & conflits <span class="tip-icon" tabindex="0">?</span><div class="tooltip">Entrez la fréquence fondamentale de votre basse et celle du kick. L'outil détecte les conflits fréquentiels entre leurs harmoniques. Solution : transposez d'un demi-ton ou taillez un notch EQ.</div></h2>
+      <h2>Harmoniques & conflits <span class="tip-icon" tabindex="0">?</span><div class="tooltip">Quand deux sons partagent des fréquences proches, ils entrent en compétition dans le spectre et se masquent mutuellement — c'est particulièrement problématique entre le kick et la basse. Cet outil calcule toutes les harmoniques de votre basse et du kick et signale les fréquences qui se chevauchent. En cas de conflit, deux solutions : transposer la basse d'un demi-ton pour décaler ses harmoniques, ou appliquer un notch EQ sur la fréquence du kick dans la piste basse pour lui laisser de l'espace.</div></h2>
       <div class="row">
         <div>
           <label style="display:block;margin-bottom:4px">Fondamentale basse (Hz)</label>
@@ -647,7 +647,7 @@ tr:hover td{background:rgba(124,92,252,.04)}
   <!-- TRANSPO -->
   <div class="spnl" id="spnl-sound-transpo">
     <div class="card">
-      <h2>Transposition de sample <span class="tip-icon" tabindex="0">?</span><div class="tooltip">Sélectionnez la note source (note du sample tel qu'il est enregistré) puis la note cible. L'outil calcule le pitch shift exact à appliquer dans Newtone ou Edison.</div></h2>
+      <h2>Transposition de sample <span class="tip-icon" tabindex="0">?</span><div class="tooltip">Sélectionnez la note fondamentale du sample tel qu'il est enregistré, puis la note cible souhaitée. L'outil calcule le pitch shift exact en demi-tons et en cents à entrer dans le potard Pitch du sampler FL Studio ou directement dans le piano roll.</div></h2>
       <div style="display:grid;grid-template-columns:1fr 50px 1fr;gap:10px;align-items:start;margin-bottom:14px">
         <div>
           <label style="display:block;margin-bottom:8px">Note source</label>
