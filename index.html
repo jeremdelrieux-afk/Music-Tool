@@ -1067,7 +1067,7 @@ function render(){
   const eK=document.getElementById('tf-key'); if(eK)  eK.textContent=rname+' '+S.mode;
   // Calcul de l'accord selectionne depuis S.deg (local, pas de variable externe)
   const selC=(S.deg!==null&&S.deg>=0&&S.deg<chords.length)?chords[S.deg]:null;
-  document.getElementById('chord-rows').innerHTML=chords.map((c,i)=>'<tr class="cl '+(S.deg===i?'sel':'')+'" data-idx="'+i+'"><td><span class="roman">'+c.roman+'</span></td><td><span class="cnm" style="color:'+c.col+'">'+c.root.name+c.suffix+'</span> <span class="badge" style="background:'+c.col+'18;color:'+c.col+'">'+c.lbl+'</span></td><td class="cnotes">'+c.root.name+' - '+c.third.name+' - '+c.fifth.name+'</td><td class="fn">'+DEG_FN[i]+'</td><td><button class="pb">play</button> <button class="pb" onclick=\"exportChordMidi(event,'"+c.root.name+c.suffix+"',["+c.nis.join(',')+"])\">⬇</button></td></tr>').join('');
+  document.getElementById('chord-rows').innerHTML=chords.map((c,i)=>'<tr class="cl '+(S.deg===i?'sel':'')+'" data-idx="'+i+'"><td><span class="roman">'+c.roman+'</span></td><td><span class="cnm" style="color:'+c.col+'">'+c.root.name+c.suffix+'</span> <span class="badge" style="background:'+c.col+'18;color:'+c.col+'">'+c.lbl+'</span></td><td class="cnotes">'+c.root.name+' - '+c.third.name+' - '+c.fifth.name+'</td><td class="fn">'+DEG_FN[i]+'</td><td><button class="pb">play</button> <button class="pb" data-name="'+c.root.name+c.suffix+'" data-nis="'+c.nis.join(',')+'" onclick="exportChordMidi(event,this.dataset.name,this.dataset.nis.split(',').map(Number))">⬇</button></td></tr>').join('');
   document.querySelectorAll('#chord-rows tr[data-idx]').forEach(function(tr){
     var idx=parseInt(tr.dataset.idx);
     tr.addEventListener('click',function(e){
