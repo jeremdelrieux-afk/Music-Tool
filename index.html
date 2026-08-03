@@ -674,7 +674,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-h
 <script>
 
 function copyVal(val, btn) {
-  navigator.clipboard.writeText(String(val)).then(() => {
+  const clean = String(val).replace(/[^0-9.+-]/g, '').trim();
+  navigator.clipboard.writeText(clean).then(() => {
     btn.textContent = '✓';
     btn.classList.add('ok');
     setTimeout(() => { btn.textContent = '📋'; btn.classList.remove('ok'); }, 1200);
