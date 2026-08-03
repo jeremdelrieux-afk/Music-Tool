@@ -313,6 +313,45 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-h
     <div class="ct">Accords pivot <span class="ct-sub" id="pivot-title"></span></div>
     <div id="pivot-chords"></div>
   </div>
+  <div class="card">
+    <div class="ct">Compatibilité harmonique <span class="ct-sub">comparer deux tonalités</span></div>
+    <div style="display:grid;grid-template-columns:1fr 50px 1fr;gap:8px;align-items:center;margin-bottom:14px">
+      <div>
+        <div style="font-size:11px;color:var(--mu);margin-bottom:6px">Tonalité A</div>
+        <select id="compat-key-a" onchange="analyzeCompat()" style="width:100%;background:var(--card2);border:1px solid var(--b);color:var(--tx);padding:8px 10px;border-radius:7px;font-size:13px">
+          <option>C</option><option>C#</option><option>D</option><option>D#</option><option>E</option><option>F</option><option>F#</option><option>G</option><option>G#</option><option>A</option><option>A#</option><option>B</option>
+        </select>
+        <select id="compat-mode-a" onchange="analyzeCompat()" style="width:100%;background:var(--card2);border:1px solid var(--b);color:var(--tx);padding:8px 10px;border-radius:7px;font-size:13px;margin-top:6px">
+          <option value="natural_minor">Mineur naturel</option>
+          <option value="major">Majeur</option>
+          <option value="dorian">Dorien</option>
+          <option value="phrygian">Phrygien</option>
+          <option value="lydian">Lydien</option>
+          <option value="mixolydian">Mixolydien</option>
+          <option value="harmonic_minor">Mineur harmonique</option>
+          <option value="melodic_minor">Mineur mélodique</option>
+        </select>
+      </div>
+      <div style="text-align:center;font-size:22px;color:var(--mu)">vs</div>
+      <div>
+        <div style="font-size:11px;color:var(--mu);margin-bottom:6px">Tonalité B</div>
+        <select id="compat-key-b" onchange="analyzeCompat()" style="width:100%;background:var(--card2);border:1px solid var(--b);color:var(--tx);padding:8px 10px;border-radius:7px;font-size:13px">
+          <option>C</option><option>C#</option><option>D</option><option>D#</option><option>E</option><option>F</option><option selected>G</option><option>G#</option><option>A</option><option>A#</option><option>B</option>
+        </select>
+        <select id="compat-mode-b" onchange="analyzeCompat()" style="width:100%;background:var(--card2);border:1px solid var(--b);color:var(--tx);padding:8px 10px;border-radius:7px;font-size:13px;margin-top:6px">
+          <option value="natural_minor">Mineur naturel</option>
+          <option value="major">Majeur</option>
+          <option value="dorian">Dorien</option>
+          <option value="phrygian">Phrygien</option>
+          <option value="lydian">Lydien</option>
+          <option value="mixolydian">Mixolydien</option>
+          <option value="harmonic_minor">Mineur harmonique</option>
+          <option value="melodic_minor">Mineur mélodique</option>
+        </select>
+      </div>
+    </div>
+    <div id="compat-result"></div>
+  </div>
 </div>
 
 <!-- STUDIO -->
@@ -872,6 +911,92 @@ function renderFreqTable() {
       tr.cells[1].appendChild(copyBtn);
       return tr.outerHTML;
     }).join('') + '</tbody>';
+}
+
+
+// COMPATIBILITE HARMONIQUE
+function analyzeCompat() {
+  const NOTES_S = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+  const NOTES_F = ['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B'];
+  const MODES_IV = {
+    major:[0,2,4,5,7,9,11], natural_minor:[0,2,3,5,7,8,10],
+    harmonic_minor:[0,2,3,5,7,8,11], melodic_minor:[0,2,3,5,7,9,11],
+    dorian:[0,2,3,5,7,9,10], phrygian:[0,1,3,5,7,8,10],
+    lydian:[0,2,4,6,7,9,11], mixolydian:[0,2,4,5,7,9,10]
+  };
+  const MODE_NAMES = {
+    major:'Majeur', natural_minor:'Mineur naturel', harmonic_minor:'Mineur harm.',
+    melodic_minor:'Mineur mélo.', dorian:'Dorien', phrygian:'Phrygien',
+    lydian:'Lydien', mixolydian:'Mixolydien'
+  };
+  const CHORD_T = {
+    major:['Maj','min','min','Maj','Maj','min','dim'],
+    natural_minor:['min','dim','Maj','min','min','Maj','Maj'],
+    harmonic_minor:['min','dim','aug','min','Maj','Maj','dim'],
+    melodic_minor:['min','min','aug','Maj','Maj','dim','dim'],
+    dorian:['min','min','Maj','Maj','min','dim','Maj'],
+    phrygian:['min','Maj','Maj','min','dim','Maj','min'],
+    lydian:['Maj','Maj','min','dim','Maj','min','min'],
+    mixolydian:['Maj','min','dim','Maj','min','min','Maj']
+  };
+  const CHORD_IV = {'Maj':[0,4,7],'min':[0,3,7],'dim':[0,3,6],'aug':[0,4,8]};
+
+  const keyA = NOTES_S.indexOf(document.getElementById('compat-key-a').value);
+  const keyB = NOTES_S.indexOf(document.getElementById('compat-key-b').value);
+  const modeA = document.getElementById('compat-mode-a').value;
+  const modeB = document.getElementById('compat-mode-b').value;
+  const na = FLAT_R.includes((keyA+3)%12)?NOTES_F:NOTES_S;
+  const nb = FLAT_R.includes((keyB+3)%12)?NOTES_F:NOTES_S;
+
+  const notesA = MODES_IV[modeA].map(i=>(keyA+i)%12);
+  const notesB = MODES_IV[modeB].map(i=>(keyB+i)%12);
+  const shared = notesA.filter(n=>notesB.includes(n));
+  const onlyA = notesA.filter(n=>!notesB.includes(n));
+  const onlyB = notesB.filter(n=>!notesA.includes(n));
+  const pct = Math.round(shared.length/7*100);
+
+  // Accords pivot
+  const chordsA = MODES_IV[modeA].map((iv,i)=>{
+    const r=(keyA+iv)%12;
+    const t=CHORD_T[modeA][i];
+    const nis=CHORD_IV[t].map(x=>(r+x)%12).sort((a,b)=>a-b);
+    return{name:na[r]+(t==='Maj'?'':t==='min'?'m':t),nis:nis.join(','),col:t==='Maj'?'#e0a030':t==='min'?'#6080ff':'#ff4060'};
+  });
+  const chordsB = MODES_IV[modeB].map((iv,i)=>{
+    const r=(keyB+iv)%12;
+    const t=CHORD_T[modeB][i];
+    const nis=CHORD_IV[t].map(x=>(r+x)%12).sort((a,b)=>a-b);
+    return{name:nb[r]+(t==='Maj'?'':t==='min'?'m':t),nis:nis.join(','),col:t==='Maj'?'#e0a030':t==='min'?'#6080ff':'#ff4060'};
+  });
+  const pivots=[];const seen=new Set();
+  chordsA.forEach(ca=>{chordsB.forEach(cb=>{
+    if(ca.nis===cb.nis&&!seen.has(ca.nis)){seen.add(ca.nis);pivots.push({name:ca.name,col:ca.col});}
+  });});
+
+  let verdict,vcolor;
+  if(pct>=85){verdict='Très compatible — transition naturelle, idéal pour une modulation douce ou un mix harmonique.';vcolor='var(--acc2)';}
+  else if(pct>=57){verdict='Compatible — quelques notes changent, la transition est audible mais musicale.';vcolor='#c0c030';}
+  else if(pct>=28){verdict='Tension — rupture harmonique marquée, effet intentionnel ou accord pivot nécessaire.';vcolor='var(--acc)';}
+  else{verdict='Incompatible — rupture maximale, effet de surprise ou de choc. Utiliser avec intention.';vcolor='#ff4060';}
+
+  document.getElementById('compat-result').innerHTML =
+    '<div style="background:var(--bg);border:2px solid '+vcolor+';border-radius:10px;padding:14px;margin-bottom:12px">'+
+    '<div style="font:700 28px JetBrains Mono,sans-serif;color:'+vcolor+'">'+pct+'% compatible</div>'+
+    '<div style="font-size:12px;color:var(--mu);margin-top:4px">'+shared.length+'/7 notes communes</div>'+
+    '<div style="font-size:12px;color:var(--tx);margin-top:8px">'+verdict+'</div></div>'+
+    '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px">'+
+    '<div style="background:var(--card2);border:1px solid var(--b);border-radius:8px;padding:10px">'+
+    '<div style="font:700 11px Syne,sans-serif;color:var(--acc2);margin-bottom:6px">NOTES COMMUNES ('+shared.length+')</div>'+
+    '<div style="font:500 12px JetBrains Mono,monospace;color:var(--tx)">'+shared.map(n=>na[n]).join(' · ')+'</div></div>'+
+    '<div style="background:var(--card2);border:1px solid var(--b);border-radius:8px;padding:10px">'+
+    '<div style="font:700 11px Syne,sans-serif;color:var(--acc);margin-bottom:6px">UNIQUEMENT A ('+onlyA.length+')</div>'+
+    '<div style="font:500 12px JetBrains Mono,monospace;color:var(--tx)">'+onlyA.map(n=>na[n]).join(' · ')+'</div></div>'+
+    '<div style="background:var(--card2);border:1px solid var(--b);border-radius:8px;padding:10px">'+
+    '<div style="font:700 11px Syne,sans-serif;color:var(--acc3);margin-bottom:6px">UNIQUEMENT B ('+onlyB.length+')</div>'+
+    '<div style="font:500 12px JetBrains Mono,monospace;color:var(--tx)">'+onlyB.map(n=>nb[n]).join(' · ')+'</div></div></div>'+
+    (pivots.length?'<div style="background:var(--card2);border:1px solid var(--b);border-radius:8px;padding:10px"><div style="font:700 11px Syne,sans-serif;color:var(--mu);margin-bottom:8px">ACCORDS PIVOT</div><div style="display:flex;gap:6px;flex-wrap:wrap">'+
+    pivots.map(p=>'<span style="background:'+p.col+'20;border:1px solid '+p.col+'60;border-radius:5px;padding:4px 10px;font:600 13px JetBrains Mono,monospace;color:'+p.col+'">'+p.name+'</span>').join('')+'</div></div>':
+    '<div style="background:var(--card2);border:1px solid var(--b);border-radius:8px;padding:10px;font-size:12px;color:var(--mu)">Aucun accord pivot commun — envisagez une note pédale ou une modulation progressive.</div>');
 }
 
 // TAP TEMPO
