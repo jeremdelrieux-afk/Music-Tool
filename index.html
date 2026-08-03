@@ -500,6 +500,17 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-h
       <div class="cmp-row"><span style="color:var(--tx)">Présence / Air</span><span class="cmp-val">C5–C8 = 523–4186 Hz</span></div>
     </div>
   </div>
+  <div class="card">
+    <div class="ct">Sidechain Pumping <span class="ct-sub">valeurs synchronisees BPM par genre</span></div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px" id="sc-genre-btns">
+      <button class="divbtn on" data-genre="dnb" onclick="setSCGenre(this)">Drum and Bass</button>
+      <button class="divbtn" data-genre="techno" onclick="setSCGenre(this)">Techno</button>
+      <button class="divbtn" data-genre="house" onclick="setSCGenre(this)">House</button>
+      <button class="divbtn" data-genre="trance" onclick="setSCGenre(this)">Trance</button>
+      <button class="divbtn" data-genre="dnb_neuro" onclick="setSCGenre(this)">Neurofunk</button>
+    </div>
+    <div id="sc-result"></div>
+  </div>
 </div>
 
 <!-- TRANSPOSITION -->
