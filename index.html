@@ -766,37 +766,6 @@ function copyVal(val, btn) {
 }
 
 
-
-function exportChordMidi(e, name, nis) {
-  e.stopPropagation();
-  const ticksPerBeat = 480;
-  const bpm = curBPM();
-  const usPerBeat = Math.round(60000000 / bpm);
-  const dur = ticksPerBeat * 2;
-  function writeVarLen(val) {
-    const b = [];
-    b.unshift(val & 0x7F);
-    val >>= 7;
-    while (val > 0) { b.unshift((val & 0x7F) | 0x80); val >>= 7; }
-    return b;
-  }
-  function num4(v) { return [(v>>24)&0xFF,(v>>16)&0xFF,(v>>8)&0xFF,v&0xFF]; }
-  function num2(v) { return [(v>>8)&0xFF,v&0xFF]; }
-  const tempoEvt = [0x00,0xFF,0x51,0x03,(usPerBeat>>16)&0xFF,(usPerBeat>>8)&0xFF,usPerBeat&0xFF];
-  const trackEvents = [...tempoEvt];
-  nis.forEach(ni => { const midiNote = 48+(ni%12); trackEvents.push(...writeVarLen(0),0x90,midiNote,100); });
-  nis.forEach((ni,i) => { const midiNote = 48+(ni%12); trackEvents.push(...writeVarLen(i===0?dur:0),0x80,midiNote,0); });
-  trackEvents.push(0x00,0xFF,0x2F,0x00);
-  const header=[0x4D,0x54,0x68,0x64,0,0,0,6,0,0,0,1,...num2(ticksPerBeat)];
-  const track=[0x4D,0x54,0x72,0x6B,...num4(trackEvents.length),...trackEvents];
-  const midi=new Uint8Array([...header,...track]);
-  const blob=new Blob([midi],{type:"audio/midi"});
-  const a=document.createElement("a");
-  a.href=URL.createObjectURL(blob);
-  a.download="chord-"+name.replace(/[^a-zA-Z0-9]/g,"")+".mid";
-  a.click();
-}
-
 // ARPEGIATEUR
 const ARP = { speed: 1, dir: 'up', oct: 1, playing: false, timer: null, step: 0, altDir: 1, notes: [] };
 
@@ -1067,7 +1036,7 @@ function render(){
   const eK=document.getElementById('tf-key'); if(eK)  eK.textContent=rname+' '+S.mode;
   // Calcul de l'accord selectionne depuis S.deg (local, pas de variable externe)
   const selC=(S.deg!==null&&S.deg>=0&&S.deg<chords.length)?chords[S.deg]:null;
-  document.getElementById('chord-rows').innerHTML=chords.map((c,i)=>'<tr class="cl '+(S.deg===i?'sel':'')+'" data-idx="'+i+'"><td><span class="roman">'+c.roman+'</span></td><td><span class="cnm" style="color:'+c.col+'">'+c.root.name+c.suffix+'</span> <span class="badge" style="background:'+c.col+'18;color:'+c.col+'">'+c.lbl+'</span></td><td class="cnotes">'+c.root.name+' - '+c.third.name+' - '+c.fifth.name+'</td><td class="fn">'+DEG_FN[i]+'</td><td><button class="pb">play</button> <button class="pb" data-name="'+c.root.name+c.suffix+'" data-nis="'+c.nis.join(',')+'" onclick="exportChordMidi(event,this.dataset.name,this.dataset.nis.split(',').map(Number))">⬇</button></td></tr>').join('');
+  document.getElementById('chord-rows').innerHTML=chords.map((c,i)=>'<tr class="cl '+(S.deg===i?'sel':'')+'" data-idx="'+i+'"><td><span class="roman">'+c.roman+'</span></td><td><span class="cnm" style="color:'+c.col+'">'+c.root.name+c.suffix+'</span> <span class="badge" style="background:'+c.col+'18;color:'+c.col+'">'+c.lbl+'</span></td><td class="cnotes">'+c.root.name+' - '+c.third.name+' - '+c.fifth.name+'</td><td class="fn">'+DEG_FN[i]+'</td><td><button class="pb">play</button></td></tr>').join('');
   document.querySelectorAll('#chord-rows tr[data-idx]').forEach(function(tr){
     var idx=parseInt(tr.dataset.idx);
     tr.addEventListener('click',function(e){
