@@ -631,6 +631,19 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-h
       <div style="font:700 11px 'Syne',sans-serif;color:var(--acc);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Correction de formants — quand l'activer</div>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;font-size:11px;color:var(--mu);line-height:1.7">
         <div><b style="color:#38c870">1-2 demi-tons</b><br>Correction optionnelle. Sur un sample simple monophonique, Newtone sans formants donne un resultat propre.</div>
+      </div>
+    </div>
+    <div style="background:var(--bg);border:1px solid var(--b2);border-radius:8px;padding:10px 14px;margin-top:12px">
+      <div style="font:700 11px 'Syne',sans-serif;color:var(--acc);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Micro-tuning — désaccordage initial</div>
+      <div style="font-size:11px;color:var(--mu);line-height:1.8">
+        Certains samples ne sont pas exactement calés sur le diapason standard A440 — vinyle, synthé analogique, enregistrement vintage.<br><br>
+        <b style="color:var(--tx)">Exemple :</b> sample de basse root Do, désaccordé à +18 cents. Tu veux l'utiliser en Ré.<br>
+        Sans correction : Do → Ré = +200 cents, mais le sample reste désaccordé de +18 cents → sonne faux dans le mix.<br>
+        Avec micro-tuning : entre +18 dans le champ désaccordage → l'outil calcule <b style="color:var(--acc2)">+182 cents à appliquer</b> dans Newtone.<br><br>
+        <b style="color:var(--tx)">Comment mesurer le désaccordage :</b> charge le sample dans FL Studio, joue-le sans pitch shift, lis la fondamentale dans SPAN ou un tuner — la différence en cents par rapport à la note théorique est ton désaccordage initial.
+      </div>
+    </div>
+    <div style="display:none">
         <div><b style="color:#c09020">3-5 demi-tons</b><br>Correction recommandee. Sans elle, le timbre change notablement (effet chipmunk vers le haut). Newtone : active Formant Correction. Edison : coche Preserve formants.</div>
         <div><b style="color:#c04830">6 demi-tons et plus</b><br>Correction indispensable. Meme avec formants la qualite se degrade sur les grands shifts. Utilise Melodyne pour les samples polyphoniques ou vocaux.</div>
       </div>
