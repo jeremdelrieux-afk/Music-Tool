@@ -23,11 +23,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 .hd-key{font-size:15px;font-weight:700;color:var(--acc);font-family:monospace}
 .hd-mode{font-size:11px;color:var(--mu2)}
 .hd-bpm{font-size:13px;font-weight:600;color:var(--acc3);font-family:monospace}
-.tips-toggle{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--mu2);cursor:pointer;padding:4px 10px;border:1px solid var(--b);border-radius:20px;transition:.2s}
-.tips-toggle:hover{border-color:var(--acc);color:var(--acc)}
-.tips-toggle.on{border-color:var(--acc2);color:var(--acc2);background:rgba(0,212,170,.08)}
-.dot{width:6px;height:6px;border-radius:50%;background:var(--acc2);transition:.2s}
-.tips-toggle:not(.on) .dot{background:var(--mu)}
+
 
 /* TABS */
 .tabs{display:flex;background:var(--bg2);border-bottom:1px solid var(--b);padding:0 20px;overflow-x:auto;scrollbar-width:none;gap:2px}
@@ -50,14 +46,14 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 .card{background:var(--card);border:1px solid var(--b);border-radius:var(--r);padding:18px;margin-bottom:16px;position:relative}
 .card-accent{border-left:3px solid var(--acc)}
 .card h2{font-size:13px;font-weight:600;color:var(--mu2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:14px;display:flex;align-items:center;gap:8px}
-.card h2 .tip-icon{width:18px;height:18px;border-radius:50%;background:var(--b2);color:var(--mu2);font-size:10px;display:none;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:.2s;border:1px solid var(--b)}
+.card h2 .tip-icon{width:18px;height:18px;border-radius:50%;background:var(--b2);color:var(--mu2);font-size:10px;display:flex;align-items:center;justify-content:center;cursor:help;flex-shrink:0;transition:.2s;border:1px solid var(--b)}
 .card h2 .tip-icon:hover{background:var(--acc);color:#fff;border-color:var(--acc)}
-.tips-on .card h2 .tip-icon{display:flex}
-.tip-icon.active{background:var(--acc);color:#fff;border-color:var(--acc)}
+
+
 
 /* TOOLTIP */
 .tooltip{position:fixed;background:#0a1525;border:1px solid var(--acc);border-radius:var(--r2);padding:10px 14px;font-size:12px;color:var(--tx);line-height:1.7;width:280px;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,.8);display:none;pointer-events:none}
-.tip-icon.active + .tooltip{display:block}
+.tip-icon:hover + .tooltip{display:block}
 
 /* FORMS */
 input[type=range]{width:100%;accent-color:var(--acc);cursor:pointer}
@@ -227,9 +223,7 @@ tr:hover td{background:rgba(124,92,252,.04)}
     <span class="hd-mode" id="hk-mode">Mineur Naturel</span>
     <span style="color:var(--b2)">|</span>
     <span class="hd-bpm" id="hk-bpm">174 BPM</span>
-    <button class="tips-toggle" id="tips-btn" onclick="toggleTips()">
-      <div class="dot"></div> <span id="tips-label">Tips OFF</span>
-    </button>
+
   </div>
 </div>
 
