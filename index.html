@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Music Production Tool</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;background:#0d0d0d;color:#e0e0e0;min-height:100vh}
+.app{max-width:1100px;margin:0 auto;padding:20px}
+h1{font-size:22px;font-weight:600;color:#fff;margin-bottom:4px}
+.subtitle{font-size:13px;color:#888;margin-bottom:24px}
+.tabs{display:flex;gap:4px;margin-bottom:24px;background:#1a1a1a;padding:4px;border-radius:10px}
+.tab{flex:1;padding:10px 8px;background:transparent;border:none;color:#888;font-size:13px;font-weight:500;border-radius:8px;cursor:pointer;transition:all .2s}
+.tab.active{background:#2a2a2a;color:#fff}
+.tab:hover:not(.active){color:#ccc}
+.section{display:none}
+.section.active{display:block}
+.card{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:12px;padding:20px;margin-bottom:16px}
+.card h2{font-size:15px;font-weight:600;color:#fff;margin-bottom:16px}
+.row{display:flex;gap:16px;align-items:center;margin-bottom:16px;flex-wrap:wrap}
+label{font-size:13px;color:#888;min-width:60px}
+input[type=range]{flex:1;min-width:120px;accent-color:#7c6ef7}
+input[type=number],select{background:#252525;border:1px solid #333;color:#fff;padding:8px 12px;border-radius:8px;font-size:14px;outline:none}
+input[type=number]{width:90px}
+select{min-width:140px}
+.bpm-display{font-size:32px;font-weight:700;color:#7c6ef7;min-width:70px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;padding:8px 10px;color:#888;font-weight:500;border-bottom:1px solid #2a2a2a;font-size:12px}
+td{padding:8px 10px;border-bottom:1px solid #1e1e1e;color:#ccc}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#222;color:#fff}
+.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:500}
+.badge-purple{background:#3d2f8a;color:#c4b5f4}
+.badge-teal{background:#0d4a3a;color:#5ecfb0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.note-pill{display:inline-block;width:36px;height:36px;line-height:36px;text-align:center;border-radius:50%;background:#252525;border:1px solid #333;font-size:12px;font-weight:600;margin:4px;cursor:default}
+.note-pill.root{background:#3d2f8a;border-color:#7c6ef7;color:#e0d8ff}
+.chord-btn{background:#252525;border:1px solid #333;color:#ccc;padding:10px 14px;border-radius:8px;cursor:pointer;font-size:13px;transition:all .2s;text-align:left;width:100%}
+.chord-btn:hover{background:#2e2e2e;border-color:#555;color:#fff}
+.chord-btn.selected{background:#2a1f5c;border-color:#7c6ef7;color:#c4b5f4}
+.chord-notes{font-size:12px;color:#888;margin-top:4px}
+.prog-card{background:#252525;border:1px solid #2a2a2a;border-radius:10px;padding:14px;cursor:pointer;transition:all .2s}
+.prog-card:hover{border-color:#444}
+.prog-card.selected{border-color:#7c6ef7;background:#1e1a3a}
+.prog-title{font-size:13px;font-weight:600;color:#fff;margin-bottom:6px}
+.prog-genre{font-size:11px;color:#888;margin-bottom:10px}
+.prog-chords{display:flex;gap:6px;flex-wrap:wrap}
+.prog-chord{background:#333;padding:4px 10px;border-radius:6px;font-size:12px;font-weight:600;color:#ccc}
+.prog-notes-display{margin-top:10px;padding:10px;background:#1a1533;border-radius:8px;font-size:12px;color:#c4b5f4;display:none}
+.prog-notes-display.show{display:block}
+.tip{background:#1a2a1a;border-left:3px solid #3a8a5a;padding:10px 14px;border-radius:0 8px 8px 0;font-size:12px;color:#8ec8a0;margin-top:8px}
+.instr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;margin-bottom:16px}
+.instr-btn{background:#252525;border:1px solid #333;color:#888;padding:10px 8px;border-radius:8px;cursor:pointer;font-size:13px;text-align:center;transition:all .2s}
+.instr-btn:hover{border-color:#555;color:#ccc}
+.instr-btn.selected{background:#2a1f5c;border-color:#7c6ef7;color:#c4b5f4}
+.rec-box{background:#252525;border:1px solid #2a2a2a;border-radius:10px;padding:14px;margin-top:4px}
+.rec-box h3{font-size:13px;font-weight:600;color:#fff;margin-bottom:8px}
+.rec-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #1e1e1e;font-size:13px}
+.rec-row:last-child{border-bottom:none}
+.rec-label{color:#888}
+.rec-value{color:#c4b5f4;font-weight:500}
+@media(max-width:600px){.grid2{grid-template-columns:1fr}.tabs{flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="app">
+<h1>Music Production Tool</h1>
+<div class="subtitle">Calculateur BPM · Conseiller Reverb/Delay · Assistant de Composition</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="showTab('bpm',this)">Temps BPM</button>
+  <button class="tab" onclick="showTab('advisor',this)">Conseiller</button>
+  <button class="tab" onclick="showTab('compo',this)">Composition</button>
+</div>
+
+<div id="tab-bpm" class="section active">
+  <div class="card">
+    <h2>Calculateur BPM</h2>
+    <div class="row">
+      <label>BPM</label>
+      <input type="range" id="bpmSlider" min="40" max="300" value="120" oninput="updateBPM(this.value)">
+      <span class="bpm-display" id="bpmDisplay">120</span>
+      <input type="number" id="bpmInput" value="120" min="40" max="300" oninput="updateBPM(this.value)" style="width:80px">
+    </div>
+  </div>
+  <div class="card">
+    <h2>Subdivisions rythmiques (ms)</h2>
+    <table>
+      <thead><tr><th>Subdivision</th><th>Normal</th><th>Pointé</th><th>Triolet</th></tr></thead>
+      <tbody id="subdiv-body"></tbody>
+    </table>
+  </div>
+  <div class="grid2">
+    <div class="card">
+      <h2>Delay Times</h2>
+      <table>
+        <thead><tr><th>Type</th><th>Temps (ms)</th><th>Note</th></tr></thead>
+        <tbody id="delay-body"></tbody>
+      </table>
+    </div>
+    <div class="card">
+      <h2>Reverb Pre-delay &amp; Decay</h2>
+      <table>
+        <thead><tr><th>Type</th><th>Pre-delay</th><th>Decay suggéré</th></tr></thead>
+        <tbody id="reverb-body"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div id="tab-advisor" class="section">
+  <div class="card">
+    <h2>Sélectionner un instrument</h2>
+    <div class="instr-grid" id="instr-grid"></div>
+  </div>
+  <div id="advisor-result"></div>
+</div>
+
+<div id="tab-compo" class="section">
+  <div class="card">
+    <h2>Tonalité &amp; Mode</h2>
+    <div class="row">
+      <label>Tonalité</label>
+      <select id="key-select" onchange="updateScale()">
+        <option>Do</option><option>Do#</option><option>Ré</option><option>Ré#</option>
+        <option>Mi</option><option>Fa</option><option>Fa#</option><option>Sol</option>
+        <option>Sol#</option><option>La</option><option>La#</option><option>Si</option>
+      </select>
+      <label>Mode</label>
+      <select id="mode-select" onchange="updateScale()">
+        <option value="major">Majeur</option>
+        <option value="natural_minor" selected>Mineur naturel</option>
+        <option value="harmonic_minor">Mineur harmonique</option>
+        <option value="melodic_minor">Mineur mélodique</option>
+        <option value="dorian">Dorien</option>
+        <option value="phrygian">Phrygien</option>
+        <option value="lydian">Lydien</option>
+        <option value="mixolydian">Mixolydien</option>
+        <option value="locrian">Locrien</option>
+      </select>
+    </div>
+  </div>
+  <div class="card">
+    <h2>Notes de la gamme</h2>
+    <div id="scale-notes"></div>
+    <div style="margin-top:16px">
+      <table>
+        <thead><tr><th>Degré</th><th>Note</th><th>Fréquence (Hz)</th></tr></thead>
+        <tbody id="scale-freq-body"></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card">
+    <h2>Accords de la gamme</h2>
+    <div id="chords-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px"></div>
+  </div>
+  <div class="card">
+    <h2>Suites d'accords par genre</h2>
+    <div id="progs-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px"></div>
+  </div>
+</div>
+</div>
+
+<script>
+const NOTE_NAMES=['Do','Do#','Ré','Ré#','Mi','Fa','Fa#','Sol','Sol#','La','La#','Si'];
+const NOTE_MIDI={'Do':60,'Do#':61,'Ré':62,'Ré#':63,'Mi':64,'Fa':65,'Fa#':66,'Sol':67,'Sol#':68,'La':69,'La#':70,'Si':71};
+const MODES={
+  major:[0,2,4,5,7,9,11],
+  natural_minor:[0,2,3,5,7,8,10],
+  harmonic_minor:[0,2,3,5,7,8,11],
+  melodic_minor:[0,2,3,5,7,9,11],
+  dorian:[0,2,3,5,7,9,10],
+  phrygian:[0,1,3,5,7,8,10],
+  lydian:[0,2,4,6,7,9,11],
+  mixolydian:[0,2,4,5,7,9,10],
+  locrian:[0,1,3,5,6,8,10]
+};
+const CHORD_TYPES_MODES={
+  major:['Maj','min','min','Maj','Maj','min','dim'],
+  natural_minor:['min','dim','Maj','min','min','Maj','Maj'],
+  harmonic_minor:['min','dim','Maj','min','Maj','Maj','dim'],
+  melodic_minor:['min','min','Maj','Maj','Maj','dim','dim'],
+  dorian:['min','min','Maj','Maj','min','dim','Maj'],
+  phrygian:['min','Maj','Maj','min','dim','Maj','min'],
+  lydian:['Maj','Maj','min','dim','Maj','min','min'],
+  mixolydian:['Maj','min','dim','Maj','min','min','Maj'],
+  locrian:['dim','Maj','min','min','Maj','Maj','min']
+};
+const DEGREE_NAMES=['I','II','III','IV','V','VI','VII'];
+const CHORD_INTERVALS={'Maj':[0,4,7],'min':[0,3,7],'dim':[0,3,6]};
+const SUBDIV=[
+  {name:'Ronde (1/1)',mul:4},{name:'Blanche (1/2)',mul:2},{name:'Noire (1/4)',mul:1},
+  {name:'Croche (1/8)',mul:.5},{name:'Double croche (1/16)',mul:.25},{name:'Triple croche (1/32)',mul:.125}
+];
+const DELAYS=[
+  {name:'Slap',mul:.125,desc:'Croche'},{name:'Double Slap',mul:.25,desc:'Noire'},
+  {name:'Chorus',mul:null,fixed:30,desc:'~30ms fixe'},{name:'Echo court',mul:.5,desc:'Blanche'},
+  {name:'Echo long',mul:1,desc:'Noire pointée'},{name:'Ping-Pong',mul:.375,desc:'Croche pointée'},
+  {name:'Tape Delay',mul:.667,desc:'Triolet blanche'}
+];
+const REVERBS=[
+  {name:'Room',pre_mul:.25,decay:'0.4–0.8s'},{name:'Hall',pre_mul:.5,decay:'1.5–3.5s'},
+  {name:'Plate',pre_mul:.125,decay:'0.8–2.0s'},{name:'Spring',pre_mul:.0625,decay:'0.5–1.5s'},
+  {name:'Chamber',pre_mul:.375,decay:'0.6–1.8s'},{name:'Ambience',pre_mul:.0625,decay:'0.2–0.5s'}
+];
+const INSTRUMENTS=[
+  {id:'guitar',label:'Guitare'},{id:'bass',label:'Basse'},{id:'vocals',label:'Voix'},
+  {id:'synth',label:'Synthé'},{id:'piano',label:'Piano'},{id:'drums',label:'Batterie'},
+  {id:'strings',label:'Cordes'},{id:'brass',label:'Cuivres'}
+];
+const ADVICE={
+  guitar:{reverb:{type:'Spring / Room',predelay:'8–15ms',decay:'0.6–1.2s',tip:'Le Spring convient pour le clean et le blues. Pour le métal, utilisez un Room court avec moins de wet.'},delay:{type:'Slap (1/8) + Echo (1/4)',time:'1/8 + 1/4',tip:'Classique rockabilly/rock. Pour l\'ambient, essayez un ping-pong en blanche pointée.'},best:'Spring Reverb + Slap Delay'},
+  bass:{reverb:{type:'Ambience',predelay:'2–5ms',decay:'0.2–0.4s',tip:'Un léger ambience évite de noyer les graves. Gardez le wet sous 15%.'},delay:{type:'Chorus très court',time:'15–25ms',tip:'Évitez les delays longs sur la basse. Un chorus subtil enrichit sans confusion rythmique.'},best:'Ambience légère (wet < 15%)'},
+  vocals:{reverb:{type:'Hall / Plate',predelay:'20–30ms',decay:'1.2–2.5s',tip:'Le pre-delay maintient la voix en avant. Hall pour les ballades, Plate pour la pop.'},delay:{type:'Echo 1/4 + 1/8',time:'Noire + Croche',tip:'Delay en noire avec 3–4 répétitions. Coupez les hautes fréquences pour un son vintage.'},best:'Plate Reverb + Quarter-note Delay'},
+  synth:{reverb:{type:'Hall / Chamber',predelay:'10–20ms',decay:'1.5–4.0s',tip:'Hall long pour les pads. Chamber court pour les leads — maintient la définition.'},delay:{type:'Ping-Pong / Tape',time:'3/8 ou 2/3',tip:'Ping-pong pour la largeur stéréo. Tape Delay pour la chaleur et le mouvement.'},best:'Hall Reverb + Ping-Pong Delay'},
+  piano:{reverb:{type:'Hall / Room',predelay:'15–25ms',decay:'1.0–2.0s',tip:'Grand Hall pour le concert. Room court et intimiste pour le jazz.'},delay:{type:'Echo ou aucun',time:'1/4 ou 1/2',tip:'Le piano n\'a souvent pas besoin de delay. Si vous en utilisez un, restez subtil.'},best:'Hall moyen (1.2s decay)'},
+  drums:{reverb:{type:'Room / Plate (snare)',predelay:'2–8ms',decay:'0.3–0.8s',tip:'Room sur le bus drums. Plate sur la caisse claire uniquement. Évitez toute reverb sur la kick.'},delay:{type:'Slap sur snare',time:'Croche pointée',tip:'Envoyez principalement la snare dans la reverb. Room court donne de la cohésion.'},best:'Room sur bus + Plate sur snare'},
+  strings:{reverb:{type:'Hall large',predelay:'25–40ms',decay:'2.5–4.0s',tip:'Grand Hall naturel. Pre-delay généreux pour séparer du reste du mix.'},delay:{type:'Tape ou aucun',time:'1/2 ou 1/1',tip:'Tape Delay très court peut ajouter de la profondeur sur un solo. Sinon, évitez.'},best:'Grand Hall (2.5–4s decay)'},
+  brass:{reverb:{type:'Chamber / Room',predelay:'8–15ms',decay:'0.5–1.2s',tip:'Chamber court donne de la présence sans noyer le son agressif des cuivres.'},delay:{type:'Slap ou aucun',time:'Croche',tip:'Slap delay pour l\'effet spectaculaire. Pour le jazz, reverb seule suffit.'},best:'Chamber (0.8s decay)'}
+};
+const PROG_DEFS=[
+  {genre:'Drum and Bass / Neuro',degrees:[0,2,5,4],desc:'Groovy, sombre, répétitif'},
+  {genre:'Hi-Tek / Techno Minimal',degrees:[0,6,3,4],desc:'Hypnotique, dissonant, industriel'},
+  {genre:'Death Metal',degrees:[0,5,3,6],desc:'Sombre, agressif, tritone inclus'}
+];
+
+let currentBPM=120;
+
+function showTab(t,btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+t).classList.add('active');
+  btn.classList.add('active');
+}
+function ms(mul,bpm){return (60000/bpm)*mul;}
+function updateBPM(v){
+  v=Math.max(40,Math.min(300,parseInt(v)||120));
+  currentBPM=v;
+  document.getElementById('bpmDisplay').textContent=v;
+  document.getElementById('bpmSlider').value=v;
+  document.getElementById('bpmInput').value=v;
+  renderSubdivisions();renderDelays();renderReverbs();
+}
+function renderSubdivisions(){
+  document.getElementById('subdiv-body').innerHTML=SUBDIV.map(s=>{
+    const n=ms(s.mul,currentBPM),pt=n*1.5,tr=n*(2/3);
+    return `<tr><td>${s.name}</td><td><b>${n.toFixed(1)}</b> ms</td><td>${pt.toFixed(1)} ms</td><td>${tr.toFixed(1)} ms</td></tr>`;
+  }).join('');
+}
+function renderDelays(){
+  document.getElementById('delay-body').innerHTML=DELAYS.map(d=>{
+    const t=d.fixed||ms(d.mul,currentBPM);
+    return `<tr><td>${d.name}</td><td><b>${t.toFixed(1)}</b> ms</td><td><span class="badge badge-teal">${d.desc}</span></td></tr>`;
+  }).join('');
+}
+function renderReverbs(){
+  document.getElementById('reverb-body').innerHTML=REVERBS.map(r=>{
+    return `<tr><td>${r.name}</td><td><b>${ms(r.pre_mul,currentBPM).toFixed(1)}</b> ms</td><td>${r.decay}</td></tr>`;
+  }).join('');
+}
+function renderInstruments(){
+  document.getElementById('instr-grid').innerHTML=INSTRUMENTS.map(i=>
+    `<button class="instr-btn" id="instr-${i.id}" onclick="selectInstr('${i.id}')">${i.label}</button>`
+  ).join('');
+}
+function selectInstr(id){
+  document.querySelectorAll('.instr-btn').forEach(b=>b.classList.remove('selected'));
+  document.getElementById('instr-'+id).classList.add('selected');
+  const a=ADVICE[id],lbl=INSTRUMENTS.find(i=>i.id===id).label;
+  const s=ms(.125,currentBPM).toFixed(1),q=ms(1,currentBPM).toFixed(1);
+  document.getElementById('advisor-result').innerHTML=`
+  <div class="card">
+    <h2>Recommandation — ${lbl}</h2>
+    <div class="tip" style="margin-bottom:16px">Meilleur choix : <b>${a.best}</b></div>
+    <div class="grid2">
+      <div class="rec-box">
+        <h3>Reverb recommandée</h3>
+        <div class="rec-row"><span class="rec-label">Type</span><span class="rec-value">${a.reverb.type}</span></div>
+        <div class="rec-row"><span class="rec-label">Pre-delay</span><span class="rec-value">${a.reverb.predelay}</span></div>
+        <div class="rec-row"><span class="rec-label">Decay</span><span class="rec-value">${a.reverb.decay}</span></div>
+        <div class="tip">${a.reverb.tip}</div>
+      </div>
+      <div class="rec-box">
+        <h3>Delay recommandé</h3>
+        <div class="rec-row"><span class="rec-label">Type</span><span class="rec-value">${a.delay.type}</span></div>
+        <div class="rec-row"><span class="rec-label">Subdivision</span><span class="rec-value">${a.delay.time}</span></div>
+        <div class="rec-row"><span class="rec-label">À ${currentBPM} BPM</span><span class="rec-value">${s} ms (1/8) · ${q} ms (1/4)</span></div>
+        <div class="tip">${a.delay.tip}</div>
+      </div>
+    </div>
+  </div>`;
+}
+function midiToFreq(midi){return 440*Math.pow(2,(midi-69)/12);}
+function getScaleNotes(){
+  const key=document.getElementById('key-select').value;
+  const mode=document.getElementById('mode-select').value;
+  const root=NOTE_MIDI[key];
+  return MODES[mode].map(i=>{const midi=root+i;return{name:NOTE_NAMES[midi%12],midi,freq:midiToFreq(midi)};});
+}
+function getChordNotes(rootMidi,type){
+  return CHORD_INTERVALS[type].map(i=>NOTE_NAMES[(rootMidi+i)%12]);
+}
+function updateScale(){
+  const notes=getScaleNotes();
+  const mode=document.getElementById('mode-select').value;
+  const chordTypes=CHORD_TYPES_MODES[mode];
+  const degrees=['1re','2e','3e','4e','5e','6e','7e'];
+
+  document.getElementById('scale-notes').innerHTML=notes.map((n,i)=>
+    `<span class="note-pill ${i===0?'root':''}" title="${n.freq.toFixed(2)} Hz">${n.name}</span>`
+  ).join('');
+
+  document.getElementById('scale-freq-body').innerHTML=notes.map((n,i)=>
+    `<tr><td>${DEGREE_NAMES[i]} — ${degrees[i]}</td><td><b>${n.name}</b></td><td>${n.freq.toFixed(2)} Hz</td></tr>`
+  ).join('');
+
+  document.getElementById('chords-grid').innerHTML=notes.map((n,i)=>{
+    const type=chordTypes[i],cn=getChordNotes(n.midi,type);
+    return `<button class="chord-btn" id="chord-${i}" onclick="selectChord(${i})">
+      <div><b>${n.name} ${type}</b> <span class="badge badge-purple">${DEGREE_NAMES[i]}</span></div>
+      <div class="chord-notes">${cn.join(' – ')}</div>
+    </button>`;
+  }).join('');
+
+  document.getElementById('progs-grid').innerHTML=PROG_DEFS.map((p,pi)=>{
+    const chords=p.degrees.map(d=>{
+      const n=notes[d],t=chordTypes[d],cn=getChordNotes(n.midi,t);
+      return{name:`${n.name}${t==='Maj'?'':'m'}`,notes:cn,deg:DEGREE_NAMES[d]};
+    });
+    const chordsHTML=chords.map(c=>`<span class="prog-chord">${c.name}</span>`).join('');
+    const notesDetailHTML=chords.map(c=>`<b>${c.name}</b>: ${c.notes.join(' – ')}`).join('<br>');
+    return `<div class="prog-card" id="prog-${pi}" onclick="toggleProg(${pi})">
+      <div class="prog-title">${p.genre}</div>
+      <div class="prog-genre">${p.desc}</div>
+      <div class="prog-chords">${chordsHTML}</div>
+      <div class="prog-notes-display" id="prog-notes-${pi}">${notesDetailHTML}</div>
+    </div>`;
+  }).join('');
+}
+function selectChord(i){
+  document.querySelectorAll('.chord-btn').forEach(b=>b.classList.remove('selected'));
+  document.getElementById('chord-'+i).classList.add('selected');
+}
+function toggleProg(i){
+  document.getElementById('prog-'+i).classList.toggle('selected');
+  document.getElementById('prog-notes-'+i).classList.toggle('show');
+}
+
+renderSubdivisions();renderDelays();renderReverbs();renderInstruments();updateScale();
+</script>
+</body>
+</html>
