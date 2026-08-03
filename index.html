@@ -45,14 +45,15 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 /* CARDS */
 .card{background:var(--card);border:1px solid var(--b);border-radius:var(--r);padding:18px;margin-bottom:16px;position:relative}
 .card-accent{border-left:3px solid var(--acc)}
-.card h2{font-size:13px;font-weight:600;color:var(--mu2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.card h2{font-size:13px;font-weight:600;color:var(--mu2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .card h2 .tip-icon{width:18px;height:18px;border-radius:50%;background:var(--b2);color:var(--mu2);font-size:10px;display:flex;align-items:center;justify-content:center;cursor:default;flex-shrink:0;transition:.2s;border:1px solid var(--b)}
 .card h2 .tip-icon:hover{background:var(--acc);color:#fff;border-color:var(--acc)}
 
 
 
 /* TOOLTIP */
-.tooltip{position:fixed;background:#0a1525;border:1px solid var(--acc);border-radius:var(--r2);padding:10px 14px;font-size:12px;color:var(--tx);line-height:1.7;width:280px;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,.8);display:none;pointer-events:none}
+.tooltip{display:none;background:rgba(10,21,37,.95);border:1px solid var(--acc);border-radius:var(--r2);padding:10px 14px;font-size:12px;color:var(--tx);line-height:1.7;margin-top:8px;width:100%}
+.tip-icon.active + .tooltip,.tip-icon:hover + .tooltip{display:block}
 .tip-icon:hover + .tooltip{display:block}
 
 /* FORMS */
@@ -100,11 +101,11 @@ tr:hover td{background:rgba(124,92,252,.04)}
 .pkey{position:absolute;cursor:pointer;border-radius:0 0 5px 5px;transition:background .1s}
 .pkey.white{height:128px;border:1px solid var(--b)}
 .pkey.black{height:76px;z-index:2}
-.pkey.white.out{background:#101828}
+.pkey.white.out{background:#1e2d45}
 .pkey.white.in{background:#2a4a8a}
 .pkey.white.chord{background:var(--acc)}
 .pkey.white.root{background:var(--acc3)}
-.pkey.black.out{background:#060c14}
+.pkey.black.out{background:#0f1828}
 .pkey.black.in{background:#1a3570}
 .pkey.black.chord{background:#5a3ccc}
 .pkey.black.root{background:#cc4a1a}
@@ -828,16 +829,13 @@ document.addEventListener('click', function(e) {
     e.stopPropagation();
     const wasActive = icon.classList.contains('active');
     document.querySelectorAll('.tip-icon.active').forEach(i => i.classList.remove('active'));
+    document.querySelectorAll('.tip-icon.above').forEach(i => i.classList.remove('above'));
     if (!wasActive) {
+      const rect = icon.getBoundingClientRect();
+      if (rect.top > window.innerHeight / 2) icon.classList.add('above');
       icon.classList.add('active');
       const tooltip = icon.nextElementSibling;
-      if (tooltip && tooltip.classList.contains('tooltip')) {
-        const rect = icon.getBoundingClientRect();
-        const below = rect.bottom + 12 + 120 < window.innerHeight;
-        tooltip.style.display = 'block';
-        tooltip.style.top = below ? (rect.bottom + 8) + 'px' : (rect.top - tooltip.offsetHeight - 8) + 'px';
-        tooltip.style.left = Math.min(rect.left, window.innerWidth - 296) + 'px';
-      }
+
     }
     return;
   }
@@ -928,14 +926,21 @@ function renderPiano(sn,chordNis=[]){
     for(let n=0;n<12;n++){
       const isB=IS_BLACK[n],inSc=si.includes(n),isC=chordNis.includes(n),isRoot=n===S.root;
       const k=document.createElement('div');
-      k.className='pkey '+(isB?'black':'white')+' '+(isRoot&&inSc?'root':isC?'chord':inSc?'in':'out');
+      // Priorite : accord > tonique > gamme > hors gamme
+      const cls=isC?'chord':(isRoot&&inSc?'root':inSc?'in':'out');
+      k.className='pkey '+(isB?'black':'white')+' '+cls;
       if(!isB){
         const lp=(oct*7+W_POS[n])*KW;maxW=Math.max(maxW,lp+KW);
         k.style.cssText='left:'+lp+'px;top:0;width:'+(KW-2)+'px;';
-        if(n===0){const lb=document.createElement('div');lb.style.cssText='position:absolute;bottom:5px;left:50%;transform:translateX(-50%);font-size:8px;color:#4a6080;pointer-events:none;font-family:monospace;';lb.textContent='C'+(oct+4);k.appendChild(lb);}
+        const lb=document.createElement('div');
+        lb.style.cssText='position:absolute;bottom:4px;left:50%;transform:translateX(-50%);font-size:8px;color:rgba(255,255,255,.25);pointer-events:none;font-family:monospace;font-weight:600;';
+        lb.textContent=NS[n]+(oct+4);k.appendChild(lb);
       } else {
         const lp=(oct*7+B_CTR[n])*KW-BW/2;
         k.style.cssText='left:'+lp+'px;top:0;width:'+BW+'px;';
+        const lb=document.createElement('div');
+        lb.style.cssText='position:absolute;bottom:4px;left:50%;transform:translateX(-50%);font-size:7px;color:rgba(255,255,255,.4);pointer-events:none;font-family:monospace;';
+        lb.textContent=NS[n];k.appendChild(lb);
       }
       const freq=noteFreq(n,oct+4);
       k.addEventListener('mousedown',e=>{e.preventDefault();const orig=k.className;k.style.filter='brightness(1.5)';tone(freq,getCtx().currentTime,1.4,isB?0.14:0.2);setTimeout(()=>k.style.filter='',160);});
@@ -943,7 +948,7 @@ function renderPiano(sn,chordNis=[]){
     }
   }
   // Extra C
-  {const lp=2*7*KW;maxW=Math.max(maxW,lp+KW);const inSc=si.includes(0),isC=chordNis.includes(0);const k=document.createElement('div');k.className='pkey white '+(S.root===0&&inSc?'root':isC?'chord':inSc?'in':'out');k.style.cssText='left:'+lp+'px;top:0;width:'+(KW-2)+'px;';const lb=document.createElement('div');lb.style.cssText='position:absolute;bottom:5px;left:50%;transform:translateX(-50%);font-size:8px;color:#4a6080;pointer-events:none;font-family:monospace;';lb.textContent='C6';k.appendChild(lb);k.addEventListener('mousedown',e=>{e.preventDefault();tone(noteFreq(0,6),getCtx().currentTime,1.2,0.16);});div.appendChild(k);}
+  {const lp=2*7*KW;maxW=Math.max(maxW,lp+KW);const inSc=si.includes(0),isC=chordNis.includes(0);const k=document.createElement('div');const clsX=isC?'chord':(S.root===0&&inSc?'root':inSc?'in':'out');k.className='pkey white '+clsX;k.style.cssText='left:'+lp+'px;top:0;width:'+(KW-2)+'px;';const lb=document.createElement('div');lb.style.cssText='position:absolute;bottom:4px;left:50%;transform:translateX(-50%);font-size:8px;color:rgba(255,255,255,.25);pointer-events:none;font-family:monospace;font-weight:600;';lb.textContent='C6';k.appendChild(lb);k.addEventListener('mousedown',e=>{e.preventDefault();tone(noteFreq(0,6),getCtx().currentTime,1.2,0.16);});div.appendChild(k);}
   div.style.width=(maxW+4)+'px';piano.style.width=(maxW+4)+'px';piano.appendChild(div);
 }
 
