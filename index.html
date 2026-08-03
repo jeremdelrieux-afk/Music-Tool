@@ -3,351 +3,1156 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Music Production Tool</title>
+<title>Harmony Lab</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:system-ui,sans-serif;background:#0d0d0d;color:#e0e0e0;min-height:100vh}
-.app{max-width:1100px;margin:0 auto;padding:20px}
-h1{font-size:22px;font-weight:600;color:#fff;margin-bottom:4px}
-.subtitle{font-size:13px;color:#888;margin-bottom:24px}
-.tabs{display:flex;gap:4px;margin-bottom:24px;background:#1a1a1a;padding:4px;border-radius:10px}
-.tab{flex:1;padding:10px 8px;background:transparent;border:none;color:#888;font-size:13px;font-weight:500;border-radius:8px;cursor:pointer;transition:all .2s}
-.tab.active{background:#2a2a2a;color:#fff}
-.tab:hover:not(.active){color:#ccc}
-.section{display:none}
-.section.active{display:block}
-.card{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:12px;padding:20px;margin-bottom:16px}
-.card h2{font-size:15px;font-weight:600;color:#fff;margin-bottom:16px}
-.row{display:flex;gap:16px;align-items:center;margin-bottom:16px;flex-wrap:wrap}
-label{font-size:13px;color:#888;min-width:60px}
-input[type=range]{flex:1;min-width:120px;accent-color:#7c6ef7}
-input[type=number],select{background:#252525;border:1px solid #333;color:#fff;padding:8px 12px;border-radius:8px;font-size:14px;outline:none}
-input[type=number]{width:90px}
-select{min-width:140px}
-.bpm-display{font-size:32px;font-weight:700;color:#7c6ef7;min-width:70px}
-table{width:100%;border-collapse:collapse;font-size:13px}
-th{text-align:left;padding:8px 10px;color:#888;font-weight:500;border-bottom:1px solid #2a2a2a;font-size:12px}
-td{padding:8px 10px;border-bottom:1px solid #1e1e1e;color:#ccc}
-tr:last-child td{border-bottom:none}
-tr:hover td{background:#222;color:#fff}
-.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:500}
-.badge-purple{background:#3d2f8a;color:#c4b5f4}
-.badge-teal{background:#0d4a3a;color:#5ecfb0}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.note-pill{display:inline-block;width:36px;height:36px;line-height:36px;text-align:center;border-radius:50%;background:#252525;border:1px solid #333;font-size:12px;font-weight:600;margin:4px;cursor:default}
-.note-pill.root{background:#3d2f8a;border-color:#7c6ef7;color:#e0d8ff}
-.chord-btn{background:#252525;border:1px solid #333;color:#ccc;padding:10px 14px;border-radius:8px;cursor:pointer;font-size:13px;transition:all .2s;text-align:left;width:100%}
-.chord-btn:hover{background:#2e2e2e;border-color:#555;color:#fff}
-.chord-btn.selected{background:#2a1f5c;border-color:#7c6ef7;color:#c4b5f4}
-.chord-notes{font-size:12px;color:#888;margin-top:4px}
-.prog-card{background:#252525;border:1px solid #2a2a2a;border-radius:10px;padding:14px;cursor:pointer;transition:all .2s}
-.prog-card:hover{border-color:#444}
-.prog-card.selected{border-color:#7c6ef7;background:#1e1a3a}
-.prog-title{font-size:13px;font-weight:600;color:#fff;margin-bottom:6px}
-.prog-genre{font-size:11px;color:#888;margin-bottom:10px}
-.prog-chords{display:flex;gap:6px;flex-wrap:wrap}
-.prog-chord{background:#333;padding:4px 10px;border-radius:6px;font-size:12px;font-weight:600;color:#ccc}
-.prog-notes-display{margin-top:10px;padding:10px;background:#1a1533;border-radius:8px;font-size:12px;color:#c4b5f4;display:none}
-.prog-notes-display.show{display:block}
-.tip{background:#1a2a1a;border-left:3px solid #3a8a5a;padding:10px 14px;border-radius:0 8px 8px 0;font-size:12px;color:#8ec8a0;margin-top:8px}
-.instr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;margin-bottom:16px}
-.instr-btn{background:#252525;border:1px solid #333;color:#888;padding:10px 8px;border-radius:8px;cursor:pointer;font-size:13px;text-align:center;transition:all .2s}
-.instr-btn:hover{border-color:#555;color:#ccc}
-.instr-btn.selected{background:#2a1f5c;border-color:#7c6ef7;color:#c4b5f4}
-.rec-box{background:#252525;border:1px solid #2a2a2a;border-radius:10px;padding:14px;margin-top:4px}
-.rec-box h3{font-size:13px;font-weight:600;color:#fff;margin-bottom:8px}
-.rec-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #1e1e1e;font-size:13px}
-.rec-row:last-child{border-bottom:none}
-.rec-label{color:#888}
-.rec-value{color:#c4b5f4;font-weight:500}
-@media(max-width:600px){.grid2{grid-template-columns:1fr}.tabs{flex-direction:column}}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#060a10;--bg2:#0c1018;--card:#101820;--card2:#161f2c;--b:#1c2838;--b2:#243448;--acc:#ff7030;--acc2:#00c8a0;--acc3:#6090ff;--tx:#c8d8ec;--mu:#526070;--mu2:#384858;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;overflow-x:hidden}
+.hd{background:linear-gradient(135deg,#0c1520,#060a10);border-bottom:1px solid var(--b);padding:13px 22px;display:flex;align-items:center;gap:14px}
+.logo{font-family:'Syne',sans-serif;font-weight:800;font-size:17px;color:var(--acc);letter-spacing:-.5px}
+.logo b{color:var(--tx);font-weight:700}
+.hd-badge{margin-left:auto;display:flex;align-items:center;gap:10px}
+.hd-key{font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:600;color:var(--acc)}
+.hd-mode{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--mu)}
+.hd-dot{width:6px;height:6px;border-radius:50%;background:var(--acc2)}
+.tabs{display:flex;background:var(--bg2);border-bottom:1px solid var(--b);padding:0 22px;overflow-x:auto;scrollbar-width:none}
+.tb{padding:12px 16px;background:none;border:none;border-bottom:2px solid transparent;color:var(--mu);font:500 13px 'DM Sans',sans-serif;cursor:pointer;white-space:nowrap;transition:.18s}
+.tb:hover{color:var(--tx)}.tb.on{color:var(--acc);border-bottom-color:var(--acc)}
+.cnt{padding:18px 22px;max-width:1200px;margin:0 auto}
+.pnl{display:none}.pnl.on{display:block}
+.card{background:var(--card);border:1px solid var(--b);border-radius:11px;padding:16px;margin-bottom:13px}
+.ct{font-family:'Syne',sans-serif;font-weight:700;font-size:10px;color:var(--mu);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
+.ct-sub{color:var(--acc);text-transform:none;font-weight:400;font-size:10px;margin-left:4px}
+.kg{display:grid;grid-template-columns:repeat(12,1fr);gap:4px;margin-bottom:13px}
+.kb{padding:8px 3px;background:var(--card2);border:1px solid var(--b);border-radius:6px;color:var(--mu);font:600 12px 'JetBrains Mono',monospace;cursor:pointer;text-align:center;transition:.13s}
+.kb:hover{border-color:var(--acc);color:var(--tx)}.kb.on{background:var(--acc);border-color:var(--acc);color:#fff}.kb.bk{background:#080e16}
+.mg{display:flex;flex-wrap:wrap;gap:6px}
+.mb{padding:6px 12px;background:var(--card2);border:1px solid var(--b);border-radius:14px;color:var(--mu);font:500 12px 'DM Sans',sans-serif;cursor:pointer;transition:.13s}
+.mb:hover{color:var(--tx)}.mb.on{font-weight:600}
+.sp{display:flex;gap:6px;flex-wrap:wrap}
+.spill{display:flex;flex-direction:column;align-items:center;background:var(--card2);border:1px solid var(--b);border-radius:7px;padding:6px 9px;min-width:40px}
+.sn{font:600 14px 'JetBrains Mono',monospace}.sd{font-size:9px;color:var(--mu);margin-top:1px}
+.pw{overflow-x:auto;padding:4px 0 8px}
+.piano{position:relative;display:inline-block;height:128px}
+.cht{width:100%;border-collapse:collapse}
+.cht th{text-align:left;padding:6px 9px;color:var(--mu);font-size:10px;text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--b)}
+.cht td{padding:8px 9px;border-bottom:1px solid var(--b);font-size:13px;vertical-align:middle}
+.cht tr:last-child td{border-bottom:none}
+.cht tr.cl{cursor:pointer;transition:background .13s}
+.cht tr.cl:hover{background:var(--card2)}
+.cht tr.sel{background:rgba(255,112,48,.07)}
+.cnm{font:600 15px 'JetBrains Mono',monospace}
+.badge{display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:500;margin-left:6px}
+.cnotes{font:400 11px 'JetBrains Mono',monospace;color:var(--mu)}
+.roman{font:500 12px 'JetBrains Mono',monospace;color:var(--mu2);min-width:34px;display:inline-block}
+.fn{font-size:11px;color:var(--mu)}
+.pb{padding:3px 8px;background:var(--card2);border:1px solid var(--b2);border-radius:5px;color:var(--mu);font-size:11px;cursor:pointer;transition:.13s}
+.pb:hover{background:var(--acc);border-color:var(--acc);color:#fff}
+.mg2{display:flex;gap:5px;flex-wrap:wrap}
+.mn{display:flex;flex-direction:column;align-items:center;padding:7px 8px;border-radius:7px;min-width:40px;border:1px solid transparent}
+.mn-n{font:600 13px 'JetBrains Mono',monospace}.mn-r{font-size:9px;margin-top:2px;text-transform:uppercase;letter-spacing:.3px}
+.mn.stable{background:rgba(0,200,100,.1);border-color:rgba(0,200,100,.22);color:#38c870}
+.mn.color{background:rgba(255,175,0,.09);border-color:rgba(255,175,0,.22);color:#c09020}
+.mn.tension{background:rgba(255,65,40,.09);border-color:rgba(255,65,40,.22);color:#c04830}
+.bg2{display:flex;gap:7px;flex-wrap:wrap}
+.bc{display:flex;flex-direction:column;align-items:center;background:var(--card2);border:1px solid var(--b);border-radius:9px;padding:9px 12px;cursor:pointer;transition:.13s;min-width:68px}
+.bc:hover{transform:translateY(-1px)}
+.bcn{font:700 15px 'JetBrains Mono',monospace}
+.bcd{font-size:9px;color:var(--mu);margin-top:3px;text-align:center;line-height:1.3}
+/* COF */
+#cof{display:block;margin:0 auto}
+.cof-info{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-top:13px}
+.rel-card{background:var(--card2);border:1px solid var(--b);border-radius:9px;padding:12px}
+.rel-title{font:700 11px 'Syne',sans-serif;color:var(--mu);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px}
+.mod-item{display:flex;justify-content:space-between;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--b);font-size:12px;gap:8px}
+.mod-item:last-child{border-bottom:none}
+.mod-key{font:600 13px 'JetBrains Mono',monospace;min-width:64px}
+.mod-meta{color:var(--mu);font-size:11px;line-height:1.6}
+/* STUDIO */
+.srow{display:flex;gap:10px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+.srow label{font-size:12px;color:var(--mu);min-width:90px}
+.srow input[type=range]{flex:1;accent-color:var(--acc);min-width:100px}
+.sval{font:600 14px 'JetBrains Mono',monospace;color:var(--acc);min-width:60px;text-align:right}
+.divbtns{display:flex;gap:4px;flex-wrap:wrap}
+.divbtn{padding:5px 9px;background:var(--card2);border:1px solid var(--b);border-radius:5px;font:500 11px 'JetBrains Mono',monospace;color:var(--mu);cursor:pointer;transition:.13s}
+.divbtn:hover{color:var(--tx)}.divbtn.on{background:var(--acc2);border-color:var(--acc2);color:#000;font-weight:600}
+.rbox{background:var(--bg);border:1px solid var(--b2);border-radius:8px;padding:12px 14px;margin-top:8px}
+.rbox-val{font:700 22px 'JetBrains Mono',monospace;color:var(--acc)}
+.rbox-sub{font-size:11px;color:var(--mu);margin-top:3px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.st-btn{padding:7px 14px;background:var(--card2);border:1px solid var(--b);border-radius:7px;font:500 12px 'DM Sans',sans-serif;color:var(--mu);cursor:pointer;transition:.13s}
+.st-btn.on{border-color:var(--acc);color:var(--acc);background:rgba(255,112,48,.08)}
+.cmp-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--b);font-size:12px}
+.cmp-row:last-child{border-bottom:none}
+.cmp-val{font:600 12px 'JetBrains Mono',monospace;color:var(--acc2)}
+/* BPM */
+.bpm-master{display:flex;gap:12px;align-items:center;margin-bottom:4px}
+.bpm-master label{font-size:13px;color:var(--mu);min-width:28px}
+.bpm-master input[type=range]{flex:1;accent-color:var(--acc)}
+.bpm-master input[type=number]{width:72px;background:var(--card2);border:1px solid var(--b);color:var(--tx);font:600 15px 'JetBrains Mono',monospace;padding:6px 9px;border-radius:7px;text-align:center}
+.tt{width:100%;border-collapse:collapse}
+.tt th,.tt td{padding:7px 9px;text-align:left;border-bottom:1px solid var(--b);font-size:12px}
+.tt th{color:var(--mu);font-size:10px;text-transform:uppercase;letter-spacing:.4px}
+.tt td:not(:first-child){font:500 12px 'JetBrains Mono',monospace;color:var(--acc)}
+.tt tr:last-child td{border-bottom:none}
+/* TUNING */
+.tp-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:4px}
+.tp-btn{padding:8px 3px;background:var(--card2);border:1px solid var(--b);border-radius:6px;color:var(--mu);font:600 12px 'JetBrains Mono',monospace;cursor:pointer;text-align:center;transition:.13s}
+.tp-btn:hover{border-color:var(--acc3);color:var(--tx)}
+.tp-btn.src-on{background:var(--acc);border-color:var(--acc);color:#fff}
+.tp-btn.tgt-on{background:var(--acc2);border-color:var(--acc2);color:#000}
+.tp-btn.bk{background:#080e16}
+.tp-result{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.tp-cell{background:var(--bg);border:1px solid var(--b2);border-radius:8px;padding:12px}
+.tp-cell-val{font:700 20px 'JetBrains Mono',monospace;color:var(--acc);margin-bottom:3px}
+.tp-cell-lbl{font-size:11px;color:var(--mu)}
+.tp-warn{background:rgba(255,180,0,.08);border:1px solid rgba(255,180,0,.25);border-radius:7px;padding:10px 14px;font-size:12px;color:#c09020;margin-top:10px}
+.tp-ok{background:rgba(0,200,100,.08);border:1px solid rgba(0,200,100,.2);border-radius:7px;padding:10px 14px;font-size:12px;color:#38c870;margin-top:10px}
+.note-map{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.nmap-item{display:flex;align-items:center;gap:5px;background:var(--card2);border:1px solid var(--b);border-radius:6px;padding:5px 9px;font:500 12px 'JetBrains Mono',monospace}
+.nmap-from{color:var(--mu)}.nmap-arr{color:var(--mu2)}.nmap-to{color:var(--acc2)}
+.tx-m{color:var(--mu);font-size:11px}
+.mt8{margin-top:8px}.mt12{margin-top:12px}
+@media(max-width:720px){.kg,.tp-grid{grid-template-columns:repeat(6,1fr)}.cnt{padding:12px}.grid2,.grid3,.cof-info,.tp-result{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-<div class="app">
-<h1>Music Production Tool</h1>
-<div class="subtitle">Calculateur BPM · Conseiller Reverb/Delay · Assistant de Composition</div>
 
+<div class="hd">
+  <div class="logo">Harmony<b>Lab</b></div>
+  <div class="hd-badge">
+    <div class="hd-dot"></div>
+    <span class="hd-key" id="hk-key">D</span>
+    <span class="hd-mode" id="hk-mode">Mineur Naturel</span>
+  </div>
+</div>
 <div class="tabs">
-  <button class="tab active" onclick="showTab('bpm',this)">Temps BPM</button>
-  <button class="tab" onclick="showTab('advisor',this)">Conseiller</button>
-  <button class="tab" onclick="showTab('compo',this)">Composition</button>
+  <button class="tb on" onclick="tab('gamme',this)">Gamme et Accords</button>
+  <button class="tb" onclick="tab('cof',this)">Cercle des Quintes</button>
+  <button class="tb" onclick="tab('studio',this)">BPM et Studio</button>
+  <button class="tb" onclick="tab('tuning',this)">Transposition</button>
+  <button class="tb" onclick="tab('guide',this)">Mode d'emploi</button>
 </div>
 
-<div id="tab-bpm" class="section active">
-  <div class="card">
-    <h2>Calculateur BPM</h2>
-    <div class="row">
-      <label>BPM</label>
-      <input type="range" id="bpmSlider" min="40" max="300" value="120" oninput="updateBPM(this.value)">
-      <span class="bpm-display" id="bpmDisplay">120</span>
-      <input type="number" id="bpmInput" value="120" min="40" max="300" oninput="updateBPM(this.value)" style="width:80px">
-    </div>
-  </div>
-  <div class="card">
-    <h2>Subdivisions rythmiques (ms)</h2>
-    <table>
-      <thead><tr><th>Subdivision</th><th>Normal</th><th>Pointé</th><th>Triolet</th></tr></thead>
-      <tbody id="subdiv-body"></tbody>
-    </table>
-  </div>
+<div class="cnt">
+
+<!-- GAMME -->
+<div class="pnl on" id="pnl-gamme">
   <div class="grid2">
     <div class="card">
-      <h2>Delay Times</h2>
-      <table>
-        <thead><tr><th>Type</th><th>Temps (ms)</th><th>Note</th></tr></thead>
-        <tbody id="delay-body"></tbody>
-      </table>
+      <div class="ct">Tonalite</div>
+      <div class="kg" id="key-grid"></div>
+      <div class="ct" style="margin-top:12px">Mode</div>
+      <div class="mg" id="mode-grid"></div>
+      <div class="tx-m mt8" id="mode-desc"></div>
     </div>
     <div class="card">
-      <h2>Reverb Pre-delay &amp; Decay</h2>
-      <table>
-        <thead><tr><th>Type</th><th>Pre-delay</th><th>Decay suggéré</th></tr></thead>
-        <tbody id="reverb-body"></tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-<div id="tab-advisor" class="section">
-  <div class="card">
-    <h2>Sélectionner un instrument</h2>
-    <div class="instr-grid" id="instr-grid"></div>
-  </div>
-  <div id="advisor-result"></div>
-</div>
-
-<div id="tab-compo" class="section">
-  <div class="card">
-    <h2>Tonalité &amp; Mode</h2>
-    <div class="row">
-      <label>Tonalité</label>
-      <select id="key-select" onchange="updateScale()">
-        <option>Do</option><option>Do#</option><option>Ré</option><option>Ré#</option>
-        <option>Mi</option><option>Fa</option><option>Fa#</option><option>Sol</option>
-        <option>Sol#</option><option>La</option><option>La#</option><option>Si</option>
-      </select>
-      <label>Mode</label>
-      <select id="mode-select" onchange="updateScale()">
-        <option value="major">Majeur</option>
-        <option value="natural_minor" selected>Mineur naturel</option>
-        <option value="harmonic_minor">Mineur harmonique</option>
-        <option value="melodic_minor">Mineur mélodique</option>
-        <option value="dorian">Dorien</option>
-        <option value="phrygian">Phrygien</option>
-        <option value="lydian">Lydien</option>
-        <option value="mixolydian">Mixolydien</option>
-        <option value="locrian">Locrien</option>
-      </select>
+      <div class="ct">Notes de la gamme</div>
+      <div class="sp" id="scale-pills"></div>
+      <div class="mt12">
+        <div class="ct" style="margin-bottom:8px">Intervalles caracteristiques</div>
+        <div id="interval-desc" class="tx-m" style="line-height:1.9"></div>
+      </div>
+      <div style="background:var(--bg);border:1px solid var(--b2);border-radius:8px;padding:10px 12px;margin-top:12px">
+        <div style="font:700 11px 'Syne',sans-serif;color:var(--mu);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">Tonique vs Fondamentale</div>
+        <div class="cmp-row">
+          <span style="color:var(--acc2);font:600 12px 'JetBrains Mono',monospace" id="tf-tonique">--</span>
+          <span style="font-size:11px;color:var(--mu)">Tonique — centre harmonique de la gamme</span>
+        </div>
+        <div style="font-size:11px;color:var(--mu);line-height:1.7;margin-top:7px">
+          La <b style="color:var(--tx)">tonique</b> est un concept harmonique : c'est la note de repos de ta tonalite, definie par le contexte musical.<br>
+          La <b style="color:var(--tx)">fondamentale</b> est un concept acoustique : c'est la frequence physique la plus basse d'un son, mesurable dans SPAN, independante de tout contexte.<br><br>
+          Quand ta basse joue la tonique, les deux coincident. Quand elle joue le V degre (<span id="tf-v" style="color:var(--acc);font-family:'JetBrains Mono',monospace;font-weight:600">--</span>), la fondamentale est <span id="tf-v2" style="color:var(--acc);font-family:'JetBrains Mono',monospace;font-weight:600">--</span> mais la tonique du morceau reste <span id="tf-t2" style="color:var(--acc2);font-family:'JetBrains Mono',monospace;font-weight:600">--</span>. Ton kick peut avoir une fondamentale a 55 Hz (A1) dans un morceau en <span id="tf-key" style="color:var(--acc2);font-family:'JetBrains Mono',monospace;font-weight:600">--</span> — les deux sont independants.
+        </div>
+      </div>
     </div>
   </div>
   <div class="card">
-    <h2>Notes de la gamme</h2>
-    <div id="scale-notes"></div>
-    <div style="margin-top:16px">
-      <table>
-        <thead><tr><th>Degré</th><th>Note</th><th>Fréquence (Hz)</th></tr></thead>
-        <tbody id="scale-freq-body"></tbody>
-      </table>
+    <div class="ct">Clavier <span class="ct-sub" id="kbd-hint">Clique un accord pour le voir</span></div>
+    <div class="pw"><div class="piano" id="piano"></div></div>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:9px">
+      <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--mu)">
+        <div style="width:22px;height:12px;background:#d8dfe8;border:1px solid #aab4c2;border-radius:2px"></div>
+        <div style="width:13px;height:12px;background:#1e2a38;border-radius:2px"></div>
+        Hors gamme
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--mu)">
+        <div style="width:22px;height:12px;background:#60aaff;border:1px solid #2070d0;border-radius:2px"></div>
+        <div style="width:13px;height:12px;background:#1a55c0;border-radius:2px"></div>
+        Dans la gamme
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--mu)">
+        <div style="width:22px;height:12px;background:#ffe040;border:1px solid #c8a000;border-radius:2px"></div>
+        <div style="width:13px;height:12px;background:#d4a800;border-radius:2px"></div>
+        Accord selectionne
+      </div>
+    </div>
+    <div id="mel-container" style="display:none;margin-top:13px">
+      <div class="ct">Guide melodie <span class="ct-sub" id="mel-title"></span></div>
+      <div class="mg2" id="mel-guide"></div>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:7px">
+        <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:#38c870"><div style="width:8px;height:8px;border-radius:2px;background:#38c870"></div>Stables (arpege)</div>
+        <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:#c09020"><div style="width:8px;height:8px;border-radius:2px;background:#c09020"></div>Couleur (tension douce)</div>
+        <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:#c04830"><div style="width:8px;height:8px;border-radius:2px;background:#c04830"></div>Tension forte (a resoudre)</div>
+      </div>
     </div>
   </div>
   <div class="card">
-    <h2>Accords de la gamme</h2>
-    <div id="chords-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px"></div>
+    <div class="ct">Accords diatoniques <span class="ct-sub">clique pour selectionner</span></div>
+    <table class="cht">
+      <thead><tr><th>Degre</th><th>Accord</th><th>Notes</th><th>Fonction harmonique</th><th></th></tr></thead>
+      <tbody id="chord-rows"></tbody>
+    </table>
   </div>
   <div class="card">
-    <h2>Suites d'accords par genre</h2>
-    <div id="progs-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px"></div>
+    <div class="ct">Accords empruntes</div>
+    <div class="bg2" id="borrowed"></div>
+    <div class="tx-m mt8">Proviennent d'autres modes ou du mode parallele. Couleurs harmoniques inattendues, tres utilisees en DnB et Techno.</div>
   </div>
 </div>
+
+<!-- COF -->
+<div class="pnl" id="pnl-cof">
+  <div class="card">
+    <div class="ct">Cercle des Quintes <span class="ct-sub">clique pour naviguer vers cette tonalite</span></div>
+    <svg id="cof" width="500" height="500" viewBox="0 0 500 500"></svg>
+    <div class="tx-m mt8" style="text-align:center">
+      Anneau exterieur = Majeur &nbsp;|&nbsp; Anneau interieur = Mineur relatif &nbsp;|&nbsp; Chaque pas = 1 quinte (7 demi-tons)
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct">Comprendre le cercle</div>
+    <div class="grid3">
+      <div style="background:var(--card2);border:1px solid var(--b);border-radius:8px;padding:12px">
+        <div style="font:700 11px 'Syne',sans-serif;color:var(--acc2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">Gamme relative</div>
+        <div style="font-size:12px;color:var(--mu);line-height:1.7">
+          Deux tonalites sont <b style="color:var(--tx)">relatives</b> quand elles partagent exactement les <b style="color:var(--tx)">7 memes notes</b>, avec une tonique differente.<br><br>
+          Ex : <b style="color:var(--acc)">D mineur</b> et <b style="color:var(--acc)">F majeur</b> = D E F G A Bb C dans les deux cas.<br><br>
+          La relative majeure = tonique + 3 demi-tons. Transition invisible, aucun accord pivot necessaire.
+        </div>
+      </div>
+      <div style="background:var(--card2);border:1px solid var(--b);border-radius:8px;padding:12px">
+        <div style="font:700 11px 'Syne',sans-serif;color:var(--acc);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">Gamme parallele</div>
+        <div style="font-size:12px;color:var(--mu);line-height:1.7">
+          Deux tonalites sont <b style="color:var(--tx)">paralleles</b> quand elles ont la <b style="color:var(--tx)">meme tonique</b> mais un mode different.<br><br>
+          Ex : <b style="color:var(--acc)">D mineur</b> et <b style="color:var(--acc)">D majeur</b> = meme note D, mais D majeur a F# et C# au lieu de F et C.<br><br>
+          3 notes changent entre majeur et mineur naturel. Meme tonique, couleur radicalement differente.
+        </div>
+      </div>
+      <div style="background:var(--card2);border:1px solid var(--b);border-radius:8px;padding:12px">
+        <div style="font:700 11px 'Syne',sans-serif;color:var(--acc3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">Modulation par quintes</div>
+        <div style="font-size:12px;color:var(--mu);line-height:1.7">
+          Chaque pas sur le cercle = <b style="color:var(--tx)">1 note change</b>.<br><br>
+          <b style="color:var(--acc2)">1 pas</b> : 6 notes communes, transition tres naturelle<br>
+          <b style="color:var(--acc2)">2 pas</b> : 5 notes communes, transition douce<br>
+          <b style="color:var(--acc2)">3 pas</b> : 4 notes communes, transition audible<br>
+          <b style="color:var(--acc)">6 pas</b> : triton, rupture maximale<br><br>
+          Utilise un <b style="color:var(--tx)">accord pivot</b> (commun aux deux tonalites) pour moduler sans rupture.
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="cof-info">
+    <div class="rel-card">
+      <div class="rel-title">Modulations depuis <span id="mod-from" style="color:var(--acc)">D min</span></div>
+      <div id="mod-targets"></div>
+    </div>
+    <div class="rel-card">
+      <div class="rel-title">Relations modales</div>
+      <div id="rel-info"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct">Accords pivot <span class="ct-sub" id="pivot-title"></span></div>
+    <div id="pivot-chords"></div>
+  </div>
 </div>
 
+<!-- STUDIO -->
+<div class="pnl" id="pnl-studio">
+  <div class="card">
+    <div class="ct">Tempo de reference</div>
+    <div class="bpm-master">
+      <label>BPM</label>
+      <input type="range" id="bslider" min="60" max="220" value="174" oninput="setBPM(this.value)">
+      <input type="number" id="bnum" value="174" min="40" max="300" oninput="setBPM(this.value)">
+    </div>
+    <div class="tx-m">1 noire = <span id="beat-ms" style="color:var(--acc);font-family:'JetBrains Mono',monospace;font-weight:600">345 ms</span></div>
+  </div>
+  <div class="grid2">
+    <!-- DELAY -->
+    <div class="card">
+      <div class="ct">Delay</div>
+      <div class="tx-m" style="margin-bottom:6px">Division rythmique</div>
+      <div class="divbtns" id="delay-divs"></div>
+      <div class="rbox" style="margin-bottom:12px">
+        <div class="rbox-val" id="delay-time">--</div>
+        <div class="rbox-sub">Temps de delai</div>
+      </div>
+      <div class="srow">
+        <label>Feedback</label>
+        <input type="range" id="delay-fb" min="0" max="99" value="40" oninput="updateDelay()">
+        <span class="sval" id="delay-fb-val">40%</span>
+      </div>
+      <div style="background:var(--bg);border:1px solid var(--b2);border-radius:7px;padding:9px 12px;font-size:11px;color:var(--mu);margin-bottom:10px" id="delay-fb-info">--</div>
+      <div class="grid3">
+        <div style="background:var(--bg);border:1px solid var(--b2);border-radius:7px;padding:8px;text-align:center">
+          <div style="font:600 12px 'JetBrains Mono',monospace;color:var(--acc2)">10-20%</div>
+          <div style="font-size:10px;color:var(--mu)">Rythmique</div>
+        </div>
+        <div style="background:var(--bg);border:1px solid var(--b2);border-radius:7px;padding:8px;text-align:center">
+          <div style="font:600 12px 'JetBrains Mono',monospace;color:var(--acc2)">25-40%</div>
+          <div style="font-size:10px;color:var(--mu)">Atmospherique</div>
+        </div>
+        <div style="background:var(--bg);border:1px solid var(--b2);border-radius:7px;padding:8px;text-align:center">
+          <div style="font:600 12px 'JetBrains Mono',monospace;color:var(--acc2)">50-100%</div>
+          <div style="font-size:10px;color:var(--mu)">Effet total</div>
+        </div>
+      </div>
+      <div class="tx-m mt8">Ping-pong offset : <span id="delay-ping" style="color:var(--acc);font-family:'JetBrains Mono',monospace;font-weight:600">--</span></div>
+    </div>
+    <!-- REVERB -->
+    <div class="card">
+      <div class="ct">Reverb</div>
+      <div style="background:var(--bg);border:1px solid var(--b2);border-radius:7px;padding:9px 12px;margin-bottom:12px;font-size:11px;color:var(--mu);line-height:1.6">
+        <b style="color:var(--tx)">Pre-delay</b> = silence entre la note directe et le debut de la queue de reverb. Typiquement <b style="color:var(--acc2)">10–80 ms</b>. Au-dela de 100ms tu entends un echo distinct, pas un pre-delay.<br>
+        <b style="color:var(--tx)">RT60</b> = Reverberation Time 60 dB = temps que met le son pour decroitre de 60 dB apres l'arret de la source. C'est la duree de la queue de reverb.
+      </div>
+      <table class="tt" id="rv-table" style="margin-bottom:12px"></table>
+      <div class="grid2" style="gap:8px">
+        <div style="background:var(--bg);border:1px solid var(--b2);border-radius:7px;padding:9px">
+          <div style="font:600 11px 'Syne',sans-serif;color:var(--acc);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Mix wet</div>
+          <div style="font-size:11px;color:var(--mu);line-height:1.7">Kick/snare : 5-15%<br>Bass : 0-8%<br>Leads : 20-40%<br>Pads : 30-60%</div>
+        </div>
+        <div style="background:var(--bg);border:1px solid var(--b2);border-radius:7px;padding:9px">
+          <div style="font:600 11px 'Syne',sans-serif;color:var(--acc);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Pre-delay BPM sync</div>
+          <div style="font-size:11px;color:var(--mu);line-height:1.7">
+            1/32 = <span id="rv-sync-32" style="color:var(--acc2);font-family:'JetBrains Mono',monospace">--</span><br>
+            1/16 = <span id="rv-sync-16" style="color:var(--acc2);font-family:'JetBrains Mono',monospace">--</span><br>
+            1/8 = <span id="rv-sync-8" style="color:var(--acc2);font-family:'JetBrains Mono',monospace">--</span><br>
+            <span style="color:var(--mu2)">Rester sous 80ms pour un pre-delay naturel</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- COMPRESSEUR -->
+    <div class="card">
+      <div class="ct">Compresseur — timings synchronises BPM</div>
+      <div class="tx-m" style="margin-bottom:8px">Valeurs attack/release en ms par subdivision</div>
+      <div id="cmp-table"></div>
+      <div style="background:var(--bg);border:1px solid var(--b2);border-radius:8px;padding:10px 12px;margin-top:10px">
+        <div style="font:700 11px 'Syne',sans-serif;color:var(--acc);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Usages typiques</div>
+        <div class="cmp-row"><span style="color:var(--tx)">Pumping sidechain</span><span class="cmp-val">Att 1-5ms / Rel = 1/4 note</span></div>
+        <div class="cmp-row"><span style="color:var(--tx)">Transient kick (click)</span><span class="cmp-val">Att 20-50ms / Rel 80ms</span></div>
+        <div class="cmp-row"><span style="color:var(--tx)">Bus basses (glue)</span><span class="cmp-val">Att 10-30ms / Rel = 1/8 note</span></div>
+        <div class="cmp-row"><span style="color:var(--tx)">Bus drums</span><span class="cmp-val">Att 5ms / Rel = 1/16 note</span></div>
+        <div class="cmp-row"><span style="color:var(--tx)">Vocal transparent</span><span class="cmp-val">Att 8-15ms / Rel auto</span></div>
+      </div>
+    </div>
+    <!-- SATURATION -->
+    <div class="card">
+      <div class="ct">Saturation</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px" id="sat-types">
+        <button class="st-btn on" onclick="setSatType(this,'tape')">Tape</button>
+        <button class="st-btn" onclick="setSatType(this,'tube')">Tube</button>
+        <button class="st-btn" onclick="setSatType(this,'clip')">Hard Clip</button>
+        <button class="st-btn" onclick="setSatType(this,'trans')">Transformer</button>
+        <button class="st-btn" onclick="setSatType(this,'bit')">Bitcrusher</button>
+      </div>
+      <div id="sat-desc" style="background:var(--bg);border:1px solid var(--b2);border-radius:8px;padding:10px 12px;margin-bottom:10px;font-size:12px;line-height:1.7;color:var(--mu)"></div>
+      <div class="srow">
+        <label>Drive</label>
+        <input type="range" id="sat-drive" min="0" max="100" value="30" oninput="updateSat()">
+        <span class="sval" id="sat-drive-val">30%</span>
+      </div>
+      <div id="sat-drive-desc" style="font-size:11px;color:var(--mu);margin-top:4px;margin-bottom:10px"></div>
+      <div style="background:var(--bg);border:1px solid var(--b2);border-radius:8px;padding:10px 12px">
+        <div style="font:700 11px 'Syne',sans-serif;color:var(--acc);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Positionnement dans la chaine</div>
+        <div class="cmp-row"><span style="color:var(--tx)">Avant EQ</span><span class="cmp-val">Sature tout, EQ taille ensuite</span></div>
+        <div class="cmp-row"><span style="color:var(--tx)">Apres EQ</span><span class="cmp-val">Sature uniquement les freq gardees</span></div>
+        <div class="cmp-row"><span style="color:var(--tx)">Parallele (New York)</span><span class="cmp-val">Blend signal propre + sature</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct">Table de timing complete</div>
+    <table class="tt" id="bpm-table"></table>
+  </div>
+</div>
+
+<!-- TRANSPOSITION -->
+<div class="pnl" id="pnl-tuning">
+  <div class="card">
+    <div class="ct">Calculateur de transposition de sample</div>
+    <div class="tx-m" style="margin-bottom:14px">Indique la note fondamentale du sample tel qu'il est, puis la note souhaitee. L'outil calcule le pitch shift exact a appliquer dans Newtone, Edison ou ton sampler.</div>
+    <div style="display:grid;grid-template-columns:1fr 50px 1fr;gap:8px;align-items:start">
+      <div>
+        <div class="ct" style="margin-bottom:8px">Note source (sample actuel)</div>
+        <div class="tp-grid" id="tp-src-grid"></div>
+      </div>
+      <div style="text-align:center;padding-top:28px;font-size:26px;color:var(--acc)">to</div>
+      <div>
+        <div class="ct" style="margin-bottom:8px">Note cible (souhaitee)</div>
+        <div class="tp-grid" id="tp-tgt-grid"></div>
+      </div>
+    </div>
+    <div style="display:none" id="dir-btns"></div>
+    <div id="tp-result" style="display:none">
+      <div class="tp-result">
+        <div class="tp-cell"><div class="tp-cell-val" id="tp-semi">--</div><div class="tp-cell-lbl">Demi-tons a appliquer</div></div>
+        <div class="tp-cell"><div class="tp-cell-val" id="tp-cents">--</div><div class="tp-cell-lbl">Cents</div></div>
+        <div class="tp-cell"><div class="tp-cell-val" id="tp-ratio">--</div><div class="tp-cell-lbl">Ratio de frequence (2^n/12)</div></div>
+        <div class="tp-cell"><div class="tp-cell-val" id="tp-speed">--</div><div class="tp-cell-lbl">Changement de vitesse sans formants</div></div>
+      </div>
+      <div id="tp-advice"></div>
+      <!-- FL STUDIO ALGO SECTION -->
+      <div style="background:var(--bg);border:1px solid var(--b2);border-radius:8px;padding:12px 14px;margin-top:10px">
+        <div style="font:700 11px 'Syne',sans-serif;color:var(--acc);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">FL Studio — valeurs et algorithme recommande</div>
+        <div class="cmp-row"><span style="color:var(--tx)">Newtone (pitch)</span><span class="cmp-val" id="tp-fl-neo">--</span></div>
+        <div class="cmp-row"><span style="color:var(--tx)">Edison pitch shift</span><span class="cmp-val" id="tp-fl-edi">--</span></div>
+        <div class="cmp-row" style="margin-bottom:12px"><span style="color:var(--tx)">Channel Rack / Sampler</span><span class="cmp-val" id="tp-fl-smp">--</span></div>
+        <!-- Type de contenu -->
+        <div style="font:700 11px 'Syne',sans-serif;color:var(--mu);text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px">Type de contenu du sample</div>
+        <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px" id="content-type-btns">
+          <button class="st-btn on" onclick="setContentType(this,'drums')">Drums / Perc</button>
+          <button class="st-btn" onclick="setContentType(this,'bass')">Basse / Sub</button>
+          <button class="st-btn" onclick="setContentType(this,'mono')">Melodique mono</button>
+          <button class="st-btn" onclick="setContentType(this,'poly')">Polyphonique / Mix</button>
+          <button class="st-btn" onclick="setContentType(this,'voice')">Voix</button>
+        </div>
+        <!-- Recommandation algo -->
+        <div id="algo-rec" style="display:none">
+          <div style="background:var(--card2);border:1px solid var(--b);border-radius:8px;padding:12px">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+              <div>
+                <div style="font:700 13px 'JetBrains Mono',monospace;color:var(--acc2);margin-bottom:3px" id="algo-name">--</div>
+                <div style="font:500 11px 'JetBrains Mono',monospace;color:var(--mu)" id="algo-path">--</div>
+              </div>
+              <div style="background:rgba(0,200,160,.12);border:1px solid rgba(0,200,160,.3);border-radius:5px;padding:3px 9px;font-size:10px;font-weight:700;color:var(--acc2);white-space:nowrap" id="algo-quality">--</div>
+            </div>
+            <div style="font-size:12px;color:var(--mu);line-height:1.7;margin-bottom:8px" id="algo-desc">--</div>
+            <div id="algo-formant-row" style="display:none;background:rgba(255,180,0,.07);border:1px solid rgba(255,180,0,.2);border-radius:5px;padding:7px 10px;font-size:11px;color:#c09020">
+              <b>Correction de formants :</b> <span id="algo-formant-val">--</span>
+            </div>
+          </div>
+          <!-- Alternative -->
+          <div id="algo-alt" style="margin-top:8px;padding:8px 10px;background:var(--bg);border:1px solid var(--b2);border-radius:7px;font-size:11px;color:var(--mu)"></div>
+          <!-- Resample warning -->
+          <div id="algo-resample" style="display:none;margin-top:8px;background:rgba(255,112,48,.07);border:1px solid rgba(255,112,48,.2);border-radius:7px;padding:8px 10px;font-size:11px;color:var(--acc)"></div>
+        </div>
+        <div id="algo-placeholder" style="font-size:11px;color:var(--mu)">Selectionne un type de contenu pour voir la recommandation.</div>
+      </div>
+    </div>
+  </div>
+  <div class="card" id="tp-map-card" style="display:none">
+    <div class="ct">Notes de la gamme courante apres transposition <span class="ct-sub" id="tp-map-title"></span></div>
+    <div class="note-map" id="tp-map"></div>
+    <div class="tx-m mt8" id="tp-map-note"></div>
+  </div>
+</div>
+
+<!-- MODE D'EMPLOI -->
+<div class="pnl" id="pnl-guide">
+
+  <!-- INTRO -->
+  <div class="card" style="border-color:var(--acc)40">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+      <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:20px;color:var(--acc)">Harmony<span style="color:var(--tx)">Lab</span></div>
+      <div style="font-size:12px;color:var(--mu)">Outil de theorie musicale et de production — usage offline, aucune connexion requise</div>
+    </div>
+    <div style="font-size:12px;color:var(--mu);line-height:1.8">
+      HarmonyLab est un outil concu pour les producteurs de musique electronique (DnB, Neurofunk, Techno, Hi-Tech Minimal). Il couvre quatre domaines : theorie musicale, modulation harmonique, calculs studio synchronises au BPM, et transposition de samples. Tout fonctionne dans le navigateur, sans installation.
+    </div>
+  </div>
+
+  <!-- GAMME ET ACCORDS -->
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+      <div style="width:4px;height:32px;background:var(--acc3);border-radius:2px"></div>
+      <div>
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:15px">Gamme et Accords</div>
+        <div style="font-size:11px;color:var(--mu)">Theorie musicale interactive</div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div>
+        <div style="font:700 11px 'Syne',sans-serif;color:var(--acc3);text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px">A quoi ca sert</div>
+        <div style="font-size:12px;color:var(--mu);line-height:1.8">
+          Identifier les notes et accords d'une tonalite. Savoir quels accords sont compatibles entre eux dans une progression. Trouver les notes a utiliser en melodie sur un accord donne. Comprendre la fonction harmonique de chaque degre.
+        </div>
+      </div>
+      <div>
+        <div style="font:700 11px 'Syne',sans-serif;color:var(--acc3);text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px">Comment l'utiliser</div>
+        <div style="font-size:12px;color:var(--mu);line-height:1.8">
+          1. Selectionne ta <b style="color:var(--tx)">tonique</b> (la note racine de ton morceau) dans la grille en haut.<br>
+          2. Selectionne le <b style="color:var(--tx)">mode</b> : Mineur Naturel pour du DnB sombre, Majeur pour quelque chose de lumineux, Dorien pour une couleur jazzy.<br>
+          3. Le <b style="color:var(--tx)">clavier</b> colorie les notes : bleu = dans la gamme, jaune = accord selectionne, sombre = hors gamme.<br>
+          4. Clique un accord dans le tableau pour le selectionner : le clavier se met a jour et le <b style="color:var(--tx)">guide melodie</b> apparait avec les notes classees par couleur harmonique.
+        </div>
+      </div>
+    </div>
+
+    <div style="background:var(--bg);border:1px solid var(--b2);border-radius:8px;padding:10px 14px;margin-top:12px">
+      <div style="font:700 11px 'Syne',sans-serif;color:var(--acc);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Concepts cles</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;font-size:11px;color:var(--mu);line-height:1.7">
+        <div><b style="color:var(--tx)">Accords diatoniques</b><br>Les 7 accords natifs de ta tonalite. Ils partagent toutes les memes notes, donc ils sont toujours compatibles entre eux. Base de toute progression.</div>
+        <div><b style="color:var(--tx)">Accords empruntes</b><br>Accords qui ne sont pas natifs de ta tonalite mais qui s'y integrent bien (mode parallele, mineur harmonique). Ils apportent une couleur inattendue sans quitter l'espace harmonique.</div>
+        <div><b style="color:var(--tx)">Tonique vs Fondamentale</b><br>La tonique est le centre harmonique du morceau (concept musical). La fondamentale est la frequence physique la plus basse d'un son, mesurable dans SPAN (concept acoustique). Les deux ne coincident que quand ta basse joue le I degre.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CERCLE DES QUINTES -->
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+      <div style="width:4px;height:32px;background:var(--acc2);border-radius:2px"></div>
+      <div>
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:15px">Cercle des Quintes</div>
+        <div style="font-size:11px;color:var(--mu)">Navigation harmonique et modulation</div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div>
+        <div style="font:700 11px 'Syne',sans-serif;color:var(--acc2);text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px">A quoi ca sert</div>
+        <div style="font-size:12px;color:var(--mu);line-height:1.8">
+          Visualiser les relations entre tonalites. Trouver vers quelle tonalite moduler sans rupture. Identifier les gammes relatives et paralleles. Trouver les accords pivot pour transitionner en douceur.
+        </div>
+      </div>
+      <div>
+        <div style="font:700 11px 'Syne',sans-serif;color:var(--acc2);text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px">Comment l'utiliser</div>
+        <div style="font-size:12px;color:var(--mu);line-height:1.8">
+          1. Clique n'importe quel segment du cercle pour naviguer vers cette tonalite (anneau exterieur = majeur, anneau interieur = mineur).<br>
+          2. Le panel <b style="color:var(--tx)">Modulations</b> liste les tonalites voisines avec le nombre de notes communes et les notes qui changent.<br>
+          3. Les <b style="color:var(--tx)">Accords pivot</b> en bas sont les accords communs aux tonalites a 1 quinte — utilise-les dans ta progression pour transitionner naturellement.
+        </div>
+      </div>
+    </div>
+
+    <div style="background:var(--bg);border:1px solid var(--b2);border-radius:8px;padding:10px 14px;margin-top:12px">
+      <div style="font:700 11px 'Syne',sans-serif;color:var(--acc);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Regle pratique</div>
+      <div style="font-size:11px;color:var(--mu);line-height:1.8">
+        Chaque pas sur le cercle = 1 seule note change. A 1 pas tu as 6 notes communes (transition tres naturelle). A 6 pas (triton) tu n'as qu'une note commune (rupture maximale). En DnB et Techno, les modulations les plus efficaces se font a 1 ou 2 pas, ou vers la relative majeure/mineure (0 note change, meme gamme, tonique differente).
+      </div>
+    </div>
+  </div>
+
+  <!-- BPM ET STUDIO -->
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+      <div style="width:4px;height:32px;background:var(--acc);border-radius:2px"></div>
+      <div>
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:15px">BPM et Studio</div>
+        <div style="font-size:11px;color:var(--mu)">Delay, Reverb, Compresseur, Saturation</div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+      <div>
+        <div style="font:700 11px 'Syne',sans-serif;color:var(--acc);text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px">A quoi ca sert</div>
+        <div style="font-size:12px;color:var(--mu);line-height:1.8">
+          Calculer les timings d'effets synchronises a ton BPM. Avoir les bonnes valeurs de delay, reverb, attack et release en millisecondes pour ton tempo sans faire le calcul a la main.
+        </div>
+      </div>
+      <div>
+        <div style="font:700 11px 'Syne',sans-serif;color:var(--acc);text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px">Comment l'utiliser</div>
+        <div style="font-size:12px;color:var(--mu);line-height:1.8">
+          1. Regle le <b style="color:var(--tx)">BPM</b> en haut — tout se recalcule automatiquement.<br>
+          2. Pour le <b style="color:var(--tx)">Delay</b> : choisis la division rythmique souhaitee, regles le feedback, lis le nombre de repetitions audibles et le temps de decroissance total.<br>
+          3. Pour la <b style="color:var(--tx)">Reverb</b> : lis les pre-delay et RT60 recommandes par type (Room, Hall, Plate...).<br>
+          4. Pour le <b style="color:var(--tx)">Compresseur</b> : lis les valeurs en ms pour chaque subdivision, puis applique-les dans Pro-C 2 ou ton compresseur.<br>
+          5. Pour la <b style="color:var(--tx)">Saturation</b> : choisis le type (Tape, Tube, Hard Clip...) et regle le drive.
+        </div>
+      </div>
+    </div>
+
+    <div style="background:var(--bg);border:1px solid var(--b2);border-radius:8px;padding:10px 14px">
+      <div style="font:700 11px 'Syne',sans-serif;color:var(--acc);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Concepts cles</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;font-size:11px;color:var(--mu);line-height:1.7">
+        <div><b style="color:var(--tx)">Feedback delay</b><br>Chaque repetition = signal x (feedback%). A 40% : signal original → 40% → 16% → 6.4%... Le calcul indique combien de repetitions restent audibles au-dessus de -60 dB et la duree totale de decroissance.</div>
+        <div><b style="color:var(--tx)">Pre-delay reverb</b><br>Silence entre la note directe et le debut de la queue de reverb. Typiquement 10-80ms. Au-dela de 100ms tu entends un echo, pas un pre-delay. Se cale sur 1/32 ou 1/16 en BPM sync.</div>
+        <div><b style="color:var(--tx)">RT60</b><br>Reverberation Time 60 dB = temps que met le son pour decroitre de 60 dB apres arret de la source. C'est la duree de la queue de reverb. Room : 0.3-0.8s. Hall : 1.5-3.5s. Plate : 0.8-2s.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRANSPOSITION -->
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+      <div style="width:4px;height:32px;background:#b060ff;border-radius:2px"></div>
+      <div>
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:15px">Transposition</div>
+        <div style="font-size:11px;color:var(--mu)">Calculateur de pitch shift pour samples</div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div>
+        <div style="font:700 11px 'Syne',sans-serif;color:#b060ff;text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px">A quoi ca sert</div>
+        <div style="font-size:12px;color:var(--mu);line-height:1.8">
+          Calculer exactement combien de demi-tons appliquer pour transponer un sample d'une note a une autre. Par exemple : tu as un sample de basse root C, tu veux l'utiliser dans un morceau en D — l'outil te donne +2 demi-tons, les valeurs en cents, et quel algorithme FL Studio utiliser selon le contenu.
+        </div>
+      </div>
+      <div>
+        <div style="font:700 11px 'Syne',sans-serif;color:#b060ff;text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px">Comment l'utiliser</div>
+        <div style="font-size:12px;color:var(--mu);line-height:1.8">
+          1. Clique la <b style="color:var(--tx)">note source</b> (note fondamentale du sample tel qu'il est enregistre).<br>
+          2. Clique la <b style="color:var(--tx)">note cible</b> (la note souhaitee).<br>
+          3. Lis les resultats : demi-tons, cents, ratio de frequence, changement de vitesse sans formants.<br>
+          4. Selectionne le <b style="color:var(--tx)">type de contenu</b> (Drums, Basse, Melodique, Polyphonique, Voix) pour obtenir la recommandation d'algorithme FL Studio adaptee.<br>
+          5. Consulte le <b style="color:var(--tx)">mapping des notes</b> en bas : il montre ce que chaque note de ta gamme courante devient apres transposition.
+        </div>
+      </div>
+    </div>
+
+    <div style="background:var(--bg);border:1px solid var(--b2);border-radius:8px;padding:10px 14px;margin-top:12px">
+      <div style="font:700 11px 'Syne',sans-serif;color:var(--acc);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Correction de formants — quand l'activer</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;font-size:11px;color:var(--mu);line-height:1.7">
+        <div><b style="color:#38c870">1-2 demi-tons</b><br>Correction optionnelle. Sur un sample simple monophonique, Newtone sans formants donne un resultat propre.</div>
+        <div><b style="color:#c09020">3-5 demi-tons</b><br>Correction recommandee. Sans elle, le timbre change notablement (effet chipmunk vers le haut). Newtone : active Formant Correction. Edison : coche Preserve formants.</div>
+        <div><b style="color:#c04830">6 demi-tons et plus</b><br>Correction indispensable. Meme avec formants la qualite se degrade sur les grands shifts. Utilise Melodyne pour les samples polyphoniques ou vocaux.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WORKFLOW SUGGERE -->
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+      <div style="width:4px;height:32px;background:var(--mu);border-radius:2px"></div>
+      <div>
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:15px">Workflow suggere — session de production</div>
+        <div style="font-size:11px;color:var(--mu)">Comment utiliser HarmonyLab de A a Z dans une session</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px">
+      <div style="background:var(--bg);border:1px solid var(--b2);border-radius:8px;padding:10px;text-align:center">
+        <div style="font:700 20px 'Syne',sans-serif;color:var(--acc3);margin-bottom:6px">1</div>
+        <div style="font:600 11px 'Syne',sans-serif;color:var(--tx);margin-bottom:5px">Choisir la tonalite</div>
+        <div style="font-size:10px;color:var(--mu);line-height:1.6">Onglet Gamme. Selectionne tonique + mode. Identifie les 7 accords disponibles.</div>
+      </div>
+      <div style="background:var(--bg);border:1px solid var(--b2);border-radius:8px;padding:10px;text-align:center">
+        <div style="font:700 20px 'Syne',sans-serif;color:var(--acc3);margin-bottom:6px">2</div>
+        <div style="font:600 11px 'Syne',sans-serif;color:var(--tx);margin-bottom:5px">Construire la progression</div>
+        <div style="font-size:10px;color:var(--mu);line-height:1.6">Clique les accords dans le tableau. Le clavier et le guide melodie s'actualisent a chaque selection.</div>
+      </div>
+      <div style="background:var(--bg);border:1px solid var(--b2);border-radius:8px;padding:10px;text-align:center">
+        <div style="font:700 20px 'Syne',sans-serif;color:var(--acc3);margin-bottom:6px">3</div>
+        <div style="font:600 11px 'Syne',sans-serif;color:var(--tx);margin-bottom:5px">Explorer les modulations</div>
+        <div style="font-size:10px;color:var(--mu);line-height:1.6">Onglet Cercle des Quintes. Identifie les tonalites voisines et les accords pivot pour une transition.</div>
+      </div>
+      <div style="background:var(--bg);border:1px solid var(--b2);border-radius:8px;padding:10px;text-align:center">
+        <div style="font:700 20px 'Syne',sans-serif;color:var(--acc3);margin-bottom:6px">4</div>
+        <div style="font:600 11px 'Syne',sans-serif;color:var(--tx);margin-bottom:5px">Regler les effets</div>
+        <div style="font-size:10px;color:var(--mu);line-height:1.6">Onglet BPM. Entre ton tempo, lis les ms pour delay, reverb et compresseur, applique dans FL Studio.</div>
+      </div>
+      <div style="background:var(--bg);border:1px solid var(--b2);border-radius:8px;padding:10px;text-align:center">
+        <div style="font:700 20px 'Syne',sans-serif;color:var(--acc3);margin-bottom:6px">5</div>
+        <div style="font:600 11px 'Syne',sans-serif;color:var(--tx);margin-bottom:5px">Transponer les samples</div>
+        <div style="font-size:10px;color:var(--mu);line-height:1.6">Onglet Transposition. Source → cible, lis les demi-tons et l'algo recommande selon le contenu.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</div><!-- /cnt -->
 <script>
-const NOTE_NAMES=['Do','Do#','Ré','Ré#','Mi','Fa','Fa#','Sol','Sol#','La','La#','Si'];
-const NOTE_MIDI={'Do':60,'Do#':61,'Ré':62,'Ré#':63,'Mi':64,'Fa':65,'Fa#':66,'Sol':67,'Sol#':68,'La':69,'La#':70,'Si':71};
+// DATA
+const NS=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+const NF=['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B'];
+const FLAT_R=[5,10,3,8,1,6];
 const MODES={
-  major:[0,2,4,5,7,9,11],
-  natural_minor:[0,2,3,5,7,8,10],
-  harmonic_minor:[0,2,3,5,7,8,11],
-  melodic_minor:[0,2,3,5,7,9,11],
-  dorian:[0,2,3,5,7,9,10],
-  phrygian:[0,1,3,5,7,8,10],
-  lydian:[0,2,4,6,7,9,11],
-  mixolydian:[0,2,4,5,7,9,10],
-  locrian:[0,1,3,5,6,8,10]
+  'Mineur Naturel':  {iv:[0,2,3,5,7,8,10],col:'#6080ff',desc:'Sombre, melancolique - DnB, Techno, Pop dark'},
+  'Majeur':          {iv:[0,2,4,5,7,9,11],col:'#f0c040',desc:'Lumineux, joyeux, positif'},
+  'Mineur Harm.':    {iv:[0,2,3,5,7,8,11],col:'#b060ff',desc:'Dramatique, oriental - V devient dominante majeure'},
+  'Mineur Melo.':    {iv:[0,2,3,5,7,9,11],col:'#60c0ff',desc:'Sophistique, jazz - 6e et 7e releves'},
+  'Dorien':          {iv:[0,2,3,5,7,9,10],col:'#40d080',desc:'Mineur jazzy - 6e degre majeur'},
+  'Phrygien':        {iv:[0,1,3,5,7,8,10],col:'#ff4060',desc:'Espagnol, dark - b2 caracteristique'},
+  'Lydien':          {iv:[0,2,4,6,7,9,11],col:'#ffe060',desc:'Onirique, planant - quarte augmentee'},
+  'Mixolydien':      {iv:[0,2,4,5,7,9,10],col:'#ff8040',desc:'Blues-rock - 7e abaissee'},
+  'Phrygien Dom.':   {iv:[0,1,4,5,7,8,10],col:'#ff2020',desc:'Oriental, metal - Phrygien avec tierce majeure'},
+  'Locrien':         {iv:[0,1,3,5,6,8,10],col:'#808090',desc:'Tres instable - quinte diminuee'},
 };
-const CHORD_TYPES_MODES={
-  major:['Maj','min','min','Maj','Maj','min','dim'],
-  natural_minor:['min','dim','Maj','min','min','Maj','Maj'],
-  harmonic_minor:['min','dim','Maj','min','Maj','Maj','dim'],
-  melodic_minor:['min','min','Maj','Maj','Maj','dim','dim'],
-  dorian:['min','min','Maj','Maj','min','dim','Maj'],
-  phrygian:['min','Maj','Maj','min','dim','Maj','min'],
-  lydian:['Maj','Maj','min','dim','Maj','min','min'],
-  mixolydian:['Maj','min','dim','Maj','min','min','Maj'],
-  locrian:['dim','Maj','min','min','Maj','Maj','min']
+const DEG_FN=['Tonique - repos absolu','Sus-tonique - tension','Mediante - couleur du mode',
+  'Sous-dominante - tension moderee','Dominante - forte tension vers resolution',
+  'Sus-dominante - couleur','Sensible / Sous-tonique - tension vers tonique'];
+const IV_NAMES={1:'b2',2:'2',3:'b3/m3',4:'M3',5:'4 juste',6:'b5 triton',7:'5 juste',8:'b6/m6',9:'6',10:'b7/m7',11:'M7'};
+const MODE_TO_MAJ={'Majeur':0,'Lydien':7,'Mixolydien':5,'Dorien':10,'Mineur Naturel':3,'Mineur Harm.':3,'Mineur Melo.':3,'Phrygien':8,'Phrygien Dom.':8,'Locrien':1};
+const IS_BLACK=[false,true,false,true,false,false,true,false,true,false,true,false];
+const W_POS={0:0,2:1,4:2,5:3,7:4,9:5,11:6};
+const B_CTR={1:.5,3:1.5,6:3.5,8:4.5,10:5.5};
+const KW=34,BW=20;
+const DIVS=[
+  {label:'1/1',mult:4},{label:'1/2',mult:2},{label:'1/4',mult:1},{label:'1/8',mult:.5},
+  {label:'1/16',mult:.25},{label:'1/32',mult:.125},
+  {label:'1/4.',mult:1.5},{label:'1/8.',mult:.75},{label:'1/4T',mult:2/3},{label:'1/8T',mult:1/3},
+];
+const SAT={
+  tape:{desc:'Harmoniques pairs (2e, 4e) - chaleur, rondeur, compression naturelle des transitoires. Parfaite pour basses, drums, tout signal trop digital.',drives:['0-20% : Legere coloration, quasi transparent','20-50% : Chaleur prononcee, transitoires arrondis','50-80% : Saturation dense, perte de definition HF','80-100% : Overdrive, effet lo-fi']},
+  tube:{desc:'Harmoniques pairs ET impairs - plus musical que le Tape. Apporte presence et vie. Reagit dynamiquement au niveau entree. Leads, synthes, voix.',drives:['0-15% : Legere presence, transient doux','15-40% : Couleur tube prononcee, mid-range enrichi','40-70% : Crunch musical','70-100% : Overdrive tube, distorsion douce']},
+  clip:{desc:'Coupe les pics brutalement - harmoniques impairs (3e, 5e, 7e). Son agressif, carre, industriel. Augmente massivement le RMS. Tres utilise en DnB/Techno sur basses et reeze.',drives:['0-10% : Legere compression de pics','10-30% : Clipping perceptible, gain de densite','30-60% : Distorsion agressive, spectre enrichi','60-100% : Son carre, wave shaping extreme']},
+  trans:{desc:'Enrichit le bas du spectre - masse et chaleur dans les sub/bas. Comportement non-lineaire qui colle les elements. Bus basse/kick ou bus master.',drives:['0-25% : Renforcement sub naturel','25-50% : Bas enrichi, meilleure cohesion','50-75% : Saturation bas-mediums notable','75-100% : Compression transformateur prononcee']},
+  bit:{desc:'Reduit la resolution bits et/ou le sample rate - aliasing, granularite, lo-fi robotique. Effet creatif sur leads, snares, FX. Non lineaire selon la frequence.',drives:['0-20% : Legere granularite (12-14 bits)','20-40% : Lo-fi perceptible (8-10 bits)','40-70% : Son robotique fort (6-8 bits)','70-100% : Aliasing extreme, destructif (1-4 bits)']},
 };
-const DEGREE_NAMES=['I','II','III','IV','V','VI','VII'];
-const CHORD_INTERVALS={'Maj':[0,4,7],'min':[0,3,7],'dim':[0,3,6]};
-const SUBDIV=[
-  {name:'Ronde (1/1)',mul:4},{name:'Blanche (1/2)',mul:2},{name:'Noire (1/4)',mul:1},
-  {name:'Croche (1/8)',mul:.5},{name:'Double croche (1/16)',mul:.25},{name:'Triple croche (1/32)',mul:.125}
-];
-const DELAYS=[
-  {name:'Slap',mul:.125,desc:'Croche'},{name:'Double Slap',mul:.25,desc:'Noire'},
-  {name:'Chorus',mul:null,fixed:30,desc:'~30ms fixe'},{name:'Echo court',mul:.5,desc:'Blanche'},
-  {name:'Echo long',mul:1,desc:'Noire pointée'},{name:'Ping-Pong',mul:.375,desc:'Croche pointée'},
-  {name:'Tape Delay',mul:.667,desc:'Triolet blanche'}
-];
-const REVERBS=[
-  {name:'Room',pre_mul:.25,decay:'0.4–0.8s'},{name:'Hall',pre_mul:.5,decay:'1.5–3.5s'},
-  {name:'Plate',pre_mul:.125,decay:'0.8–2.0s'},{name:'Spring',pre_mul:.0625,decay:'0.5–1.5s'},
-  {name:'Chamber',pre_mul:.375,decay:'0.6–1.8s'},{name:'Ambience',pre_mul:.0625,decay:'0.2–0.5s'}
-];
-const INSTRUMENTS=[
-  {id:'guitar',label:'Guitare'},{id:'bass',label:'Basse'},{id:'vocals',label:'Voix'},
-  {id:'synth',label:'Synthé'},{id:'piano',label:'Piano'},{id:'drums',label:'Batterie'},
-  {id:'strings',label:'Cordes'},{id:'brass',label:'Cuivres'}
-];
-const ADVICE={
-  guitar:{reverb:{type:'Spring / Room',predelay:'8–15ms',decay:'0.6–1.2s',tip:'Le Spring convient pour le clean et le blues. Pour le métal, utilisez un Room court avec moins de wet.'},delay:{type:'Slap (1/8) + Echo (1/4)',time:'1/8 + 1/4',tip:'Classique rockabilly/rock. Pour l\'ambient, essayez un ping-pong en blanche pointée.'},best:'Spring Reverb + Slap Delay'},
-  bass:{reverb:{type:'Ambience',predelay:'2–5ms',decay:'0.2–0.4s',tip:'Un léger ambience évite de noyer les graves. Gardez le wet sous 15%.'},delay:{type:'Chorus très court',time:'15–25ms',tip:'Évitez les delays longs sur la basse. Un chorus subtil enrichit sans confusion rythmique.'},best:'Ambience légère (wet < 15%)'},
-  vocals:{reverb:{type:'Hall / Plate',predelay:'20–30ms',decay:'1.2–2.5s',tip:'Le pre-delay maintient la voix en avant. Hall pour les ballades, Plate pour la pop.'},delay:{type:'Echo 1/4 + 1/8',time:'Noire + Croche',tip:'Delay en noire avec 3–4 répétitions. Coupez les hautes fréquences pour un son vintage.'},best:'Plate Reverb + Quarter-note Delay'},
-  synth:{reverb:{type:'Hall / Chamber',predelay:'10–20ms',decay:'1.5–4.0s',tip:'Hall long pour les pads. Chamber court pour les leads — maintient la définition.'},delay:{type:'Ping-Pong / Tape',time:'3/8 ou 2/3',tip:'Ping-pong pour la largeur stéréo. Tape Delay pour la chaleur et le mouvement.'},best:'Hall Reverb + Ping-Pong Delay'},
-  piano:{reverb:{type:'Hall / Room',predelay:'15–25ms',decay:'1.0–2.0s',tip:'Grand Hall pour le concert. Room court et intimiste pour le jazz.'},delay:{type:'Echo ou aucun',time:'1/4 ou 1/2',tip:'Le piano n\'a souvent pas besoin de delay. Si vous en utilisez un, restez subtil.'},best:'Hall moyen (1.2s decay)'},
-  drums:{reverb:{type:'Room / Plate (snare)',predelay:'2–8ms',decay:'0.3–0.8s',tip:'Room sur le bus drums. Plate sur la caisse claire uniquement. Évitez toute reverb sur la kick.'},delay:{type:'Slap sur snare',time:'Croche pointée',tip:'Envoyez principalement la snare dans la reverb. Room court donne de la cohésion.'},best:'Room sur bus + Plate sur snare'},
-  strings:{reverb:{type:'Hall large',predelay:'25–40ms',decay:'2.5–4.0s',tip:'Grand Hall naturel. Pre-delay généreux pour séparer du reste du mix.'},delay:{type:'Tape ou aucun',time:'1/2 ou 1/1',tip:'Tape Delay très court peut ajouter de la profondeur sur un solo. Sinon, évitez.'},best:'Grand Hall (2.5–4s decay)'},
-  brass:{reverb:{type:'Chamber / Room',predelay:'8–15ms',decay:'0.5–1.2s',tip:'Chamber court donne de la présence sans noyer le son agressif des cuivres.'},delay:{type:'Slap ou aucun',time:'Croche',tip:'Slap delay pour l\'effet spectaculaire. Pour le jazz, reverb seule suffit.'},best:'Chamber (0.8s decay)'}
-};
-const PROG_DEFS=[
-  {genre:'Drum and Bass / Neuro',degrees:[0,2,5,4],desc:'Groovy, sombre, répétitif'},
-  {genre:'Hi-Tek / Techno Minimal',degrees:[0,6,3,4],desc:'Hypnotique, dissonant, industriel'},
-  {genre:'Death Metal',degrees:[0,5,3,6],desc:'Sombre, agressif, tritone inclus'}
-];
 
-let currentBPM=120;
+// STATE
+const S={root:2,mode:'Mineur Naturel',deg:null,actx:null,tpSrc:null,tpTgt:null,tpDir:'short',delayDivIdx:3,satType:'tape'};
 
-function showTab(t,btn){
-  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
-  document.getElementById('tab-'+t).classList.add('active');
-  btn.classList.add('active');
+// AUDIO
+function getCtx(){if(!S.actx)S.actx=new(window.AudioContext||window.webkitAudioContext)();if(S.actx.state==='suspended')S.actx.resume();return S.actx;}
+function noteFreq(ni,oct){return 440*Math.pow(2,((oct+1)*12+ni-69)/12);}
+function tone(freq,t0,dur=1.8,vol=0.2){
+  const ctx=getCtx(),osc=ctx.createOscillator(),g=ctx.createGain(),f=ctx.createBiquadFilter();
+  f.type='lowpass';f.frequency.value=2600;osc.connect(f);f.connect(g);g.connect(ctx.destination);
+  osc.type='triangle';osc.frequency.value=freq;
+  g.gain.setValueAtTime(0,t0);g.gain.linearRampToValueAtTime(vol,t0+0.018);g.gain.exponentialRampToValueAtTime(0.001,t0+dur);
+  osc.start(t0);osc.stop(t0+dur+0.1);
 }
-function ms(mul,bpm){return (60000/bpm)*mul;}
-function updateBPM(v){
-  v=Math.max(40,Math.min(300,parseInt(v)||120));
-  currentBPM=v;
-  document.getElementById('bpmDisplay').textContent=v;
-  document.getElementById('bpmSlider').value=v;
-  document.getElementById('bpmInput').value=v;
-  renderSubdivisions();renderDelays();renderReverbs();
-}
-function renderSubdivisions(){
-  document.getElementById('subdiv-body').innerHTML=SUBDIV.map(s=>{
-    const n=ms(s.mul,currentBPM),pt=n*1.5,tr=n*(2/3);
-    return `<tr><td>${s.name}</td><td><b>${n.toFixed(1)}</b> ms</td><td>${pt.toFixed(1)} ms</td><td>${tr.toFixed(1)} ms</td></tr>`;
-  }).join('');
-}
-function renderDelays(){
-  document.getElementById('delay-body').innerHTML=DELAYS.map(d=>{
-    const t=d.fixed||ms(d.mul,currentBPM);
-    return `<tr><td>${d.name}</td><td><b>${t.toFixed(1)}</b> ms</td><td><span class="badge badge-teal">${d.desc}</span></td></tr>`;
-  }).join('');
-}
-function renderReverbs(){
-  document.getElementById('reverb-body').innerHTML=REVERBS.map(r=>{
-    return `<tr><td>${r.name}</td><td><b>${ms(r.pre_mul,currentBPM).toFixed(1)}</b> ms</td><td>${r.decay}</td></tr>`;
-  }).join('');
-}
-function renderInstruments(){
-  document.getElementById('instr-grid').innerHTML=INSTRUMENTS.map(i=>
-    `<button class="instr-btn" id="instr-${i.id}" onclick="selectInstr('${i.id}')">${i.label}</button>`
-  ).join('');
-}
-function selectInstr(id){
-  document.querySelectorAll('.instr-btn').forEach(b=>b.classList.remove('selected'));
-  document.getElementById('instr-'+id).classList.add('selected');
-  const a=ADVICE[id],lbl=INSTRUMENTS.find(i=>i.id===id).label;
-  const s=ms(.125,currentBPM).toFixed(1),q=ms(1,currentBPM).toFixed(1);
-  document.getElementById('advisor-result').innerHTML=`
-  <div class="card">
-    <h2>Recommandation — ${lbl}</h2>
-    <div class="tip" style="margin-bottom:16px">Meilleur choix : <b>${a.best}</b></div>
-    <div class="grid2">
-      <div class="rec-box">
-        <h3>Reverb recommandée</h3>
-        <div class="rec-row"><span class="rec-label">Type</span><span class="rec-value">${a.reverb.type}</span></div>
-        <div class="rec-row"><span class="rec-label">Pre-delay</span><span class="rec-value">${a.reverb.predelay}</span></div>
-        <div class="rec-row"><span class="rec-label">Decay</span><span class="rec-value">${a.reverb.decay}</span></div>
-        <div class="tip">${a.reverb.tip}</div>
-      </div>
-      <div class="rec-box">
-        <h3>Delay recommandé</h3>
-        <div class="rec-row"><span class="rec-label">Type</span><span class="rec-value">${a.delay.type}</span></div>
-        <div class="rec-row"><span class="rec-label">Subdivision</span><span class="rec-value">${a.delay.time}</span></div>
-        <div class="rec-row"><span class="rec-label">À ${currentBPM} BPM</span><span class="rec-value">${s} ms (1/8) · ${q} ms (1/4)</span></div>
-        <div class="tip">${a.delay.tip}</div>
-      </div>
-    </div>
-  </div>`;
-}
-function midiToFreq(midi){return 440*Math.pow(2,(midi-69)/12);}
-function getScaleNotes(){
-  const key=document.getElementById('key-select').value;
-  const mode=document.getElementById('mode-select').value;
-  const root=NOTE_MIDI[key];
-  return MODES[mode].map(i=>{const midi=root+i;return{name:NOTE_NAMES[midi%12],midi,freq:midiToFreq(midi)};});
-}
-function getChordNotes(rootMidi,type){
-  return CHORD_INTERVALS[type].map(i=>NOTE_NAMES[(rootMidi+i)%12]);
-}
-function updateScale(){
-  const notes=getScaleNotes();
-  const mode=document.getElementById('mode-select').value;
-  const chordTypes=CHORD_TYPES_MODES[mode];
-  const degrees=['1re','2e','3e','4e','5e','6e','7e'];
+function playChord(nis,arp=false){const ctx=getCtx(),t0=ctx.currentTime;nis.forEach((ni,i)=>{const dt=arp?i*0.09:0;tone(noteFreq(ni,3),t0+dt,2.0,0.18);tone(noteFreq(ni,4),t0+dt,1.2,0.07);});}
 
-  document.getElementById('scale-notes').innerHTML=notes.map((n,i)=>
-    `<span class="note-pill ${i===0?'root':''}" title="${n.freq.toFixed(2)} Hz">${n.name}</span>`
-  ).join('');
+// THEORY
+function useFlats(){return FLAT_R.includes((S.root+(MODE_TO_MAJ[S.mode]??0))%12);}
+function noteArr(){return useFlats()?NF:NS;}
+function scaleNotes(){const iv=MODES[S.mode].iv,na=noteArr();return iv.map(x=>{const i=(S.root+x)%12;return{name:na[i],idx:i,iv:x};});}
+function getNoteNamesFn(rootIdx,modeIv){
+  const off=MODE_TO_MAJ['Mineur Naturel']??0;
+  const useFlat=FLAT_R.includes((rootIdx+off)%12);
+  const na=useFlat?NF:NS;
+  return modeIv.map(x=>{const i=(rootIdx+x)%12;return{name:na[i],idx:i};});
+}
+function chordType(t3,t5){
+  const t=(t3+12)%12,f=(t5+12)%12;
+  if(t===4&&f===7)return{suf:'',lbl:'Majeur',col:'#e0a030'};
+  if(t===3&&f===7)return{suf:'m',lbl:'Mineur',col:'#6080ff'};
+  if(t===3&&f===6)return{suf:'deg',lbl:'Diminue',col:'#ff4060'};
+  if(t===4&&f===8)return{suf:'+',lbl:'Augmente',col:'#ff8040'};
+  return{suf:'?',lbl:'?',col:'#888'};
+}
+function buildChords(sn){
+  const RN=['I','II','III','IV','V','VI','VII'];
+  return sn.map((r,i)=>{
+    const t=sn[(i+2)%7],f=sn[(i+4)%7];
+    const t3=(t.idx-r.idx+12)%12,t5=(f.idx-r.idx+12)%12;
+    const ct=chordType(t3,t5);
+    let roman=RN[i];
+    if(ct.suf==='m'||ct.suf==='deg')roman=roman.toLowerCase();
+    if(ct.suf==='deg')roman+='deg';
+    const suffix=ct.suf==='deg'?'&#x00B0;':ct.suf;
+    return{...ct,root:r,third:t,fifth:f,degree:i,roman,suffix,nis:[r.idx,t.idx,f.idx]};
+  });
+}
+function borrowedChords(sn){
+  const na=noteArr(),res=[],m=S.mode;
+  if(['Mineur Naturel','Dorien','Phrygien'].includes(m)){const vr=sn[4].idx;res.push({name:na[vr],suf:'',desc:'V majeur (min. harm.)',nis:[vr,(vr+4)%12,(vr+7)%12],col:'#b060ff'});}
+  if(m==='Mineur Naturel'){
+    const ivr=sn[3].idx;res.push({name:na[ivr],suf:'',desc:'IV majeur (Dorien)',nis:[ivr,(ivr+4)%12,(ivr+7)%12],col:'#40d080'});
+    const n2=(S.root+1)%12;res.push({name:na[n2],suf:'',desc:'bII napolitain',nis:[n2,(n2+4)%12,(n2+7)%12],col:'#ff6080'});
+    const vii=(S.root+11)%12;res.push({name:na[vii],suf:'&#x00B0;',desc:'vii dim harm. - tension max',nis:[vii,(vii+3)%12,(vii+6)%12],col:'#ff4040'});
+  }
+  if(m==='Majeur'){
+    const iv=(S.root+5)%12,bVI=(S.root+8)%12,bVII=(S.root+10)%12;
+    res.push({name:na[iv],suf:'m',desc:'iv mineur (parallele)',nis:[iv,(iv+3)%12,(iv+7)%12],col:'#6080ff'});
+    res.push({name:na[bVI],suf:'',desc:'bVI (parallele)',nis:[bVI,(bVI+4)%12,(bVI+7)%12],col:'#b060ff'});
+    res.push({name:na[bVII],suf:'',desc:'bVII (parallele)',nis:[bVII,(bVII+4)%12,(bVII+7)%12],col:'#ff8040'});
+  }
+  return res;
+}
+function melodyGuide(sn,chord){
+  const cr=chord.root.idx;
+  const R={0:{cat:'stable',lbl:'R'},3:{cat:'stable',lbl:'m3'},4:{cat:'stable',lbl:'M3'},7:{cat:'stable',lbl:'5'},9:{cat:'color',lbl:'6'},10:{cat:'color',lbl:'m7'},11:{cat:'color',lbl:'M7'},8:{cat:'color',lbl:'b6'},2:{cat:'tension',lbl:'2'},5:{cat:'tension',lbl:'sus4'},1:{cat:'tension',lbl:'b2'},6:{cat:'tension',lbl:'b5'}};
+  return sn.map(n=>{const iv=(n.idx-cr+12)%12;const r=R[iv]||{cat:'tension',lbl:'+'+iv};return{name:n.name,idx:n.idx,...r};});
+}
 
-  document.getElementById('scale-freq-body').innerHTML=notes.map((n,i)=>
-    `<tr><td>${DEGREE_NAMES[i]} — ${degrees[i]}</td><td><b>${n.name}</b></td><td>${n.freq.toFixed(2)} Hz</td></tr>`
-  ).join('');
+// PIANO
+function renderPiano(sn,chordNis=[]){
+  const piano=document.getElementById('piano');piano.innerHTML='';
+  const si=sn.map(n=>n.idx),div=document.createElement('div');
+  div.style.cssText='position:relative;height:128px;';let maxW=0;
+  for(let oct=0;oct<2;oct++){
+    for(let n=0;n<12;n++){
+      const isB=IS_BLACK[n],inSc=si.includes(n),isC=chordNis.includes(n),freq=noteFreq(n,oct+4);
+      const k=document.createElement('div');
+      if(!isB){
+        const lp=(oct*7+W_POS[n])*KW;maxW=Math.max(maxW,lp+KW);
+        k.style.cssText='position:absolute;left:'+lp+'px;top:0;width:'+(KW-1)+'px;height:126px;background:'+(isC?'#ffe040':inSc?'#60aaff':'#d8dfe8')+';border:1px solid '+(isC?'#c8a000':inSc?'#2070d0':'#aab4c2')+';border-radius:0 0 5px 5px;cursor:pointer;z-index:1;transition:background .1s;';
+        if(n===0){const lb=document.createElement('div');lb.style.cssText='position:absolute;bottom:5px;left:50%;transform:translateX(-50%);font-size:8px;color:#888;font-family:monospace;pointer-events:none;';lb.textContent='C'+(oct+4);k.appendChild(lb);}
+      }else{
+        const lp=(oct*7+B_CTR[n])*KW-BW/2;
+        k.style.cssText='position:absolute;left:'+lp+'px;top:0;width:'+BW+'px;height:74px;background:'+(isC?'#d4a800':inSc?'#1a55c0':'#1e2a38')+';border-bottom:3px solid '+(isC?'#a07800':inSc?'#0a3080':'#0a1018')+';border-radius:0 0 4px 4px;cursor:pointer;z-index:2;transition:background .1s;';
+      }
+      k.addEventListener('mousedown',e=>{e.preventDefault();const orig=k.style.background;k.style.background='#ffb020';tone(freq,getCtx().currentTime,1.6,isB?0.16:0.22);setTimeout(()=>k.style.background=orig,160);});
+      div.appendChild(k);
+    }
+  }
+  {const lp=2*7*KW;maxW=Math.max(maxW,lp+KW);const inSc=si.includes(0),isC=chordNis.includes(0),freq=noteFreq(0,6);const k=document.createElement('div');k.style.cssText='position:absolute;left:'+lp+'px;top:0;width:'+(KW-1)+'px;height:126px;background:'+(isC?'#ffe040':inSc?'#60aaff':'#d8dfe8')+';border:1px solid '+(isC?'#c8a000':inSc?'#2070d0':'#aab4c2')+';border-radius:0 0 5px 5px;cursor:pointer;z-index:1;';const lb=document.createElement('div');lb.style.cssText='position:absolute;bottom:5px;left:50%;transform:translateX(-50%);font-size:8px;color:#888;font-family:monospace;pointer-events:none;';lb.textContent='C6';k.appendChild(lb);k.addEventListener('mousedown',e=>{e.preventDefault();tone(freq,getCtx().currentTime,1.4,0.18);});div.appendChild(k);}
+  div.style.width=(maxW+2)+'px';piano.style.width=(maxW+2)+'px';piano.appendChild(div);
+}
 
-  document.getElementById('chords-grid').innerHTML=notes.map((n,i)=>{
-    const type=chordTypes[i],cn=getChordNotes(n.midi,type);
-    return `<button class="chord-btn" id="chord-${i}" onclick="selectChord(${i})">
-      <div><b>${n.name} ${type}</b> <span class="badge badge-purple">${DEGREE_NAMES[i]}</span></div>
-      <div class="chord-notes">${cn.join(' – ')}</div>
-    </button>`;
-  }).join('');
-
-  document.getElementById('progs-grid').innerHTML=PROG_DEFS.map((p,pi)=>{
-    const chords=p.degrees.map(d=>{
-      const n=notes[d],t=chordTypes[d],cn=getChordNotes(n.midi,t);
-      return{name:`${n.name}${t==='Maj'?'':'m'}`,notes:cn,deg:DEGREE_NAMES[d]};
+// RENDER
+function render(){
+  const sn=scaleNotes(),chords=buildChords(sn),na=noteArr(),mode=MODES[S.mode],rname=na[S.root];
+  const DN=['I','II','III','IV','V','VI','VII'];
+  document.getElementById('hk-key').textContent=rname;
+  document.getElementById('hk-mode').textContent=S.mode;
+  document.getElementById('mode-desc').textContent=mode.desc;
+  document.getElementById('scale-pills').innerHTML=sn.map((n,i)=>'<div class="spill" style="border-color:'+mode.col+'40"><span class="sn" style="color:'+mode.col+'">'+n.name+'</span><span class="sd">'+DN[i]+'</span></div>').join('');
+  document.getElementById('interval-desc').innerHTML=mode.iv.slice(1).map((iv,i)=>'<span style="color:'+mode.col+';font-family:JetBrains Mono,monospace;font-weight:600">'+sn[i+1].name+'</span> <span style="color:var(--mu);font-size:11px">'+(IV_NAMES[iv]||iv)+'</span>').join(' &nbsp;&middot;&nbsp; ');
+  const degV=sn[4];
+  const eTon=document.getElementById('tf-tonique'); if(eTon) eTon.textContent=rname;
+  const eV=document.getElementById('tf-v');   if(eV)  eV.textContent=degV.name;
+  const eV2=document.getElementById('tf-v2'); if(eV2) eV2.textContent=degV.name;
+  const eT2=document.getElementById('tf-t2'); if(eT2) eT2.textContent=rname;
+  const eK=document.getElementById('tf-key'); if(eK)  eK.textContent=rname+' '+S.mode;
+  // Calcul de l'accord selectionne depuis S.deg (local, pas de variable externe)
+  const selC=(S.deg!==null&&S.deg>=0&&S.deg<chords.length)?chords[S.deg]:null;
+  document.getElementById('chord-rows').innerHTML=chords.map((c,i)=>'<tr class="cl '+(S.deg===i?'sel':'')+'" data-idx="'+i+'"><td><span class="roman">'+c.roman+'</span></td><td><span class="cnm" style="color:'+c.col+'">'+c.root.name+c.suffix+'</span> <span class="badge" style="background:'+c.col+'18;color:'+c.col+'">'+c.lbl+'</span></td><td class="cnotes">'+c.root.name+' - '+c.third.name+' - '+c.fifth.name+'</td><td class="fn">'+DEG_FN[i]+'</td><td><button class="pb">play</button></td></tr>').join('');
+  document.querySelectorAll('#chord-rows tr[data-idx]').forEach(function(tr){
+    var idx=parseInt(tr.dataset.idx);
+    tr.addEventListener('click',function(e){
+      if(e.target.tagName==='BUTTON') return;
+      S.deg=(S.deg===idx)?null:idx;
+      if(S.deg!==null) playChord(buildChords(scaleNotes())[S.deg].nis,true);
+      render();
     });
-    const chordsHTML=chords.map(c=>`<span class="prog-chord">${c.name}</span>`).join('');
-    const notesDetailHTML=chords.map(c=>`<b>${c.name}</b>: ${c.notes.join(' – ')}`).join('<br>');
-    return `<div class="prog-card" id="prog-${pi}" onclick="toggleProg(${pi})">
-      <div class="prog-title">${p.genre}</div>
-      <div class="prog-genre">${p.desc}</div>
-      <div class="prog-chords">${chordsHTML}</div>
-      <div class="prog-notes-display" id="prog-notes-${pi}">${notesDetailHTML}</div>
-    </div>`;
-  }).join('');
-}
-function selectChord(i){
-  document.querySelectorAll('.chord-btn').forEach(b=>b.classList.remove('selected'));
-  document.getElementById('chord-'+i).classList.add('selected');
-}
-function toggleProg(i){
-  document.getElementById('prog-'+i).classList.toggle('selected');
-  document.getElementById('prog-notes-'+i).classList.toggle('show');
+    tr.querySelector('button').addEventListener('click',function(e){
+      e.stopPropagation();
+      playChord(buildChords(scaleNotes())[idx].nis,true);
+    });
+  });
+  if(selC){
+    const g=melodyGuide(sn,selC);
+    document.getElementById('mel-title').textContent=selC.root.name+selC.suffix+' - notes disponibles';
+    document.getElementById('mel-guide').innerHTML=g.map(n=>'<div class="mn '+n.cat+'"><span class="mn-n">'+n.name+'</span><span class="mn-r">'+n.lbl+'</span></div>').join('');
+    document.getElementById('mel-container').style.display='block';
+  }else{document.getElementById('mel-container').style.display='none';}
+  const bor=borrowedChords(sn);
+  document.getElementById('borrowed').innerHTML=bor.length?bor.map(b=>'<div class="bc" style="border-color:'+b.col+'45" onclick="playChord('+JSON.stringify(b.nis)+',true)"><div class="bcn" style="color:'+b.col+'">'+b.name+b.suf+'</div><div class="bcd">'+b.desc+'</div></div>').join(''):'<div class="tx-m">Aucun accord emprunte pour ce mode.</div>';
+  renderModInfo(rname);
+  if(S.tpSrc!==null&&S.tpTgt!==null)calcTranspo();
+  // Piano en DERNIER — utilise selC calcule localement dans ce render()
+  renderPiano(sn,selC?selC.nis:[]);
 }
 
-renderSubdivisions();renderDelays();renderReverbs();renderInstruments();updateScale();
+// COF
+const MJ_KEYS=['C','G','D','A','E','B','F#','Db','Ab','Eb','Bb','F'];
+const MN_KEYS=['Am','Em','Bm','F#m','C#m','G#m','Ebm','Bbm','Fm','Cm','Gm','Dm'];
+const MJ_IDX=[0,7,2,9,4,11,6,1,8,3,10,5];
+function renderCoF(){
+  const svg=document.getElementById('cof'),cx=250,cy=250,R=235,r=170,ri=112;let h='';
+  for(let i=0;i<12;i++){
+    const a0=(i*30-90)*Math.PI/180,a1=((i+1)*30-90)*Math.PI/180,am=(i*30+15-90)*Math.PI/180;
+    const ni=MJ_IDX[i],mni=(ni+9)%12,isSel=ni===S.root,isMin=mni===S.root,hue=i*30;
+    const x1=cx+R*Math.cos(a0),y1=cy+R*Math.sin(a0),x2=cx+R*Math.cos(a1),y2=cy+R*Math.sin(a1),x3=cx+r*Math.cos(a1),y3=cy+r*Math.sin(a1),x4=cx+r*Math.cos(a0),y4=cy+r*Math.sin(a0);
+    h+='<path d="M'+x1+' '+y1+'A'+R+' '+R+' 0 0 1 '+x2+' '+y2+'L'+x3+' '+y3+'A'+r+' '+r+' 0 0 0 '+x4+' '+y4+'Z" fill="hsl('+hue+','+(isSel?75:32)+'%,'+(isSel?28:15)+'%)" stroke="'+(isSel?'hsl('+hue+',80%,55%)':'#1c2838')+'" stroke-width="'+(isSel?2.5:1.5)+'" onclick="goKey('+ni+',\'Majeur\')" style="cursor:pointer"/>';
+    const tx=cx+(R+r)/2*Math.cos(am),ty=cy+(R+r)/2*Math.sin(am);
+    h+='<text x="'+tx+'" y="'+ty+'" text-anchor="middle" dominant-baseline="middle" fill="'+(isSel?'#fff':'#b0c4d8')+'" font-family="Syne,sans-serif" font-weight="700" font-size="13" pointer-events="none">'+MJ_KEYS[i]+'</text>';
+    const ix1=cx+r*Math.cos(a0),iy1=cy+r*Math.sin(a0),ix2=cx+r*Math.cos(a1),iy2=cy+r*Math.sin(a1),ix3=cx+ri*Math.cos(a1),iy3=cy+ri*Math.sin(a1),ix4=cx+ri*Math.cos(a0),iy4=cy+ri*Math.sin(a0);
+    h+='<path d="M'+ix1+' '+iy1+'A'+r+' '+r+' 0 0 1 '+ix2+' '+iy2+'L'+ix3+' '+iy3+'A'+ri+' '+ri+' 0 0 0 '+ix4+' '+iy4+'Z" fill="hsl('+hue+','+(isMin?55:20)+'%,'+(isMin?20:12)+'%)" stroke="'+(isMin?'hsl('+hue+',60%,45%)':'#1c2838')+'" stroke-width="'+(isMin?2:1)+'" onclick="goKey('+mni+',\'Mineur Naturel\')" style="cursor:pointer"/>';
+    const mtx=cx+(r+ri)/2*Math.cos(am),mty=cy+(r+ri)/2*Math.sin(am);
+    h+='<text x="'+mtx+'" y="'+mty+'" text-anchor="middle" dominant-baseline="middle" fill="'+(isMin?'#c0d8ff':'#526070')+'" font-family="JetBrains Mono,monospace" font-size="10" pointer-events="none">'+MN_KEYS[i]+'</text>';
+  }
+  h+='<circle cx="'+cx+'" cy="'+cy+'" r="'+ri+'" fill="#0c1018" stroke="#1c2838" stroke-width="2"/><text x="'+cx+'" y="'+(cy-7)+'" text-anchor="middle" fill="#3d5060" font-family="Syne,sans-serif" font-size="11">Cercle</text><text x="'+cx+'" y="'+(cy+9)+'" text-anchor="middle" fill="#3d5060" font-family="Syne,sans-serif" font-size="11">des Quintes</text>';
+  svg.innerHTML=h;
+}
+
+function sharedNotes(sn1,sn2){const i1=sn1.map(n=>n.idx),i2=sn2.map(n=>n.idx);return{shared:i1.filter(i=>i2.includes(i)),diff1:i1.filter(i=>!i2.includes(i)),diff2:i2.filter(i=>!i1.includes(i))};}
+
+function renderModInfo(rname){
+  const sn=scaleNotes(),na=noteArr();
+  const rIdx=MJ_IDX.indexOf(S.root);
+  const minIv=MODES['Mineur Naturel'].iv;
+  const targets=[
+    {ni:MJ_IDX[(rIdx+1)%12],label:'Quinte haute (1 pas)',col:'#00c8a0'},
+    {ni:MJ_IDX[(rIdx+11)%12],label:'Quinte basse (1 pas)',col:'#00c8a0'},
+    {ni:MJ_IDX[(rIdx+2)%12],label:'2 quintes hautes',col:'#6090ff'},
+    {ni:MJ_IDX[(rIdx+10)%12],label:'2 quintes basses',col:'#6090ff'},
+    {ni:MJ_IDX[(rIdx+6)%12],label:'Triton (oppose)',col:'#ff4060'},
+  ];
+  document.getElementById('mod-from').textContent=rname+' '+S.mode;
+  document.getElementById('mod-targets').innerHTML=targets.map(t=>{
+    const tna=FLAT_R.includes((t.ni+3)%12)?NF:NS;
+    const tsn=getNoteNamesFn(t.ni,minIv);
+    const {shared,diff1,diff2}=sharedNotes(sn,tsn);
+    const chg=sn.filter(n=>!tsn.some(m=>m.idx===n.idx)).map(n=>n.name);
+    const newN=tsn.filter(m=>!sn.some(n=>n.idx===m.idx)).map(m=>m.name);
+    return '<div class="mod-item"><div><div class="mod-key" style="color:'+t.col+'">'+tna[t.ni]+' min</div><div style="font-size:10px;color:var(--mu2)">'+t.label+'</div></div><div class="mod-meta"><b style="color:var(--tx)">'+shared.length+'/7 notes communes</b><br>'+(chg.length>0?'<span style="color:#ff6060">'+chg.join(' ')+' remplacees par '+newN.join(' ')+'</span>':'Gamme identique')+'</div></div>';
+  }).join('');
+
+  const relMaj=(S.root+3)%12;
+  const relMajNa=FLAT_R.includes(relMaj)?NF:NS;
+  const paraSn=getNoteNamesFn(S.root,MODES['Majeur'].iv);
+  const {diff1:paraDiff}=sharedNotes(sn,paraSn);
+  const dorSn=getNoteNamesFn(S.root,MODES['Dorien'].iv);
+  const {diff1:dorDiff,diff2:dorNew}=sharedNotes(sn,dorSn);
+  document.getElementById('rel-info').innerHTML=
+    '<div class="mod-item"><div><div class="mod-key" style="color:#f0c040">'+relMajNa[relMaj]+' Maj</div><div style="font-size:10px;color:var(--mu2)">Relative majeure</div></div><div class="mod-meta"><b style="color:var(--tx)">7/7 notes communes</b><br><span style="color:#38c870">Memes 7 notes, tonique +3 demi-tons</span><br>Transition invisible</div></div>'+
+    '<div class="mod-item"><div><div class="mod-key" style="color:#f0c040">'+na[S.root]+' Maj</div><div style="font-size:10px;color:var(--mu2)">Parallele majeure</div></div><div class="mod-meta"><b style="color:var(--tx)">'+(7-paraDiff.length)+'/7 notes communes</b><br><span style="color:#ff6060">'+paraDiff.map(i=>na[i]).join(' ')+' changent (F/C#)</span><br>Meme tonique, couleur radicalement differente</div></div>'+
+    '<div class="mod-item"><div><div class="mod-key" style="color:#40d080">'+na[S.root]+' Dor.</div><div style="font-size:10px;color:var(--mu2)">Echange modal Dorien</div></div><div class="mod-meta"><b style="color:var(--tx)">'+(7-dorDiff.length)+'/7 notes communes</b><br><span style="color:#38c870">'+dorDiff.map(i=>na[i]).join(' ')+' devient '+dorNew.map(i=>na[i]).join(' ')+'</span><br>Couleur jazzy, moins sombre</div></div>';
+
+  renderPivotChords(sn,na);
+}
+
+function renderPivotChords(sn,na){
+  const rIdx=MJ_IDX.indexOf(S.root);
+  const adj=[MJ_IDX[(rIdx+1)%12],MJ_IDX[(rIdx+11)%12]];
+  const myChords=buildChords(sn);
+  let pivots=[],seen=new Set();
+  adj.forEach(ni=>{
+    const adjSn=getNoteNamesFn(ni,MODES['Mineur Naturel'].iv);
+    const adjChords=buildChords(adjSn);
+    const adjNa=FLAT_R.includes((ni+3)%12)?NF:NS;
+    adjChords.forEach(ac=>{
+      myChords.forEach(mc=>{
+        if(ac.nis.slice().sort().join()===mc.nis.slice().sort().join()&&!seen.has(mc.root.name+mc.suffix)){
+          seen.add(mc.root.name+mc.suffix);
+          pivots.push({chord:mc.root.name+mc.suffix,role1:mc.roman+' dans '+na[S.root]+' min',role2:ac.roman+' dans '+adjNa[ni]+' min',col:mc.col});
+        }
+      });
+    });
+  });
+  document.getElementById('pivot-title').textContent=pivots.length?'communs avec les tonalites a 1 quinte — parfaits pour moduler':'';
+  document.getElementById('pivot-chords').innerHTML=pivots.length?
+    '<div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:8px">'+
+    pivots.map(p=>'<div style="background:var(--card2);border:1px solid '+p.col+'45;border-radius:8px;padding:8px 12px"><div style="font:700 14px JetBrains Mono,monospace;color:'+p.col+';margin-bottom:3px">'+p.chord+'</div><div style="font-size:10px;color:var(--mu);line-height:1.5">'+p.role1+'<br>'+p.role2+'</div></div>').join('')+
+    '</div><div class="tx-m">Joue un de ces accords dans ta progression, les deux tonalites le reconnaissent comme natif. La modulation est percue comme naturelle.</div>':
+    '<div class="tx-m">Aucun accord pivot trouve avec les tonalites voisines immediates.</div>';
+}
+
+// STUDIO
+function initStudio(){
+  const dd=document.getElementById('delay-divs');
+  DIVS.forEach((d,i)=>{const b=document.createElement('button');b.className='divbtn'+(i===S.delayDivIdx?' on':'');b.textContent=d.label;b.onclick=()=>{S.delayDivIdx=i;document.querySelectorAll('#delay-divs .divbtn').forEach((x,j)=>x.classList.toggle('on',j===i));updateDelay();};dd.appendChild(b);});
+  setSatType(document.querySelector('#sat-types .st-btn.on'),'tape');
+}
+function setBPM(v){
+  v=Math.max(40,Math.min(300,parseInt(v)||174));
+  document.getElementById('bslider').value=v;document.getElementById('bnum').value=v;
+  document.getElementById('beat-ms').textContent=Math.round(60000/v)+' ms';
+  updateDelay();updateReverb();updateCompressor();renderBPMTable();
+}
+function curBPM(){return parseInt(document.getElementById('bnum').value)||174;}
+function updateDelay(){
+  const ms=60000/curBPM()*DIVS[S.delayDivIdx].mult;
+  document.getElementById('delay-time').textContent=Math.round(ms)+' ms';
+  document.getElementById('delay-ping').textContent=Math.round(ms/2)+' ms';
+  const fb=parseInt(document.getElementById('delay-fb').value)/100;
+  document.getElementById('delay-fb-val').textContent=Math.round(fb*100)+'%';
+  if(fb<=0){document.getElementById('delay-fb-info').textContent='1 seule repetition, pas de feedback';return;}
+  if(fb>=1){document.getElementById('delay-fb-info').textContent='Feedback infini - risque de larsen';return;}
+  const reps=Math.ceil(Math.log(0.001)/Math.log(fb));
+  document.getElementById('delay-fb-info').textContent='~'+reps+' repetitions audibles (seuil -60 dB) - decroissance totale ~'+((reps*ms)/1000).toFixed(1)+' s';
+}
+function updateReverb(){
+  const bpm=curBPM(),beatMs=60000/bpm;
+  const s32=Math.round(beatMs/8),s16=Math.round(beatMs/4),s8=Math.round(beatMs/2);
+  const e32=document.getElementById('rv-sync-32');if(e32)e32.textContent=s32+' ms';
+  const e16=document.getElementById('rv-sync-16');if(e16)e16.textContent=s16+' ms';
+  const e8=document.getElementById('rv-sync-8');if(e8)e8.textContent=s8+' ms';
+  const types=[
+    {name:'Room',    pre:s32,                         rt60:'0.3-0.8s', wet:'10-20%', usage:'Drums, bus mix, espace subtil'},
+    {name:'Hall',    pre:s16,                         rt60:'1.5-3.5s', wet:'15-30%', usage:'Leads, pads, orchestral'},
+    {name:'Plate',   pre:Math.round(beatMs/8*0.7)|0,  rt60:'0.8-2.0s', wet:'15-35%', usage:'Snare, voix, synthes'},
+    {name:'Spring',  pre:20,                          rt60:'0.5-1.5s', wet:'10-25%', usage:'Guitare, effet lo-fi'},
+    {name:'Chamber', pre:s16,                         rt60:'0.6-1.8s', wet:'15-30%', usage:'Voix, instruments acoustiques'},
+    {name:'Ambience',pre:8,                           rt60:'0.1-0.3s', wet:'5-15%',  usage:'Colle les elements, espace minimal'},
+  ];
+  const tbl=document.getElementById('rv-table');
+  if(tbl) tbl.innerHTML='<thead><tr><th>Type</th><th>Pre-delay</th><th>RT60</th><th>Wet</th><th>Usage</th></tr></thead><tbody>'+
+    types.map(t=>'<tr><td style="color:var(--tx);font-weight:500">'+t.name+'</td><td style="color:var(--acc2);font-family:JetBrains Mono,monospace;font-weight:600">'+t.pre+' ms</td><td style="font-family:JetBrains Mono,monospace">'+t.rt60+'</td><td style="font-family:JetBrains Mono,monospace">'+t.wet+'</td><td style="color:var(--mu);font-size:11px">'+t.usage+'</td></tr>').join('')+'</tbody>';
+}
+function updateCompressor(){
+  const ms=60000/curBPM();
+  const rows=[['1/32',ms/8],['1/16',ms/4],['1/8',ms/2],['1/4',ms],['1/2',ms*2],['1 mesure',ms*4]];
+  document.getElementById('cmp-table').innerHTML=rows.map(r=>'<div class="cmp-row"><span style="color:var(--mu);font-size:11px">'+r[0]+'</span><span class="cmp-val">'+Math.round(r[1])+' ms</span></div>').join('');
+}
+function renderBPMTable(){
+  const ms=60000/curBPM();
+  const rows=[['Ronde (1/1)',ms*4,ms*6,ms*8/3],['Blanche (1/2)',ms*2,ms*3,ms*4/3],['Noire (1/4)',ms,ms*1.5,ms*2/3],['Croche (1/8)',ms/2,ms*.75,ms/3],['Double-croche (1/16)',ms/4,ms*.375,ms/6],['Triple-croche (1/32)',ms/8,'--','--'],['Pre-delay reverb (1/32)',ms/8,'--','--'],['Decay reverb x1.2',ms*1.2,'--','--']];
+  document.getElementById('bpm-table').innerHTML='<thead><tr><th>Subdivision</th><th>Normal (ms)</th><th>Pointe (ms)</th><th>Triolet (ms)</th></tr></thead><tbody>'+rows.map(r=>'<tr><td style="color:var(--mu);font-size:11px">'+r[0]+'</td>'+[1,2,3].map(j=>'<td>'+(typeof r[j]==='number'?Math.round(r[j]):r[j])+'</td>').join('')+'</tr>').join('')+'</tbody>';
+}
+let curSatType='tape';
+function setSatType(el,type){
+  curSatType=type;
+  document.querySelectorAll('#sat-types .st-btn').forEach(b=>b.classList.remove('on'));
+  if(el)el.classList.add('on');
+  document.getElementById('sat-desc').textContent=SAT[type].desc;
+  updateSat();
+}
+function updateSat(){
+  const v=parseInt(document.getElementById('sat-drive').value);
+  document.getElementById('sat-drive-val').textContent=v+'%';
+  const d=SAT[curSatType];
+  document.getElementById('sat-drive-desc').textContent=d.drives[v<25?0:v<50?1:v<75?2:3];
+}
+
+// TRANSPOSITION
+function initTuning(){
+  ['tp-src-grid','tp-tgt-grid'].forEach((gid,gi)=>{
+    const g=document.getElementById(gid);
+    NS.forEach((n,i)=>{
+      const b=document.createElement('button');
+      b.className='tp-btn'+(IS_BLACK[i]?' bk':'');b.textContent=n;b.dataset.ni=i;
+      b.onclick=()=>{
+        if(gi===0){S.tpSrc=i;document.querySelectorAll('#tp-src-grid .tp-btn').forEach(x=>x.classList.remove('src-on'));b.classList.add('src-on');}
+        else{S.tpTgt=i;document.querySelectorAll('#tp-tgt-grid .tp-btn').forEach(x=>x.classList.remove('tgt-on'));b.classList.add('tgt-on');}
+        if(S.tpSrc!==null&&S.tpTgt!==null)calcTranspo();
+      };
+      g.appendChild(b);
+    });
+  });
+}
+function setDir(el,dir){
+  S.tpDir=dir;
+  document.querySelectorAll('#dir-btns .divbtn').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
+  if(S.tpSrc!==null&&S.tpTgt!==null)calcTranspo();
+}
+function calcTranspo(){
+  if(S.tpSrc===null||S.tpTgt===null)return;
+  let semi=S.tpTgt-S.tpSrc;
+  if(S.tpDir==='short'){if(semi>6)semi-=12;else if(semi<-6)semi+=12;}
+  else if(S.tpDir==='up'){while(semi<0)semi+=12;if(semi===0)semi=12;}
+  else{while(semi>0)semi-=12;if(semi===0)semi=-12;}
+  const ratio=Math.pow(2,semi/12);
+  const cents=semi*100;
+  const sign=semi>=0?'+':'';
+  document.getElementById('tp-result').style.display='block';
+  document.getElementById('tp-semi').textContent=sign+semi+' demi-tons';
+  document.getElementById('tp-cents').textContent=sign+cents+' cents';
+  document.getElementById('tp-ratio').textContent=ratio.toFixed(5);
+  document.getElementById('tp-speed').textContent=sign+((ratio-1)*100).toFixed(2)+'%';
+  document.getElementById('tp-fl-neo').textContent=sign+semi+' semitones (champ Pitch)';
+  document.getElementById('tp-fl-edi').textContent=sign+semi+' semitones dans Effects > Pitch shift';
+  document.getElementById('tp-fl-smp').textContent=sign+cents+' cents — Properties > Pitch (Channel rack)';
+  const absS=Math.abs(semi);
+  const activeBtn=document.querySelector('#content-type-btns .st-btn.on');
+  if(activeBtn) renderAlgoRec(activeBtn.dataset.type,absS,semi);
+  const adv=document.getElementById('tp-advice');
+  if(absS===0){adv.innerHTML='<div class="tp-ok">Aucun pitch shift necessaire.</div>';}
+  else if(absS<=2){adv.innerHTML='<div class="tp-ok">Correction de formants optionnelle (shift faible : '+absS+' demi-ton'+(absS>1?'s':'')+').<br>Pour un sample monophonique simple, Newtone suffit sans correction.</div>';}
+  else if(absS<=5){adv.innerHTML='<div class="tp-warn">Correction de formants recommandee (shift de '+absS+' demi-tons).<br>Sans correction : timbre change (effet chipmunk vers le haut).<br>Newtone : active Formant Correction. Edison : coche Preserve formants.<br>Sample polyphonique : utilise Melodyne.</div>';}
+  else{adv.innerHTML='<div class="tp-warn">Correction de formants indispensable (shift de '+absS+' demi-tons).<br>Au-dela de 5 demi-tons, meme avec formants la qualite se degrade notablement.<br>Melodyne recommande pour tout sample polyphonique.</div>';}
+  // Mapping
+  const sn=scaleNotes(),na2=FLAT_R.includes(S.tpTgt)?NF:NS,na=noteArr();
+  document.getElementById('tp-map-card').style.display='block';
+  document.getElementById('tp-map-title').textContent=NS[S.tpSrc]+' vers '+NS[S.tpTgt]+' ('+sign+semi+' demi-tons)';
+  document.getElementById('tp-map').innerHTML=sn.map(n=>{const ni=(n.idx+semi+120)%12;return '<div class="nmap-item"><span class="nmap-from">'+n.name+'</span><span class="nmap-arr">to</span><span class="nmap-to">'+na2[ni]+'</span></div>';}).join('');
+  const newIndices=sn.map(n=>(n.idx+semi+120)%12).sort((a,b)=>a-b);
+  const newRoot=(S.root+semi+120)%12;
+  let found='';
+  Object.entries(MODES).forEach(([mn,md])=>{const ti=md.iv.map(x=>(newRoot+x)%12).sort((a,b)=>a-b);if(JSON.stringify(ti)===JSON.stringify(newIndices))found=na2[newRoot]+' '+mn;});
+  document.getElementById('tp-map-note').textContent=found?'Ta gamme devient '+found+' - tu peux selectionner cette tonalite dans Gamme & Accords pour voir ses accords.':'Les notes transposees ne correspondent pas a un mode standard sur cette tonique.';
+}
+
+// ALGO RECOMMANDATIONS FL STUDIO
+const ALGOS={
+  drums:{
+    small:{name:'e2 transient',path:'Properties > Time stretching > Mode : Stretch > e2 transient',quality:'Recommande',desc:'Preserve les attaques et transitoires avec precision. Chaque hit garde son click et son punch apres le shift. Evite les artefacts sur les transitoires nets qui apparaitraient avec e2 generic.',formant:false,alt:'e3 generic si tu veux une qualite superieure sur l\'ensemble du drum bus'},
+    mid:{name:'e3 generic',path:'Properties > Time stretching > Mode : e3 generic',quality:'Recommande',desc:'Meilleure qualite globale que e2 pour les shifts moyens. Les transitoires restent bien definis, les cymbales et hi-hats conservent leur brillance. e2 transient reste une alternative valable.',formant:false,alt:'e2 transient si tu veux prioritiser la preservation des attaques'},
+    large:{name:'Slice stretch',path:'Properties > Time stretching > Mode : Special > Slice stretch',quality:'Shift important',desc:'Decoupe le sample en tranches et transpose chaque tranche independamment. Donne les meilleurs resultats sur les grandes transpositions de boucles rythmiques. Qualite nettement superieure a un stretch monolithique a +/-7 demi-tons et plus.',formant:false,alt:'e3 generic si le sample n\'est pas rythmique ou si Slice stretch cree des artefacts de decoupage'},
+  },
+  bass:{
+    small:{name:'e3 mono',path:'Properties > Time stretching > Mode : e3 mono',quality:'Recommande',desc:'Algo mono haute qualite. Les basses et subs sont des sources monophoniques par nature — e3 mono est optimise pour ca et donne une bien meilleure qualite que e3 generic sur ce type de contenu. Preserve la rondeur et le fondamental sub.',formant:false,alt:'Newtone sur l\'audio clip si tu veux corriger note par note avec precision'},
+    mid:{name:'e3 mono',path:'Properties > Time stretching > Mode : e3 mono',quality:'Recommande',desc:'Reste le meilleur choix sur basse jusqu\'a 5-6 demi-tons. Au-dela, le fondamental commence a se deformer mais e3 mono reste superieur aux algos generiques. Verifie le contenu sub apres le shift avec SPAN.',formant:false,alt:'Resample + Pitcher insert si tu veux eviter les artefacts d\'elastique sur du sub extreme'},
+    large:{name:'e3 mono',path:'Properties > Time stretching > Mode : e3 mono',quality:'Shift important',desc:'Au-dela de 6 demi-tons sur une basse, tous les algos ont des limitations. e3 mono reste le moins mauvais. Verifie systematiquement le sub avec SPAN — le fondamental peut se retrouver hors de la zone utile (sous 30 Hz ou au-dessus de 120 Hz).',formant:false,alt:'Resample intentionnel si tu veux l\'effet tape (pitch et vitesse changent ensemble)'},
+  },
+  mono:{
+    small:{name:'e3 mono',path:'Properties > Time stretching > Mode : e3 mono',quality:'Recommande',desc:'Source monophonique = melodie, lead, reeze, synthese simple. e3 mono est optimal pour les sources a une seule note a la fois. Rendu clair, transitoires preserves, harmoniques naturels.',formant:false,alt:'e2 mono si la CPU est limitee (qualite legerement inferieure mais acceptable)'},
+    mid:{name:'e3 mono',path:'Properties > Time stretching > Mode : e3 mono',quality:'Recommande',desc:'e3 mono reste recommande jusqu\'a 5 demi-tons sur source mono. Attention aux artefacts de modulation (vibrato artificiel) qui apparaissent sur certains sons a partir de 3-4 demi-tons. Ecoute attentivement les tenues.',formant:true,formantTxt:'Active Formant Correction dans les proprietes du clip (clic droit sur le clip > Properties)',alt:'Newtone pour un controle note par note sur les sources melodiques'},
+    large:{name:'e3 mono + formants',path:'Properties > Time stretching > Mode : e3 mono',quality:'Shift important',desc:'Shift important sur melodique mono : e3 mono avec correction de formants obligatoire. Sans correction, le timbre change radicalement (effet chipmunk vers le haut). Resultat acceptable jusqu\'a 7-8 demi-tons avec correction activee.',formant:true,formantTxt:'Indispensable : Properties > Formant correction (ou dans Newtone : icone formants)',alt:'Melodyne si la qualite est critique — bien superieur a tout algo FL pour les grands shifts melodiques'},
+  },
+  poly:{
+    small:{name:'e3 generic',path:'Properties > Time stretching > Mode : e3 generic',quality:'Recommande',desc:'Meilleur algo FL Studio pour le contenu polyphonique (accords, pads, mixes, full loops). Gere bien la superposition de plusieurs sources. Plus lourd en CPU que e2 generic mais qualite nettement superieure.',formant:false,alt:'e2 generic si la CPU est contrainte — qualite inferieure mais acceptable sur petits shifts'},
+    mid:{name:'e3 generic',path:'Properties > Time stretching > Mode : e3 generic',quality:'Recommande',desc:'Reste le meilleur choix pour le polyphonique a 3-5 demi-tons. Des artefacts de phase peuvent apparaitre sur les contenus denses avec de nombreuses frequences superposees. Ecoute attentivement les mediums et aigus.',formant:false,alt:'Stretch Pro si disponible dans ta version de FL — qualite superieure sur contenu polyphonique complexe'},
+    large:{name:'e3 generic',path:'Properties > Time stretching > Mode : e3 generic',quality:'Shift important',desc:'FL Studio n\'a pas d\'algo equivalent a Melodyne pour le polyphonique. e3 generic reste la seule option viable mais la qualite se degrade significativement au-dela de 5 demi-tons sur du contenu polyphonique dense. Artefacts de phase quasi-inevitables.',formant:false,alt:'Melodyne 5 (ou Studio) recommande fortement pour les shifts larges sur contenu polyphonique — bien au-dela des capacites de FL natif'},
+  },
+  voice:{
+    small:{name:'e2 speech',path:'Properties > Time stretching > Mode : Stretch > e2 speech OU Elastique > e2 speech',quality:'Recommande',desc:'Algo optimise specifiquement pour la voix et la parole. Preserve les formants vocaux mieux que e2 mono sur les petits shifts. Donne un rendu naturel sans artefacts metalliques caracteristiques des algos generiques sur la voix.',formant:false,alt:'Newtone pour la correction de pitch note par note avec formant correction integre'},
+    mid:{name:'e2 speech + formants',path:'Properties > Time stretching > Mode : Stretch > e2 speech',quality:'Recommande',desc:'e2 speech reste pertinent jusqu\'a 4-5 demi-tons sur voix. Correction de formants quasi-obligatoire des 3 demi-tons pour eviter le changement de caractere vocal (voix enfantine vers le haut, trop grave vers le bas).',formant:true,formantTxt:'Properties du clip > Formant correction — obligatoire pour conserver le caractere vocal naturel',alt:'Newtone avec formant correction pour un controle precis et une meilleure qualite'},
+    large:{name:'Newtone',path:'Clic droit sur le clip audio > Edit in Newtone',quality:'Shift important',desc:'Au-dela de 5 demi-tons sur une voix, Newtone est obligatoire. L\'algo time-stretch interne du sampler devient trop destructif pour le timbre vocal. Newtone offre la correction de formants la plus precise disponible dans FL Studio.',formant:true,formantTxt:'Dans Newtone : bouton Formant (icone a cote du pitch) — regle independamment du pitch shift',alt:'Melodyne si tu as besoin de correction polyphonique ou d\'un rendu vraiment professionnel'},
+  },
+};
+
+let curContentType='drums';
+function setContentType(el,type){
+  curContentType=type;
+  el.dataset.type=type;
+  document.querySelectorAll('#content-type-btns .st-btn').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
+  const semi=parseInt((document.getElementById('tp-semi').textContent||'0'));
+  if(!isNaN(semi)&&document.getElementById('tp-result').style.display!=='none'){
+    renderAlgoRec(type,Math.abs(semi),semi);
+  }
+}
+// Ajouter data-type aux boutons au chargement
+document.querySelectorAll('#content-type-btns .st-btn').forEach(b=>{
+  const m=b.getAttribute('onclick').match(/'([^']+)'\)/);
+  if(m)b.dataset.type=m[1];
+});
+
+function renderAlgoRec(type,absS,semi){
+  const tier=absS<=2?'small':absS<=5?'mid':'large';
+  const data=ALGOS[type]?.[tier];
+  if(!data)return;
+  document.getElementById('algo-placeholder').style.display='none';
+  document.getElementById('algo-rec').style.display='block';
+  document.getElementById('algo-name').textContent=data.name;
+  document.getElementById('algo-path').textContent=data.path;
+  document.getElementById('algo-quality').textContent=data.quality;
+  document.getElementById('algo-desc').textContent=data.desc;
+  const fr=document.getElementById('algo-formant-row');
+  if(data.formant){fr.style.display='block';document.getElementById('algo-formant-val').textContent=data.formantTxt;}
+  else{fr.style.display='none';}
+  document.getElementById('algo-alt').innerHTML='<b style="color:var(--tx)">Alternative :</b> '+data.alt;
+  // Resample note
+  const rs=document.getElementById('algo-resample');
+  if(absS>0){
+    rs.style.display='block';
+    const bpm=curBPM()||174;
+    const ratio=Math.pow(2,semi/12);
+    rs.innerHTML='<b style="color:var(--acc)">Resample</b> (Mode : Resample) = pas d\'algo, FL change la vitesse de lecture. A '+bpm+' BPM le sample jouera a <b style="color:var(--acc)">'+Math.round(bpm*ratio)+' BPM equivalent</b> ('+((ratio-1)*100>0?'+':'')+((ratio-1)*100).toFixed(1)+'%). Utilise intentionnellement pour l\'effet tape ou le lo-fi — jamais pour un pitch discret.';
+  }else{rs.style.display='none';}
+}
+
+// EVENTS
+function tab(id,el){
+  document.querySelectorAll('.tb').forEach(b=>b.classList.remove('on'));el.classList.add('on');
+  document.querySelectorAll('.pnl').forEach(p=>p.classList.remove('on'));
+  document.getElementById('pnl-'+id).classList.add('on');
+  if(id==='cof'){renderCoF();renderModInfo(noteArr()[S.root]);}
+}
+function setRoot(i){S.root=i;S.deg=null;S.selNis=null;document.querySelectorAll('.kb').forEach((b,j)=>b.classList.toggle('on',j===i));render();}
+function setMode(name){
+  S.mode=name;S.deg=null;S.selNis=null;const col=MODES[name].col;
+  document.querySelectorAll('.mb').forEach(b=>{const on=b.dataset.m===name;b.classList.toggle('on',on);b.style.background=on?col+'20':'';b.style.borderColor=on?col:'';b.style.color=on?col:'';});
+  render();
+}
+function goKey(ni,mn){
+  S.root=ni;S.mode=mn;S.deg=null;
+  document.querySelectorAll('.kb').forEach((b,j)=>b.classList.toggle('on',j===ni));
+  const col=MODES[mn].col;
+  document.querySelectorAll('.mb').forEach(b=>{const on=b.dataset.m===mn;b.classList.toggle('on',on);b.style.background=on?col+'20':'';b.style.borderColor=on?col:'';b.style.color=on?col:'';});
+  render();renderCoF();
+}
+
+// INIT
+document.getElementById('key-grid').innerHTML=NS.map((n,i)=>'<button class="kb '+(IS_BLACK[i]?'bk':'')+' '+(i===2?'on':'')+'" data-ni="'+i+'">'+n+'</button>').join('');
+document.getElementById('key-grid').addEventListener('click',function(e){
+  const b=e.target.closest('[data-ni]');if(b)setRoot(parseInt(b.dataset.ni));
+});
+
+document.getElementById('mode-grid').innerHTML=Object.entries(MODES).map(([name,m])=>'<button class="mb '+(name==='Mineur Naturel'?'on':'')+'" data-m="'+name+'" style="'+(name==='Mineur Naturel'?'background:'+m.col+'20;border-color:'+m.col+';color:'+m.col:'')+'">'+name+'</button>').join('');
+document.getElementById('mode-grid').addEventListener('click',function(e){
+  const b=e.target.closest('[data-m]');if(b)setMode(b.dataset.m);
+});
+
+render();
+initStudio();
+setBPM(174);
+initTuning();
 </script>
 </body>
 </html>
