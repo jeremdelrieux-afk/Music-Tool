@@ -1276,22 +1276,27 @@ function renderSynthKeyboard(){
 function setSynthWave(btn){
   btn.parentElement.querySelectorAll('.btn').forEach(b=>b.classList.remove('on'));
   btn.classList.add('on');SYNTH.wave=btn.dataset.wave;
+  if(synthContinuousActive)restartContinuousPlay();
 }
 function setSynthOct(btn){
   btn.parentElement.querySelectorAll('.btn').forEach(b=>b.classList.remove('on'));
   btn.classList.add('on');SYNTH.oct=parseInt(btn.dataset.oct);
+  if(synthContinuousActive)restartContinuousPlay();
 }
 function setSynthFilter(btn){
   btn.parentElement.querySelectorAll('.btn').forEach(b=>b.classList.remove('on'));
   btn.classList.add('on');SYNTH.filterType=btn.dataset.ftype;
+  if(synthContinuousActive)restartContinuousPlay();
 }
 function setSynthLFOWave(btn){
   btn.parentElement.querySelectorAll('.btn').forEach(b=>b.classList.remove('on'));
   btn.classList.add('on');SYNTH.lfoWave=btn.dataset.lwave;
+  if(synthContinuousActive)restartContinuousPlay();
 }
 function setSynthLFODest(btn){
   btn.parentElement.querySelectorAll('.btn').forEach(b=>b.classList.remove('on'));
   btn.classList.add('on');SYNTH.lfoDest=btn.dataset.dest;
+  if(synthContinuousActive)restartContinuousPlay();
 }
 function setSynthPlayOct(btn){
   btn.parentElement.querySelectorAll('.btn').forEach(b=>b.classList.remove('on'));
@@ -1547,6 +1552,20 @@ function stopContinuousPlay() {
   }, SYNTH.rel * 1000 + 500);
   synthContinuousActive = false;
   if (scopeAF) { cancelAnimationFrame(scopeAF); scopeAF = null; }
+}
+
+function restartContinuousPlay() {
+  if (!synthContinuousActive) return;
+  const sn = scaleNotes();
+  const midi = 60 + (S.mode === 'Majeur' ? [0,2,4,5,7,9,11] : [0,2,3,5,7,8,10])[0] + (SYNTH.playOct - 4) * 12;
+  const freq = 440 * Math.pow(2, (midi - 69) / 12);
+  // Couper proprement sans release long
+  if (synthContinuousNodes) {
+    try { synthContinuousNodes.osc.stop(); synthContinuousNodes.lfo.stop(); } catch(e) {}
+    synthContinuousNodes = null;
+  }
+  synthContinuousActive = false;
+  startContinuousPlay(freq);
 }
 
 function toggleSynthPlay() {
