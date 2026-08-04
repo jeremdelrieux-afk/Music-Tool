@@ -253,6 +253,7 @@ tr:hover td{background:rgba(124,92,252,.04)}
   <button class="tb" onclick="tab('fx',this)">FX Studio</button>
   <button class="tb" onclick="tab('sound',this)">Sound Design</button>
   <button class="tb" onclick="tab('outils',this)">Outils</button>
+  <button class="tb" onclick="tab('synth',this)">Synthèse</button>
 </div>
 
 <div class="cnt">
@@ -741,6 +742,760 @@ tr:hover td{background:rgba(124,92,252,.04)}
   </div>
 </div>
 
+<!-- ONGLET SYNTHESE - A INTEGRER DANS HARMONYLAB -->
+<!-- Ajouter dans les tabs : -->
+<!-- <button class="tb" onclick="tab('synth',this)">Synthèse</button> -->
+<!-- Ajouter dans le cnt : -->
+
+<div class="pnl" id="pnl-synth">
+  <div class="sub-tabs">
+    <button class="stb on" onclick="stab('synth','minisynth',this)">Mini Synthé</button>
+    <button class="stb" onclick="stab('synth','flow',this)">Signal Flow</button>
+    <button class="stb" onclick="stab('synth','presets',this)">Presets</button>
+    <button class="stb" onclick="stab('synth','lfomod',this)">LFO & Mod</button>
+  </div>
+
+  <!-- MINI SYNTHE -->
+  <div class="spnl on" id="spnl-synth-minisynth">
+    <div class="grid2">
+      <!-- OSC -->
+      <div class="card">
+        <h2>OSC — Oscillateur <span class="tip-icon" tabindex="0">?</span>
+        <div class="tooltip">Source du son. La forme d'onde détermine le timbre de base. Sine = pur, Saw = riche, Square = creux et nasal, Triangle = doux.</div></h2>
+        <div class="row">
+          <label>Forme</label>
+          <div class="btn-group" id="synth-wave-btns">
+            <button class="btn btn-sm on" data-wave="sine" onclick="setSynthWave(this)">Sine</button>
+            <button class="btn btn-sm" data-wave="sawtooth" onclick="setSynthWave(this)">Saw</button>
+            <button class="btn btn-sm" data-wave="square" onclick="setSynthWave(this)">Square</button>
+            <button class="btn btn-sm" data-wave="triangle" onclick="setSynthWave(this)">Triangle</button>
+          </div>
+        </div>
+        <div class="row">
+          <label>Octave</label>
+          <div class="btn-group" id="synth-oct-btns">
+            <button class="btn btn-sm" data-oct="-2" onclick="setSynthOct(this)">-2</button>
+            <button class="btn btn-sm" data-oct="-1" onclick="setSynthOct(this)">-1</button>
+            <button class="btn btn-sm on" data-oct="0" onclick="setSynthOct(this)">0</button>
+            <button class="btn btn-sm" data-oct="1" onclick="setSynthOct(this)">+1</button>
+            <button class="btn btn-sm" data-oct="2" onclick="setSynthOct(this)">+2</button>
+          </div>
+        </div>
+        <div class="row">
+          <label>Détune</label>
+          <input type="range" id="synth-detune" min="-50" max="50" value="0" oninput="SYNTH.detune=parseInt(this.value);document.getElementById('synth-detune-val').textContent=this.value+' ct'" style="flex:1">
+          <span id="synth-detune-val" style="font-family:monospace;color:var(--acc);min-width:50px">0 ct</span>
+        </div>
+        <div class="row">
+          <label>Volume</label>
+          <input type="range" id="synth-vol" min="0" max="100" value="70" oninput="SYNTH.vol=parseInt(this.value)/100;document.getElementById('synth-vol-val').textContent=this.value+'%'" style="flex:1">
+          <span id="synth-vol-val" style="font-family:monospace;color:var(--acc);min-width:40px">70%</span>
+        </div>
+      </div>
+
+      <!-- FILTER -->
+      <div class="card">
+        <h2>FILTER — Filtre <span class="tip-icon" tabindex="0">?</span>
+        <div class="tooltip">Sculpte le spectre. Cutoff = fréquence de coupure. Resonance = accentuation autour du cutoff. Drive = saturation dans le filtre.</div></h2>
+        <div class="row">
+          <label>Type</label>
+          <div class="btn-group" id="synth-filter-btns">
+            <button class="btn btn-sm on" data-ftype="lowpass" onclick="setSynthFilter(this)">LP</button>
+            <button class="btn btn-sm" data-ftype="highpass" onclick="setSynthFilter(this)">HP</button>
+            <button class="btn btn-sm" data-ftype="bandpass" onclick="setSynthFilter(this)">BP</button>
+            <button class="btn btn-sm" data-ftype="notch" onclick="setSynthFilter(this)">Notch</button>
+          </div>
+        </div>
+        <div class="row">
+          <label>Cutoff</label>
+          <input type="range" id="synth-cutoff" min="50" max="8000" value="2000" oninput="SYNTH.cutoff=parseInt(this.value);document.getElementById('synth-cutoff-val').textContent=this.value+' Hz'" style="flex:1">
+          <span id="synth-cutoff-val" style="font-family:monospace;color:var(--acc2);min-width:70px">2000 Hz</span>
+        </div>
+        <div class="row">
+          <label>Resonance</label>
+          <input type="range" id="synth-res" min="0.1" max="20" step="0.1" value="1" oninput="SYNTH.res=parseFloat(this.value);document.getElementById('synth-res-val').textContent=parseFloat(this.value).toFixed(1)" style="flex:1">
+          <span id="synth-res-val" style="font-family:monospace;color:var(--acc2);min-width:40px">1.0</span>
+        </div>
+        <div class="row">
+          <label>Drive</label>
+          <input type="range" id="synth-drive" min="1" max="10" step="0.1" value="1" oninput="SYNTH.drive=parseFloat(this.value);document.getElementById('synth-drive-val').textContent=parseFloat(this.value).toFixed(1)" style="flex:1">
+          <span id="synth-drive-val" style="font-family:monospace;color:var(--acc2);min-width:40px">1.0</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <!-- ENV -->
+      <div class="card">
+        <h2>ENV — Enveloppe ADSR <span class="tip-icon" tabindex="0">?</span>
+        <div class="tooltip">Contrôle l'évolution du volume dans le temps. Attack = montée. Decay = descente vers Sustain. Sustain = niveau tenu. Release = disparition après relâchement.</div></h2>
+        <div class="row">
+          <label>Attack</label>
+          <input type="range" id="synth-att" min="1" max="2000" value="10" oninput="SYNTH.att=parseInt(this.value)/1000;document.getElementById('synth-att-val').textContent=this.value+' ms'" style="flex:1">
+          <span id="synth-att-val" style="font-family:monospace;color:var(--acc3);min-width:60px">10 ms</span>
+        </div>
+        <div class="row">
+          <label>Decay</label>
+          <input type="range" id="synth-dec" min="10" max="2000" value="200" oninput="SYNTH.dec=parseInt(this.value)/1000;document.getElementById('synth-dec-val').textContent=this.value+' ms'" style="flex:1">
+          <span id="synth-dec-val" style="font-family:monospace;color:var(--acc3);min-width:60px">200 ms</span>
+        </div>
+        <div class="row">
+          <label>Sustain</label>
+          <input type="range" id="synth-sus" min="0" max="100" value="70" oninput="SYNTH.sus=parseInt(this.value)/100;document.getElementById('synth-sus-val').textContent=this.value+'%'" style="flex:1">
+          <span id="synth-sus-val" style="font-family:monospace;color:var(--acc3);min-width:40px">70%</span>
+        </div>
+        <div class="row">
+          <label>Release</label>
+          <input type="range" id="synth-rel" min="10" max="3000" value="300" oninput="SYNTH.rel=parseInt(this.value)/1000;document.getElementById('synth-rel-val').textContent=this.value+' ms'" style="flex:1">
+          <span id="synth-rel-val" style="font-family:monospace;color:var(--acc3);min-width:60px">300 ms</span>
+        </div>
+        <button class="btn btn-sm" onclick="syncENVtoBPM()" style="margin-top:4px">⟳ Sync au BPM</button>
+      </div>
+
+      <!-- LFO -->
+      <div class="card">
+        <h2>LFO — Modulation <span class="tip-icon" tabindex="0">?</span>
+        <div class="tooltip">Oscillateur lent qui module un paramètre. Ici il module la fréquence de coupure du filtre pour créer un effet de filtre qui respire rythmiquement.</div></h2>
+        <div class="row">
+          <label>Forme</label>
+          <div class="btn-group" id="synth-lfo-wave-btns">
+            <button class="btn btn-sm on" data-lwave="sine" onclick="setSynthLFOWave(this)">Sine</button>
+            <button class="btn btn-sm" data-lwave="triangle" onclick="setSynthLFOWave(this)">Tri</button>
+            <button class="btn btn-sm" data-lwave="square" onclick="setSynthLFOWave(this)">Square</button>
+            <button class="btn btn-sm" data-lwave="sawtooth" onclick="setSynthLFOWave(this)">Saw</button>
+          </div>
+        </div>
+        <div class="row">
+          <label>Rate</label>
+          <input type="range" id="synth-lfo-rate" min="0.05" max="20" step="0.05" value="1" oninput="SYNTH.lfoRate=parseFloat(this.value);document.getElementById('synth-lfo-rate-val').textContent=parseFloat(this.value).toFixed(2)+' Hz';updateLFO()" style="flex:1">
+          <span id="synth-lfo-rate-val" style="font-family:monospace;color:var(--warn);min-width:60px">1.00 Hz</span>
+        </div>
+        <div class="row">
+          <label>Depth</label>
+          <input type="range" id="synth-lfo-depth" min="0" max="3000" value="0" oninput="SYNTH.lfoDepth=parseInt(this.value);document.getElementById('synth-lfo-depth-val').textContent=this.value+' Hz';updateLFO()" style="flex:1">
+          <span id="synth-lfo-depth-val" style="font-family:monospace;color:var(--warn);min-width:60px">0 Hz</span>
+        </div>
+        <div class="row">
+          <label>Destination</label>
+          <div class="btn-group" id="synth-lfo-dest-btns">
+            <button class="btn btn-sm on" data-dest="filter" onclick="setSynthLFODest(this)">Filtre</button>
+            <button class="btn btn-sm" data-dest="pitch" onclick="setSynthLFODest(this)">Pitch</button>
+            <button class="btn btn-sm" data-dest="volume" onclick="setSynthLFODest(this)">Volume</button>
+          </div>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
+          <button class="btn btn-sm" onclick="syncLFOtoBPM('1/4')">Sync 1/4</button>
+          <button class="btn btn-sm" onclick="syncLFOtoBPM('1/8')">Sync 1/8</button>
+          <button class="btn btn-sm" onclick="syncLFOtoBPM('1/16')">Sync 1/16</button>
+          <button class="btn btn-sm" onclick="syncLFOtoBPM('1/2')">Sync 1/2</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CLAVIER JOUABLE -->
+    <div class="card">
+      <h2>Clavier — Gamme courante : <span id="synth-scale-info" style="color:var(--acc);text-transform:none;letter-spacing:0;font-weight:600;font-size:13px"></span>
+      <span class="tip-icon" tabindex="0">?</span>
+      <div class="tooltip">Seules les notes de votre gamme courante sont affichées et jouables. Changez la tonalité ou le mode dans l'onglet Harmonie pour mettre à jour le clavier.</div></h2>
+      <div id="synth-keyboard" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px"></div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <label>Octave de jeu</label>
+        <div class="btn-group" id="synth-play-oct-btns">
+          <button class="btn btn-sm" data-poct="2" onclick="setSynthPlayOct(this)">Oct 2</button>
+          <button class="btn btn-sm on" data-poct="3" onclick="setSynthPlayOct(this)">Oct 3</button>
+          <button class="btn btn-sm" data-poct="4" onclick="setSynthPlayOct(this)">Oct 4</button>
+          <button class="btn btn-sm" data-poct="5" onclick="setSynthPlayOct(this)">Oct 5</button>
+        </div>
+        <span style="font-size:11px;color:var(--mu2)">Cliquez une note pour jouer</span>
+      </div>
+    </div>
+
+    <!-- VISUALISEUR -->
+    <div class="card">
+      <h2>Visualiseur de signal</h2>
+      <canvas id="synth-scope" style="width:100%;border-radius:var(--r2);border:1px solid var(--b);background:var(--bg)" height="80"></canvas>
+    </div>
+  </div>
+
+  <!-- SIGNAL FLOW -->
+  <div class="spnl" id="spnl-synth-flow">
+    <div class="card">
+      <h2>Chaîne de synthèse — cliquez un module <span class="tip-icon" tabindex="0">?</span>
+      <div class="tooltip">Représentation visuelle du signal flow. Le son naît dans l'OSC, est sculpté par le filtre, mis en forme par l'enveloppe, modulé par le LFO, et son volume est contrôlé par le VCA.</div></h2>
+      <div id="synth-flow-chain" style="display:flex;align-items:center;gap:0;overflow-x:auto;padding:20px 0"></div>
+      <div id="synth-module-detail" style="display:none;border-radius:var(--r);padding:16px;margin-top:16px;border:1px solid var(--acc)">
+        <div id="synth-module-detail-content"></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Le signal flow en pratique</h2>
+      <div class="grid3">
+        <div class="val-box">
+          <div style="font-size:11px;color:var(--acc);font-weight:700;margin-bottom:6px">RÈGLE FONDAMENTALE</div>
+          <div style="font-size:12px;color:var(--mu2);line-height:1.7">Le son naît dans l'oscillateur, est sculpté par le filtre, mis en forme par l'enveloppe, modulé par le LFO, et son volume final est contrôlé par le VCA.</div>
+        </div>
+        <div class="val-box">
+          <div style="font-size:11px;color:var(--acc2);font-weight:700;margin-bottom:6px">MODULATION</div>
+          <div style="font-size:12px;color:var(--mu2);line-height:1.7">Le LFO et l'ENV ne produisent pas de son — ils produisent des signaux de contrôle qui modifient les paramètres d'autres modules. Ex : LFO → Cutoff = filtre qui respire.</div>
+        </div>
+        <div class="val-box">
+          <div style="font-size:11px;color:var(--warn);font-weight:700;margin-bottom:6px">DANS SERUM 2</div>
+          <div style="font-size:12px;color:var(--mu2);line-height:1.7">OSC A/B → Filter → ENV 1 (amp) + ENV 2/3 (mod) + LFO 1-4 → Matrix de modulation. La matrice permet de router n'importe quelle source vers n'importe quelle destination.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRESETS -->
+  <div class="spnl" id="spnl-synth-presets">
+    <div class="card">
+      <h2>Presets — points de départ <span class="tip-icon" tabindex="0">?</span>
+      <div class="tooltip">Cliquez un preset pour charger ses paramètres dans le Mini Synthé et voir les réglages détaillés. Ces valeurs sont des points de départ — ajustez toujours à l'oreille.</div></h2>
+      <div style="font-size:12px;color:var(--mu2);margin-bottom:14px">Cliquez un preset pour le charger dans le Mini Synthé et voir ses paramètres détaillés.</div>
+      <div id="synth-preset-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:16px"></div>
+      <div id="synth-preset-detail" style="display:none;background:var(--bg);border:1px solid var(--b2);border-radius:var(--r);padding:16px"></div>
+    </div>
+  </div>
+
+  <!-- LFO & MOD -->
+  <div class="spnl" id="spnl-synth-lfomod">
+    <div class="grid2">
+      <div class="card">
+        <h2>Formes d'onde LFO <span class="tip-icon" tabindex="0">?</span>
+        <div class="tooltip">Chaque forme d'onde crée un type de modulation différent. Survolez les boutons pour voir la forme.</div></h2>
+        <div class="btn-group" id="lfomod-wave-btns" style="margin-bottom:14px">
+          <button class="btn btn-sm on" data-w="sine" onclick="setLFOModWave(this)">Sine</button>
+          <button class="btn btn-sm" data-w="triangle" onclick="setLFOModWave(this)">Triangle</button>
+          <button class="btn btn-sm" data-w="square" onclick="setLFOModWave(this)">Square</button>
+          <button class="btn btn-sm" data-w="saw" onclick="setLFOModWave(this)">Saw</button>
+          <button class="btn btn-sm" data-w="rsaw" onclick="setLFOModWave(this)">Ramp</button>
+          <button class="btn btn-sm" data-w="random" onclick="setLFOModWave(this)">S&H</button>
+        </div>
+        <canvas id="lfomod-canvas" height="120" style="width:100%;border-radius:var(--r2);border:1px solid var(--b);background:var(--bg)"></canvas>
+        <div class="tip-box" id="lfomod-desc" style="margin-top:10px"></div>
+      </div>
+      <div class="card">
+        <h2>LFO Hz — BPM sync <span class="tip-icon" tabindex="0">?</span>
+        <div class="tooltip">Fréquences à entrer dans les synthés qui n'acceptent pas de sync BPM. Valeurs calculées selon le BPM courant.</div></h2>
+        <table style="width:100%;border-collapse:collapse;font-size:13px" id="lfomod-table"></table>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Sources & destinations de modulation dans Serum 2</h2>
+      <div class="grid2">
+        <div>
+          <div style="font-size:11px;color:var(--acc);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Sources</div>
+          <div class="harm-row"><span style="color:var(--tx)">LFO 1-4</span><span style="font-size:11px;color:var(--mu2)">Modulation rythmique ou lente</span></div>
+          <div class="harm-row"><span style="color:var(--tx)">ENV 1</span><span style="font-size:11px;color:var(--mu2)">Enveloppe d'amplitude (toujours sur VCA)</span></div>
+          <div class="harm-row"><span style="color:var(--tx)">ENV 2/3</span><span style="font-size:11px;color:var(--mu2)">Enveloppes libres — filtre, pitch, WT pos</span></div>
+          <div class="harm-row"><span style="color:var(--tx)">Velocity</span><span style="font-size:11px;color:var(--mu2)">Vélocité MIDI — volume ou filtre</span></div>
+          <div class="harm-row"><span style="color:var(--tx)">Macro 1-4</span><span style="font-size:11px;color:var(--mu2)">Contrôleurs globaux → automatisations FL</span></div>
+        </div>
+        <div>
+          <div style="font-size:11px;color:var(--acc2);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Destinations courantes</div>
+          <div class="harm-row"><span style="color:var(--tx)">Filter Cutoff</span><span style="font-size:11px;color:var(--mu2)">La plus utilisée — filtre qui respire</span></div>
+          <div class="harm-row"><span style="color:var(--tx)">Wavetable Position</span><span style="font-size:11px;color:var(--mu2)">Morphing de timbre — son vivant</span></div>
+          <div class="harm-row"><span style="color:var(--tx)">Pitch (OSC)</span><span style="font-size:11px;color:var(--mu2)">Vibrato (lent) ou FM (rapide)</span></div>
+          <div class="harm-row"><span style="color:var(--tx)">Pan</span><span style="font-size:11px;color:var(--mu2)">Auto-pan rythmique</span></div>
+          <div class="harm-row"><span style="color:var(--tx)">Volume (VCA)</span><span style="font-size:11px;color:var(--mu2)">Tremolo ou sidechain simulé</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ JS SYNTHESE ════════════ -->
+<script>
+// ══ STATE SYNTHE ══
+const SYNTH = {
+  wave:'sine', oct:0, detune:0, vol:0.7,
+  filterType:'lowpass', cutoff:2000, res:1, drive:1,
+  att:0.01, dec:0.2, sus:0.7, rel:0.3,
+  lfoRate:1, lfoDepth:0, lfoWave:'sine', lfoDest:'filter',
+  playOct:3,
+  // Noeuds actifs
+  nodes:{}, lfoNode:null, lfoGain:null,
+  scopeAnim:null
+};
+
+const SYNTH_MODULES = [
+  {id:'osc',icon:'〜',name:'OSC',sub:'Oscillateur',color:'#7c5cfc',
+   desc:'Source du son — génère la forme d\'onde de base.',
+   params:[
+     {name:'Forme d\'onde',val:'Sine/Saw/Square/Triangle',desc:'Sine = fondamentale pure. Saw = riche en harmoniques (basses, leads). Square = son creux et nasal. Triangle = doux, entre Sine et Square.'},
+     {name:'Octave',val:'±2 octaves',desc:'Transpose l\'oscillateur par octave. -2 = registre sub. +1/+2 = registre aigu.'},
+     {name:'Détune',val:'±50 cents',desc:'Désaccordage fin. Deux OSC avec des détunes opposés = effet unisson épais.'},
+   ],
+   serum:'Dans Serum 2 : OSC A et B peuvent être combinés (Add, FM, AM, Ring Mod). La Wavetable Position permet de morpher entre des formes d\'onde complexes en temps réel.'
+  },
+  {id:'filter',icon:'⌇',name:'FILTER',sub:'Filtre',color:'#00d4aa',
+   desc:'Sculpte le spectre — enlève ou accentue des fréquences.',
+   params:[
+     {name:'Cutoff',val:'50-8000 Hz',desc:'Fréquence de coupure. En dessous (LP) les harmoniques sont filtrées. C\'est le paramètre le plus expressif — modulez-le avec le LFO ou l\'ENV.'},
+     {name:'Resonance (Q)',val:'0.1-20',desc:'Accentuation autour du cutoff. Q élevé = son caractéristique "wah". Très élevé = auto-oscillation du filtre.'},
+     {name:'Drive',val:'1-10',desc:'Saturation dans le filtre. Ajoute des harmoniques et de la chaleur avant la coupure.'},
+   ],
+   serum:'Serum 2 propose des filtres inspirés de synthés classiques (Moog, MS-20, SEM). Le Dirty Filter ajoute de la distorsion. Le filtre peut morphing entre types en temps réel.'
+  },
+  {id:'env',icon:'⋀',name:'ENV',sub:'Enveloppe',color:'#ff6b35',
+   desc:'Contrôle l\'évolution du volume dans le temps (ADSR).',
+   params:[
+     {name:'Attack',val:'1-2000 ms',desc:'Temps de montée. Court = son percussif. Long = son qui s\'installe progressivement (pad).'},
+     {name:'Decay',val:'10-2000 ms',desc:'Temps de descente vers le Sustain. Court + Sustain 0 = son pluck qui disparaît vite.'},
+     {name:'Sustain',val:'0-100%',desc:'Niveau tenu tant que la note est pressée. 0% = percussion. 100% = note qui tient au maximum.'},
+     {name:'Release',val:'10-3000 ms',desc:'Temps de disparition après relâchement. Court = son coupé net. Long = queue naturelle.'},
+   ],
+   serum:'ENV 1 contrôle toujours le VCA (volume). ENV 2 et 3 sont libres — assignez-les au filtre, au pitch ou à la wavetable position dans la matrice de modulation.'
+  },
+  {id:'lfo',icon:'∿',name:'LFO',sub:'Modulation',color:'#f0b429',
+   desc:'Oscillateur lent qui module les paramètres d\'autres modules.',
+   params:[
+     {name:'Rate',val:'0.05-20 Hz',desc:'Vitesse de modulation. Sous 1 Hz = mouvement lent (respiration). 1-10 Hz = modulation perceptible. Au-dessus de 20 Hz = FM (effet de timbre).'},
+     {name:'Depth',val:'0-3000 Hz',desc:'Intensité de modulation sur le filtre. 0 = inactif. 3000 = modulation maximale du cutoff.'},
+     {name:'Destination',val:'Filtre/Pitch/Volume',desc:'Ce que le LFO modifie. Filtre = sweep rhythmique. Pitch = vibrato. Volume = tremolo.'},
+   ],
+   serum:'Serum 2 a 4 LFO avec formes d\'onde personnalisables dessinées à la main. Le mode Env transforme le LFO en enveloppe non-répétitive. Trig = redémarre à chaque note.'
+  },
+  {id:'vca',icon:'▷',name:'VCA',sub:'Volume final',color:'#ff4466',
+   desc:'Contrôle le volume de sortie — piloté par ENV 1.',
+   params:[
+     {name:'Volume',val:'0-100%',desc:'Niveau de sortie global. Dans le Mini Synthé, contrôlé par le slider Volume dans l\'OSC.'},
+     {name:'ENV 1 → VCA',val:'Toujours actif',desc:'L\'enveloppe ENV 1 contrôle le volume selon l\'ADSR défini. C\'est le câblage standard dans tous les synthés soustractifs.'},
+   ],
+   serum:'Dans Serum 2, le VCA est intégré — ENV 1 est automatiquement câblé au volume master. Le Master Volume et le Pan sont dans la section globale en bas à droite.'
+  },
+];
+
+const SYNTH_PRESETS = [
+  {
+    id:'hitek_bass', name:'Hi-Tek Minimal Bass', style:'Hi-Tek / 125-128 BPM',
+    desc:'Basse sub ronde avec légère chaleur mid', color:'#00d4aa',
+    params:{wave:'sine',oct:-1,detune:0,vol:0.8,filterType:'lowpass',cutoff:300,res:1.5,drive:2,att:0.005,dec:0.3,sus:0.75,rel:0.15,lfoRate:0.1,lfoDepth:0,lfoWave:'sine',lfoDest:'filter'},
+    patch:[
+      {s:'OSC',p:'Forme',v:'Sine',n:'Fondamentale pure pour le sub'},
+      {s:'OSC',p:'Octave',v:'-1',n:'Registre sub'},
+      {s:'FILTER',p:'Type',v:'Low Pass',n:'Coupe les aigus indésirables'},
+      {s:'FILTER',p:'Cutoff',v:'200-400 Hz',n:'Laisse passer le sub uniquement'},
+      {s:'FILTER',p:'Drive',v:'15-25%',n:'Légère chaleur analogique'},
+      {s:'ENV',p:'Attack',v:'5-8 ms',n:'Légère transitoire'},
+      {s:'ENV',p:'Decay',v:'200-400 ms',n:'Descente vers le sustain'},
+      {s:'ENV',p:'Sustain',v:'75%',n:'Tient bien'},
+      {s:'ENV',p:'Release',v:'100-150 ms',n:'Pas trop court'},
+    ]
+  },
+  {
+    id:'reeze_dnb', name:'Reeze DnB / Neuro', style:'DnB / Neurofunk / 170-180 BPM',
+    desc:'Texture modulaire agressive — sweep de filtre prononcé', color:'#7c5cfc',
+    params:{wave:'sawtooth',oct:0,detune:10,vol:0.7,filterType:'lowpass',cutoff:800,res:8,drive:4,att:0.001,dec:0.4,sus:0.4,rel:0.1,lfoRate:0.5,lfoDepth:600,lfoWave:'sine',lfoDest:'filter'},
+    patch:[
+      {s:'OSC',p:'Forme',v:'Saw',n:'Riche en harmoniques'},
+      {s:'OSC',p:'Détune',v:'+10 cents',n:'Légère épaisseur'},
+      {s:'FILTER',p:'Cutoff',v:'800 Hz (modulé)',n:'Valeur centrale avant modulation'},
+      {s:'FILTER',p:'Resonance',v:'Q 8',n:'Présence marquée — caractère wah'},
+      {s:'FILTER',p:'Drive',v:'4x',n:'Saturation prononcée'},
+      {s:'ENV',p:'Attack',v:'1 ms',n:'Transitoire immédiat'},
+      {s:'ENV',p:'Decay',v:'400 ms',n:'Sweep agressif'},
+      {s:'LFO',p:'Rate',v:'0.5 Hz',n:'Modulation lente du filtre'},
+      {s:'LFO',p:'Depth',v:'600 Hz',n:'Sweep large'},
+    ]
+  },
+  {
+    id:'pad_hitek', name:'Pad Atmosphérique', style:'Hi-Tek / Techno / 125-145 BPM',
+    desc:'Nappe évolutive hypnotique — respire lentement', color:'#ff6b35',
+    params:{wave:'triangle',oct:0,detune:5,vol:0.6,filterType:'lowpass',cutoff:1500,res:2,drive:1,att:1.2,dec:1.0,sus:0.9,rel:2.0,lfoRate:0.08,lfoDepth:400,lfoWave:'sine',lfoDest:'filter'},
+    patch:[
+      {s:'OSC',p:'Forme',v:'Triangle',n:'Harmoniques douces'},
+      {s:'OSC',p:'Détune',v:'+5 cents',n:'Légère épaisseur'},
+      {s:'FILTER',p:'Cutoff',v:'1500 Hz',n:'Ouvert — laisse respirer'},
+      {s:'ENV',p:'Attack',v:'1.2 s',n:'Montée lente — le pad s\'installe'},
+      {s:'ENV',p:'Sustain',v:'90%',n:'Tient au maximum'},
+      {s:'ENV',p:'Release',v:'2 s',n:'Disparaît très progressivement'},
+      {s:'LFO',p:'Rate',v:'0.08 Hz',n:'~12 secondes par cycle'},
+      {s:'LFO',p:'Depth',v:'400 Hz',n:'Respiration du filtre'},
+    ]
+  },
+  {
+    id:'sub_dnb', name:'Sub Bass DnB', style:'DnB / 170-180 BPM',
+    desc:'Sub propre et puissant — fondement du mix', color:'#ff4466',
+    params:{wave:'sine',oct:-2,detune:0,vol:0.9,filterType:'lowpass',cutoff:120,res:0.5,drive:1.2,att:0.001,dec:0.15,sus:0.7,rel:0.08,lfoRate:1,lfoDepth:0,lfoWave:'sine',lfoDest:'filter'},
+    patch:[
+      {s:'OSC',p:'Forme',v:'Sine',n:'Fondamentale pure — pas d\'harmoniques indésirables'},
+      {s:'OSC',p:'Octave',v:'-2',n:'Zone sub (sous 80 Hz)'},
+      {s:'FILTER',p:'Cutoff',v:'120 Hz',n:'Ne laisse passer que le sub'},
+      {s:'FILTER',p:'Resonance',v:'0%',n:'Aucune — risque d\'instabilité sub'},
+      {s:'ENV',p:'Attack',v:'1 ms',n:'Immédiat — claque avec le kick'},
+      {s:'ENV',p:'Release',v:'80 ms',n:'Ni trop court (clic) ni trop long (boue)'},
+    ]
+  },
+  {
+    id:'lead_minimal', name:'Lead Hi-Tek Minimal', style:'Hi-Tek / 125-128 BPM',
+    desc:'Lead incisif mélodique — présent sans agresser', color:'#f0b429',
+    params:{wave:'sawtooth',oct:1,detune:0,vol:0.65,filterType:'lowpass',cutoff:2500,res:4,drive:2,att:0.005,dec:0.25,sus:0.55,rel:0.2,lfoRate:2,lfoDepth:200,lfoWave:'sine',lfoDest:'filter'},
+    patch:[
+      {s:'OSC',p:'Forme',v:'Saw',n:'Riche en harmoniques pour la présence'},
+      {s:'OSC',p:'Octave',v:'+1',n:'Registre supérieur'},
+      {s:'FILTER',p:'Cutoff',v:'2500 Hz',n:'Zone de présence et d\'articulation'},
+      {s:'FILTER',p:'Resonance',v:'Q 4',n:'Caractère marqué'},
+      {s:'ENV',p:'Attack',v:'5 ms',n:'Transitoire présent'},
+      {s:'ENV',p:'Decay',v:'250 ms',n:''},
+      {s:'LFO',p:'Rate',v:'2 Hz',n:'Pulsation rythmique'},
+      {s:'LFO',p:'Depth',v:'200 Hz',n:'Mouvement subtil du filtre'},
+    ]
+  },
+];
+
+const LFOMOD_WAVES = {
+  sine:{desc:'Modulation douce et continue. Idéale pour le vibrato, le tremolo, les sweeps de filtre progressifs. Aucune transition abrupte.'},
+  triangle:{desc:'Similaire à la Sine mais avec des transitions linéaires. Légèrement plus angulaire et mécanique.'},
+  square:{desc:'Alterne entre deux valeurs extrêmes sans transition. Parfaite pour les effets on/off rythmiques — gate, sidechain simulé, tremolo carré.'},
+  saw:{desc:'Monte progressivement puis chute brutalement. Crée un effet d\'aspiration ou de sweep descendant. Très utilisée pour les sweeps de filtre.'},
+  rsaw:{desc:'Chute progressivement puis monte brutalement. Effet de rampe ascendante ou de montée progressive.'},
+  random:{desc:'Sample & Hold — tire une valeur aléatoire à chaque cycle. Crée des modulations imprévisibles et organiques. Signature des textures analogiques et glitch.'},
+};
+
+// ══ AUDIO ENGINE ══
+function getSynthCtx(){return getCtx();}
+
+function playNote(freq){
+  const ctx=getSynthCtx();
+  const t=ctx.currentTime;
+  const osc=ctx.createOscillator();
+  const filter=ctx.createBiquadFilter();
+  const drive=ctx.createWaveShaper();
+  const gainEnv=ctx.createGain();
+  const masterGain=ctx.createGain();
+  const analyser=ctx.createAnalyser();
+
+  // OSC
+  osc.type=SYNTH.wave;
+  osc.frequency.value=freq*Math.pow(2,SYNTH.oct)*Math.pow(2,SYNTH.detune/1200);
+
+  // Drive (waveshaper simple)
+  const curve=new Float32Array(256);
+  for(let i=0;i<256;i++){const x=i*2/256-1;curve[i]=((Math.PI+SYNTH.drive*3)*x)/(Math.PI+SYNTH.drive*3*Math.abs(x));}
+  drive.curve=curve;
+
+  // Filter
+  filter.type=SYNTH.filterType;
+  filter.frequency.value=SYNTH.cutoff;
+  filter.Q.value=SYNTH.res;
+
+  // LFO
+  const lfo=ctx.createOscillator();
+  const lfoGain=ctx.createGain();
+  lfo.type=SYNTH.lfoWave;
+  lfo.frequency.value=SYNTH.lfoRate;
+  lfoGain.gain.value=SYNTH.lfoDepth;
+
+  if(SYNTH.lfoDest==='filter'){lfo.connect(lfoGain);lfoGain.connect(filter.frequency);}
+  else if(SYNTH.lfoDest==='pitch'){lfo.connect(lfoGain);lfoGain.gain.value=SYNTH.lfoDepth*10;lfoGain.connect(osc.frequency);}
+  else if(SYNTH.lfoDest==='volume'){lfo.connect(lfoGain);lfoGain.gain.value=SYNTH.lfoDepth/3000*SYNTH.vol;lfoGain.connect(gainEnv.gain);}
+
+  // ENV
+  gainEnv.gain.setValueAtTime(0,t);
+  gainEnv.gain.linearRampToValueAtTime(SYNTH.vol,t+SYNTH.att);
+  gainEnv.gain.linearRampToValueAtTime(SYNTH.vol*SYNTH.sus,t+SYNTH.att+SYNTH.dec);
+
+  masterGain.gain.value=1;
+
+  // Chain
+  osc.connect(drive);
+  drive.connect(filter);
+  filter.connect(gainEnv);
+  gainEnv.connect(masterGain);
+  masterGain.connect(analyser);
+  analyser.connect(ctx.destination);
+
+  osc.start(t);
+  lfo.start(t);
+
+  // Scope
+  startScope(analyser);
+
+  // Stop after 2s
+  const stopAt=t+SYNTH.att+SYNTH.dec+1.5;
+  gainEnv.gain.setTargetAtTime(0,stopAt,SYNTH.rel/3);
+  osc.stop(stopAt+SYNTH.rel+0.5);
+  lfo.stop(stopAt+SYNTH.rel+0.5);
+}
+
+// ══ SCOPE ══
+let scopeAF=null;
+function startScope(analyser){
+  const canvas=document.getElementById('synth-scope');
+  if(!canvas)return;
+  const ctx2=canvas.getContext('2d');
+  const W=canvas.width=canvas.offsetWidth*window.devicePixelRatio||600;
+  const H=canvas.height=80*window.devicePixelRatio||80;
+  analyser.fftSize=2048;
+  const buf=new Uint8Array(analyser.fftSize);
+  if(scopeAF)cancelAnimationFrame(scopeAF);
+  function draw(){
+    scopeAF=requestAnimationFrame(draw);
+    analyser.getByteTimeDomainData(buf);
+    ctx2.fillStyle='#080b12';ctx2.fillRect(0,0,W,H);
+    ctx2.strokeStyle='#7c5cfc';ctx2.lineWidth=2;ctx2.beginPath();
+    buf.forEach((v,i)=>{const x=i/buf.length*W;const y=(v/128-1)*(H/2)+H/2;i===0?ctx2.moveTo(x,y):ctx2.lineTo(x,y);});
+    ctx2.stroke();
+  }
+  draw();
+}
+
+// ══ CLAVIER ══
+function renderSynthKeyboard(){
+  const sn=scaleNotes();
+  const na=noteArr();
+  const rname=na[S.root];
+  const el=document.getElementById('synth-scale-info');
+  if(el)el.textContent=rname+' '+S.mode;
+  const kb=document.getElementById('synth-keyboard');
+  if(!kb)return;
+  kb.innerHTML='';
+  // Jouer sur 2 octaves
+  [0,1].forEach(octOff=>{
+    sn.forEach((n,deg)=>{
+      const midi=60+(S.mode==='Majeur'?[0,2,4,5,7,9,11]:[0,2,3,5,7,8,10])[deg]+(SYNTH.playOct-4+octOff)*12;
+      const freq=440*Math.pow(2,(midi-69)/12);
+      const btn=document.createElement('button');
+      btn.style.cssText=`padding:12px 10px;background:${deg===0&&octOff===0?'rgba(255,107,53,.2)':'var(--card2)'};border:1px solid ${deg===0&&octOff===0?'var(--acc3)':'var(--b)'};border-radius:var(--r2);color:${deg===0&&octOff===0?'var(--acc3)':'var(--tx)'};cursor:pointer;font-family:monospace;font-weight:600;font-size:13px;transition:.15s;min-width:44px;text-align:center`;
+      btn.innerHTML=`<div>${n.name}</div><div style="font-size:9px;color:var(--mu2);margin-top:2px">${SYNTH.playOct+octOff}</div>`;
+      btn.addEventListener('mousedown',e=>{e.preventDefault();btn.style.background='rgba(124,92,252,.3)';playNote(freq);setTimeout(()=>btn.style.background=deg===0&&octOff===0?'rgba(255,107,53,.2)':'var(--card2)',200);});
+      kb.appendChild(btn);
+    });
+    if(octOff===0){const sep=document.createElement('div');sep.style.cssText='width:2px;background:var(--b);border-radius:2px;align-self:stretch;margin:0 4px';kb.appendChild(sep);}
+  });
+}
+
+// ══ CONTROLS ══
+function setSynthWave(btn){
+  btn.parentElement.querySelectorAll('.btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');SYNTH.wave=btn.dataset.wave;
+}
+function setSynthOct(btn){
+  btn.parentElement.querySelectorAll('.btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');SYNTH.oct=parseInt(btn.dataset.oct);
+}
+function setSynthFilter(btn){
+  btn.parentElement.querySelectorAll('.btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');SYNTH.filterType=btn.dataset.ftype;
+}
+function setSynthLFOWave(btn){
+  btn.parentElement.querySelectorAll('.btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');SYNTH.lfoWave=btn.dataset.lwave;
+}
+function setSynthLFODest(btn){
+  btn.parentElement.querySelectorAll('.btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');SYNTH.lfoDest=btn.dataset.dest;
+}
+function setSynthPlayOct(btn){
+  btn.parentElement.querySelectorAll('.btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');SYNTH.playOct=parseInt(btn.dataset.poct);
+  renderSynthKeyboard();
+}
+function updateLFO(){}
+
+function syncENVtoBPM(){
+  const beat=60000/S.bpm;
+  const att=Math.round(beat/16);
+  const dec=Math.round(beat/2);
+  const rel=Math.round(beat/4);
+  SYNTH.att=att/1000;SYNTH.dec=dec/1000;SYNTH.rel=rel/1000;
+  document.getElementById('synth-att').value=att;document.getElementById('synth-att-val').textContent=att+' ms';
+  document.getElementById('synth-dec').value=dec;document.getElementById('synth-dec-val').textContent=dec+' ms';
+  document.getElementById('synth-rel').value=rel;document.getElementById('synth-rel-val').textContent=rel+' ms';
+}
+
+function syncLFOtoBPM(div){
+  const beat=60/S.bpm;
+  const muls={'1/1':4,'1/2':2,'1/4':1,'1/8':.5,'1/16':.25};
+  const hz=1/(beat*(muls[div]||1));
+  SYNTH.lfoRate=hz;
+  document.getElementById('synth-lfo-rate').value=hz;
+  document.getElementById('synth-lfo-rate-val').textContent=hz.toFixed(2)+' Hz';
+}
+
+// ══ PRESETS ══
+function loadSynthPreset(id){
+  const p=SYNTH_PRESETS.find(x=>x.id===id);if(!p)return;
+  Object.assign(SYNTH,p.params);
+  // Mettre a jour les sliders
+  const set=(id,v,suf)=>{const el=document.getElementById(id);if(el){el.value=typeof v==='number'?v:v;const vEl=document.getElementById(id+'-val');if(vEl)vEl.textContent=(typeof v==='number'?v.toFixed(v<1?3:0):v)+(suf||'');}};
+  set('synth-cutoff',SYNTH.cutoff,' Hz');
+  set('synth-res',SYNTH.res,'');
+  set('synth-drive',SYNTH.drive,'');
+  set('synth-att',Math.round(SYNTH.att*1000),' ms');
+  set('synth-dec',Math.round(SYNTH.dec*1000),' ms');
+  set('synth-sus',Math.round(SYNTH.sus*100),'%');
+  set('synth-rel',Math.round(SYNTH.rel*1000),' ms');
+  set('synth-lfo-rate',SYNTH.lfoRate,' Hz');
+  set('synth-lfo-depth',SYNTH.lfoDepth,' Hz');
+  set('synth-vol',Math.round(SYNTH.vol*100),'%');
+  set('synth-detune',SYNTH.detune,' ct');
+  // Boutons
+  document.querySelectorAll('#synth-wave-btns .btn').forEach(b=>b.classList.toggle('on',b.dataset.wave===SYNTH.wave));
+  document.querySelectorAll('#synth-filter-btns .btn').forEach(b=>b.classList.toggle('on',b.dataset.ftype===SYNTH.filterType));
+  document.querySelectorAll('#synth-lfo-wave-btns .btn').forEach(b=>b.classList.toggle('on',b.dataset.lwave===SYNTH.lfoWave));
+  document.querySelectorAll('#synth-lfo-dest-btns .btn').forEach(b=>b.classList.toggle('on',b.dataset.dest===SYNTH.lfoDest));
+  document.querySelectorAll('#synth-oct-btns .btn').forEach(b=>b.classList.toggle('on',parseInt(b.dataset.oct)===SYNTH.oct));
+  // Detail
+  showSynthPresetDetail(id);
+}
+
+function showSynthPresetDetail(id){
+  const p=SYNTH_PRESETS.find(x=>x.id===id);if(!p)return;
+  document.querySelectorAll('#synth-preset-grid .card').forEach(c=>c.classList.remove('active'));
+  const detail=document.getElementById('synth-preset-detail');
+  detail.style.display='block';
+  detail.style.borderLeft=`3px solid ${p.color}`;
+  const sections=['OSC','FILTER','ENV','LFO','FX'];
+  let html=`<div style="font-size:15px;font-weight:700;color:${p.color};margin-bottom:4px">${p.name}</div>
+    <div style="font-size:12px;color:var(--mu2);margin-bottom:14px">${p.desc} — ${p.style}</div>`;
+  sections.forEach(sec=>{
+    const rows=p.patch.filter(r=>r.s===sec);
+    if(!rows.length)return;
+    html+=`<div style="margin-bottom:10px"><div style="font-size:10px;font-weight:700;color:${p.color};text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;padding-bottom:3px;border-bottom:1px solid var(--b)">${sec}</div>`;
+    rows.forEach(r=>{html+=`<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:12px;border-bottom:1px solid rgba(30,45,69,.3)"><span style="color:var(--mu2)">${r.p}</span><div style="text-align:right"><div style="font-family:monospace;font-weight:600;color:${p.color}">${r.v}</div>${r.n?`<div style="font-size:10px;color:var(--mu2)">${r.n}</div>`:''}</div></div>`;});
+    html+='</div>';
+  });
+  html+=`<div class="warn-box">Points de départ — ajustez toujours à l'oreille selon votre contexte de mix.</div>`;
+  detail.innerHTML=html;
+}
+
+function initSynthPresets(){
+  const grid=document.getElementById('synth-preset-grid');
+  if(!grid)return;
+  SYNTH_PRESETS.forEach(p=>{
+    const div=document.createElement('div');
+    div.className='card';
+    div.style.cssText=`border-color:${p.color}40;cursor:pointer;transition:.2s;margin-bottom:0`;
+    div.innerHTML=`<div style="font-size:14px;font-weight:700;color:${p.color};margin-bottom:4px">${p.name}</div><div style="font-size:11px;color:var(--acc2);margin-bottom:6px">${p.style}</div><div style="font-size:11px;color:var(--mu2);line-height:1.5;margin-bottom:10px">${p.desc}</div><button class="btn btn-sm btn-primary" style="width:100%">Charger + Écouter</button>`;
+    div.querySelector('button').addEventListener('click',e=>{
+      e.stopPropagation();
+      loadSynthPreset(p.id);
+      // Jouer une note de demo
+      const sn=scaleNotes();
+      const midi=60+(S.mode==='Majeur'?[0,2,4,5,7,9,11]:[0,2,3,5,7,8,10])[0]+(SYNTH.playOct-4)*12;
+      const freq=440*Math.pow(2,(midi-69)/12);
+      setTimeout(()=>playNote(freq),100);
+      // Switcher vers mini synthe
+      document.querySelectorAll('.tabs .tb').forEach(b=>{if(b.textContent.includes('Synth'))b.click();});
+      const ms=document.querySelector('[onclick*="minisynth"]');
+      if(ms)ms.click();
+    });
+    grid.appendChild(div);
+  });
+}
+
+// ══ SIGNAL FLOW ══
+function initSynthFlow(){
+  const chain=document.getElementById('synth-flow-chain');
+  if(!chain)return;
+  SYNTH_MODULES.forEach((m,i)=>{
+    const div=document.createElement('div');
+    div.style.cssText=`background:var(--card2);border:2px solid ${m.color}60;border-radius:var(--r);padding:14px;min-width:110px;text-align:center;cursor:pointer;transition:.2s;flex-shrink:0`;
+    div.innerHTML=`<div style="font-size:22px;margin-bottom:5px">${m.icon}</div><div style="font-size:12px;font-weight:700;color:${m.color};text-transform:uppercase;letter-spacing:.5px">${m.name}</div><div style="font-size:10px;color:var(--mu2);margin-top:2px">${m.sub}</div>`;
+    div.addEventListener('click',()=>showSynthModule(m.id));
+    chain.appendChild(div);
+    if(i<SYNTH_MODULES.length-1){
+      const cable=document.createElement('div');
+      cable.style.cssText='display:flex;align-items:center;padding:0 4px;flex-shrink:0';
+      cable.innerHTML=`<svg width="40" height="20"><line x1="0" y1="10" x2="36" y2="10" stroke="${m.color}" stroke-width="2" stroke-dasharray="4,3" opacity=".5"/><polygon points="32,6 40,10 32,14" fill="${SYNTH_MODULES[i+1].color}" opacity=".7"/></svg>`;
+      chain.appendChild(cable);
+    }
+  });
+}
+
+function showSynthModule(id){
+  const m=SYNTH_MODULES.find(x=>x.id===id);if(!m)return;
+  const detail=document.getElementById('synth-module-detail');
+  detail.style.display='block';detail.style.borderColor=m.color;
+  document.getElementById('synth-module-detail-content').innerHTML=`
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+      <span style="font-size:28px">${m.icon}</span>
+      <div><div style="font-size:15px;font-weight:700;color:${m.color}">${m.name} — ${m.sub}</div>
+      <div style="font-size:12px;color:var(--mu2);margin-top:2px">${m.desc}</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin-bottom:12px">
+      ${m.params.map(p=>`<div style="background:var(--card2);border:1px solid ${m.color}30;border-radius:var(--r2);padding:10px">
+        <div style="font-size:10px;color:var(--mu2);text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px">${p.name}</div>
+        <div style="font-size:14px;font-weight:700;font-family:monospace;color:${m.color};margin-bottom:4px">${p.val}</div>
+        <div style="font-size:11px;color:var(--mu2);line-height:1.5">${p.desc}</div>
+      </div>`).join('')}
+    </div>
+    <div style="background:rgba(124,92,252,.06);border:1px solid ${m.color}30;border-radius:var(--r2);padding:10px 14px">
+      <div style="font-size:10px;font-weight:700;color:${m.color};text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Dans Serum 2</div>
+      <div style="font-size:12px;color:var(--mu2);line-height:1.7">${m.serum}</div>
+    </div>`;
+}
+
+// ══ LFO MOD ══
+function drawLFOModWave(type){
+  const canvas=document.getElementById('lfomod-canvas');if(!canvas)return;
+  const ctx2=canvas.getContext('2d');
+  const W=canvas.width=canvas.offsetWidth||400,H=canvas.height=120;
+  ctx2.fillStyle='#080b12';ctx2.fillRect(0,0,W,H);
+  ctx2.strokeStyle='#1e2d45';ctx2.lineWidth=1;
+  ctx2.beginPath();ctx2.moveTo(0,H/2);ctx2.lineTo(W,H/2);ctx2.stroke();
+  ctx2.strokeStyle='#7c5cfc';ctx2.lineWidth=2.5;ctx2.beginPath();
+  for(let x=0;x<W;x++){
+    const t=(x/W)*2,phase=(t%1);
+    let y;
+    switch(type){
+      case 'sine':y=Math.sin(t*Math.PI*2);break;
+      case 'triangle':y=phase<.5?phase*4-1:(1-phase)*4-1;break;
+      case 'square':y=phase<.5?1:-1;break;
+      case 'saw':y=1-phase*2;break;
+      case 'rsaw':y=phase*2-1;break;
+      case 'random':y=(Math.floor(t*4)%2===0?0.7:-0.7);break;
+    }
+    const py=H/2-y*(H/2-10);
+    x===0?ctx2.moveTo(x,py):ctx2.lineTo(x,py);
+  }
+  ctx2.stroke();
+}
+
+function setLFOModWave(btn){
+  btn.parentElement.querySelectorAll('.btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  const w=btn.dataset.w;
+  drawLFOModWave(w);
+  const d=document.getElementById('lfomod-desc');
+  if(d)d.textContent=LFOMOD_WAVES[w]?.desc||'';
+}
+
+function renderLFOModTable(){
+  const tbl=document.getElementById('lfomod-table');if(!tbl)return;
+  const beat=60/S.bpm;
+  const rows=[
+    {n:'Ronde (1/1)',m:4},{n:'Blanche (1/2)',m:2},{n:'Noire (1/4)',m:1},
+    {n:'Croche (1/8)',m:.5},{n:'Double croche (1/16)',m:.25},
+    {n:'Noire pointée',m:1.5},{n:'Croche pointée',m:.75},
+    {n:'Triolet noire',m:2/3},{n:'Triolet croche',m:1/3},
+  ];
+  tbl.innerHTML='<thead><tr><th>Subdivision</th><th>ms</th><th style="color:var(--acc2)">Hz</th><th></th></tr></thead><tbody>'+
+    rows.map(r=>{
+      const ms=Math.round(beat*r.m*1000);
+      const hz=(1/(beat*r.m)).toFixed(4);
+      return`<tr><td style="font-size:12px;color:var(--mu2)">${r.n}</td><td style="font-family:monospace">${ms}</td><td style="font-family:monospace;color:var(--acc2)">${hz}</td><td><button class="copy-btn" onclick="copyVal('${hz}',this)">📋</button></td></tr>`;
+    }).join('')+'</tbody>';
+}
+
+// ══ INIT SYNTHE ══
+function initSynth(){
+  renderSynthKeyboard();
+  initSynthFlow();
+  initSynthPresets();
+  drawLFOModWave('sine');
+  const d=document.getElementById('lfomod-desc');
+  if(d)d.textContent=LFOMOD_WAVES.sine.desc;
+  renderLFOModTable();
+}
+
+// Appeler initSynth quand on arrive sur l'onglet Synthèse
+// A ajouter dans la fonction tab() :
+// if(id==='synth'){initSynth();renderLFOModTable();}
+</script>
+
 </div><!-- /cnt -->
 
 <script>
@@ -840,6 +1595,7 @@ function stab(pnl,id,btn){
   document.getElementById(prefix+id).classList.add('on');
   btn.classList.add('on');
   if(id==='cercle'){renderCoF();renderModInfo(noteArr()[S.root]);}
+  if(id==='synth'){initSynth();renderLFOModTable();}
   if(id==='compat')analyzeCompat();
 }
 document.addEventListener('click', function(e) {
@@ -1651,6 +2407,7 @@ function exportAllChordsMidi(){
 function renderOutilsChords(){
   const sn=scaleNotes(),chords=buildChords(sn),na=noteArr();
   document.getElementById('outils-key').textContent=na[S.root]+' '+S.mode;
+  renderSynthKeyboard();
   document.getElementById('outils-chord-rows').innerHTML=chords.map((c,i)=>
     `<tr>
       <td style="font-family:monospace;color:var(--mu2)">${c.roman}</td>
