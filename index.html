@@ -783,7 +783,7 @@ tr:hover td{background:rgba(124,92,252,.04)}
         </div>
         <div class="row">
           <label>Détune</label>
-          <input type="range" id="synth-detune" min="-50" max="50" value="0" oninput="SYNTH.detune=parseInt(this.value);document.getElementById('synth-detune-val').textContent=this.value+' ct'" style="flex:1">
+          <input type="range" id="synth-detune" min="-50" max="50" value="0" oninput="SYNTH.detune=parseInt(this.value);document.getElementById('synth-detune-val').textContent=this.value+' ct';if(synthContinuousActive)restartContinuousPlay()" style="flex:1">
           <span id="synth-detune-val" style="font-family:monospace;color:var(--acc);min-width:50px">0 ct</span>
         </div>
         <div class="row">
