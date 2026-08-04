@@ -69,6 +69,7 @@ label{font-size:12px;color:var(--mu2)}
 .btn:hover{border-color:var(--acc);color:var(--acc)}
 .btn.on{background:rgba(124,92,252,.15);border-color:var(--acc);color:var(--acc)}
 .btn-primary{background:var(--acc);border-color:var(--acc);color:#fff}
+.btn-danger{background:var(--danger);border-color:var(--danger);color:#fff}
 .btn-primary:hover{background:#6a4cdc;border-color:#6a4cdc;color:#fff}
 .btn-sm{padding:4px 10px;font-size:11px;border-radius:5px}
 .btn-group{display:flex;gap:4px;flex-wrap:wrap}
@@ -788,7 +789,7 @@ tr:hover td{background:rgba(124,92,252,.04)}
         </div>
         <div class="row">
           <label>Volume</label>
-          <input type="range" id="synth-vol" min="0" max="100" value="70" oninput="SYNTH.vol=parseInt(this.value)/100;document.getElementById('synth-vol-val').textContent=this.value+'%'" style="flex:1">
+          <input type="range" id="synth-vol" min="0" max="100" value="70" oninput="SYNTH.vol=parseInt(this.value)/100;document.getElementById('synth-vol-val').textContent=this.value+'%';updateLiveNodes()" style="flex:1">
           <span id="synth-vol-val" style="font-family:monospace;color:var(--acc);min-width:40px">70%</span>
         </div>
       </div>
@@ -808,12 +809,12 @@ tr:hover td{background:rgba(124,92,252,.04)}
         </div>
         <div class="row">
           <label>Cutoff</label>
-          <input type="range" id="synth-cutoff" min="50" max="8000" value="2000" oninput="SYNTH.cutoff=parseInt(this.value);document.getElementById('synth-cutoff-val').textContent=this.value+' Hz'" style="flex:1">
+          <input type="range" id="synth-cutoff" min="50" max="8000" value="2000" oninput="SYNTH.cutoff=parseInt(this.value);document.getElementById('synth-cutoff-val').textContent=this.value+' Hz';updateLiveNodes()" style="flex:1">
           <span id="synth-cutoff-val" style="font-family:monospace;color:var(--acc2);min-width:70px">2000 Hz</span>
         </div>
         <div class="row">
           <label>Resonance</label>
-          <input type="range" id="synth-res" min="0.1" max="20" step="0.1" value="1" oninput="SYNTH.res=parseFloat(this.value);document.getElementById('synth-res-val').textContent=parseFloat(this.value).toFixed(1)" style="flex:1">
+          <input type="range" id="synth-res" min="0.1" max="20" step="0.1" value="1" oninput="SYNTH.res=parseFloat(this.value);document.getElementById('synth-res-val').textContent=parseFloat(this.value).toFixed(1);updateLiveNodes()" style="flex:1">
           <span id="synth-res-val" style="font-family:monospace;color:var(--acc2);min-width:40px">1.0</span>
         </div>
         <div class="row">
@@ -867,12 +868,12 @@ tr:hover td{background:rgba(124,92,252,.04)}
         </div>
         <div class="row">
           <label>Rate</label>
-          <input type="range" id="synth-lfo-rate" min="0.05" max="20" step="0.05" value="1" oninput="SYNTH.lfoRate=parseFloat(this.value);document.getElementById('synth-lfo-rate-val').textContent=parseFloat(this.value).toFixed(2)+' Hz';updateLFO()" style="flex:1">
+          <input type="range" id="synth-lfo-rate" min="0.05" max="20" step="0.05" value="1" oninput="SYNTH.lfoRate=parseFloat(this.value);document.getElementById('synth-lfo-rate-val').textContent=parseFloat(this.value).toFixed(2)+' Hz';updateLiveNodes()" style="flex:1">
           <span id="synth-lfo-rate-val" style="font-family:monospace;color:var(--warn);min-width:60px">1.00 Hz</span>
         </div>
         <div class="row">
           <label>Depth</label>
-          <input type="range" id="synth-lfo-depth" min="0" max="3000" value="0" oninput="SYNTH.lfoDepth=parseInt(this.value);document.getElementById('synth-lfo-depth-val').textContent=this.value+' Hz';updateLFO()" style="flex:1">
+          <input type="range" id="synth-lfo-depth" min="0" max="3000" value="0" oninput="SYNTH.lfoDepth=parseInt(this.value);document.getElementById('synth-lfo-depth-val').textContent=this.value+' Hz';updateLiveNodes()" style="flex:1">
           <span id="synth-lfo-depth-val" style="font-family:monospace;color:var(--warn);min-width:60px">0 Hz</span>
         </div>
         <div class="row">
@@ -914,6 +915,11 @@ tr:hover td{background:rgba(124,92,252,.04)}
     <div class="card">
       <h2>Visualiseur de signal</h2>
       <canvas id="synth-scope" style="width:100%;border-radius:var(--r2);border:1px solid var(--b);background:var(--bg)" height="80"></canvas>
+      <div style="display:flex;gap:10px;align-items:center;margin-top:12px;flex-wrap:wrap">
+        <button id="synth-play-stop" class="btn btn-primary" onclick="toggleSynthPlay()" style="min-width:120px">▶ Play continu</button>
+        <div style="display:flex;gap:6px;flex-wrap:wrap" id="synth-live-notes"></div>
+        <span style="font-size:11px;color:var(--mu2)">Jouez et sculptez le son en temps réel</span>
+      </div>
     </div>
   </div>
 
@@ -1478,6 +1484,113 @@ function renderLFOModTable(){
       const hz=(1/(beat*r.m)).toFixed(4);
       return`<tr><td style="font-size:12px;color:var(--mu2)">${r.n}</td><td style="font-family:monospace">${ms}</td><td style="font-family:monospace;color:var(--acc2)">${hz}</td><td><button class="copy-btn" onclick="copyVal('${hz}',this)">📋</button></td></tr>`;
     }).join('')+'</tbody>';
+}
+
+// ══ PLAY CONTINU ══
+let synthContinuousNodes = null;
+let synthContinuousActive = false;
+
+function startContinuousPlay(freq) {
+  stopContinuousPlay();
+  const ctx = getSynthCtx();
+  const t = ctx.currentTime;
+  const osc = ctx.createOscillator();
+  const filter = ctx.createBiquadFilter();
+  const drive = ctx.createWaveShaper();
+  const gainEnv = ctx.createGain();
+  const analyser = ctx.createAnalyser();
+
+  osc.type = SYNTH.wave;
+  osc.frequency.value = freq * Math.pow(2, SYNTH.oct) * Math.pow(2, SYNTH.detune / 1200);
+
+  const curve = new Float32Array(256);
+  for (let i = 0; i < 256; i++) { const x = i * 2 / 256 - 1; curve[i] = ((Math.PI + SYNTH.drive * 3) * x) / (Math.PI + SYNTH.drive * 3 * Math.abs(x)); }
+  drive.curve = curve;
+
+  filter.type = SYNTH.filterType;
+  filter.frequency.value = SYNTH.cutoff;
+  filter.Q.value = SYNTH.res;
+
+  const lfo = ctx.createOscillator();
+  const lfoGain = ctx.createGain();
+  lfo.type = SYNTH.lfoWave;
+  lfo.frequency.value = SYNTH.lfoRate;
+  lfoGain.gain.value = SYNTH.lfoDepth;
+  if (SYNTH.lfoDest === 'filter') { lfo.connect(lfoGain); lfoGain.connect(filter.frequency); }
+  else if (SYNTH.lfoDest === 'pitch') { lfo.connect(lfoGain); lfoGain.gain.value = SYNTH.lfoDepth * 10; lfoGain.connect(osc.frequency); }
+  else if (SYNTH.lfoDest === 'volume') { lfo.connect(lfoGain); lfoGain.gain.value = SYNTH.lfoDepth / 3000 * SYNTH.vol; lfoGain.connect(gainEnv.gain); }
+
+  gainEnv.gain.setValueAtTime(0, t);
+  gainEnv.gain.linearRampToValueAtTime(SYNTH.vol, t + SYNTH.att);
+  gainEnv.gain.linearRampToValueAtTime(SYNTH.vol * SYNTH.sus, t + SYNTH.att + SYNTH.dec);
+
+  osc.connect(drive); drive.connect(filter); filter.connect(gainEnv);
+  gainEnv.connect(analyser); analyser.connect(ctx.destination);
+  osc.start(t); lfo.start(t);
+
+  synthContinuousNodes = { osc, filter, gainEnv, lfo, lfoGain, analyser };
+  synthContinuousActive = true;
+  startScope(analyser);
+
+  // Exposer les noeuds pour mise a jour en temps reel
+  window._synthLiveNodes = { osc, filter, gainEnv, lfo, lfoGain };
+}
+
+function stopContinuousPlay() {
+  if (!synthContinuousNodes) return;
+  const ctx = getSynthCtx();
+  const t = ctx.currentTime;
+  synthContinuousNodes.gainEnv.gain.setTargetAtTime(0, t, SYNTH.rel / 3);
+  setTimeout(() => {
+    try { synthContinuousNodes.osc.stop(); synthContinuousNodes.lfo.stop(); } catch(e) {}
+    synthContinuousNodes = null;
+  }, SYNTH.rel * 1000 + 500);
+  synthContinuousActive = false;
+  if (scopeAF) { cancelAnimationFrame(scopeAF); scopeAF = null; }
+}
+
+function toggleSynthPlay() {
+  const btn = document.getElementById('synth-play-stop');
+  if (synthContinuousActive) {
+    stopContinuousPlay();
+    btn.textContent = '▶ Play continu';
+    btn.classList.remove('btn-danger');
+    btn.classList.add('btn-primary');
+  } else {
+    const sn = scaleNotes();
+    const midi = 60 + (S.mode === 'Majeur' ? [0,2,4,5,7,9,11] : [0,2,3,5,7,8,10])[0] + (SYNTH.playOct - 4) * 12;
+    const freq = 440 * Math.pow(2, (midi - 69) / 12);
+    startContinuousPlay(freq);
+    btn.textContent = '■ Stop';
+    btn.classList.remove('btn-primary');
+    btn.style.background = 'var(--danger)';
+    btn.style.borderColor = 'var(--danger)';
+    renderSynthLiveNotes();
+  }
+}
+
+function renderSynthLiveNotes() {
+  const sn = scaleNotes(), na = noteArr();
+  const el = document.getElementById('synth-live-notes');
+  if (!el) return;
+  el.innerHTML = sn.map((n, deg) => {
+    const midi = 60 + (S.mode === 'Majeur' ? [0,2,4,5,7,9,11] : [0,2,3,5,7,8,10])[deg] + (SYNTH.playOct - 4) * 12;
+    const freq = 440 * Math.pow(2, (midi - 69) / 12);
+    return `<button class="btn btn-sm" style="font-family:monospace;color:${deg===0?'var(--acc3)':'var(--tx)'};border-color:${deg===0?'var(--acc3)':'var(--b)'}" onclick="if(synthContinuousActive){startContinuousPlay(${freq})}">${n.name}</button>`;
+  }).join('');
+}
+
+// Mise a jour en temps reel des parametres sur les noeuds actifs
+function updateLiveNodes() {
+  if (!synthContinuousActive || !window._synthLiveNodes) return;
+  const n = window._synthLiveNodes;
+  const ctx = getSynthCtx();
+  n.filter.frequency.setTargetAtTime(SYNTH.cutoff, ctx.currentTime, 0.01);
+  n.filter.Q.value = SYNTH.res;
+  n.filter.type = SYNTH.filterType;
+  n.lfo.frequency.setTargetAtTime(SYNTH.lfoRate, ctx.currentTime, 0.01);
+  n.lfoGain.gain.setTargetAtTime(SYNTH.lfoDepth, ctx.currentTime, 0.01);
+  n.gainEnv.gain.setTargetAtTime(SYNTH.vol * SYNTH.sus, ctx.currentTime, 0.05);
 }
 
 // ══ INIT SYNTHE ══
