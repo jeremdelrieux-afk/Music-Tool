@@ -8,43 +8,119 @@
 
 ## Fonctionnalités
 
-### 🎵 Gamme et Accords
+### 🎵 Harmonie
+
+**Gamme & Accords**
 - Sélection de tonique (12 notes) et de mode (Mineur naturel, Majeur, Dorien, Phrygien, Lydien, Mixolydien, Mineur harmonique, Mineur mélodique, Phrygien dominant, Locrien)
-- Affichage des 7 accords diatoniques avec fonction harmonique et notes composantes
-- Clavier interactif : notes de la gamme en bleu, accord sélectionné en jaune
-- Guide mélodie : notes classées par couleur harmonique (stable / couleur / tension)
+- Clavier interactif : notes de la gamme en bleu, accord sélectionné en violet, tonique en orange, hors gamme en sombre
+- Notes affichées sur toutes les touches du clavier
+- Guide mélodie : notes classées par tension harmonique (stable / couleur / tension) sur l'accord sélectionné
 - Accords empruntés (mode parallèle, mineur harmonique, napolitain)
-- Explication tonique vs fondamentale (concept harmonique vs acoustique)
-- Lecture audio des accords au clic
+- Suites d'accords par genre (DnB, Hi-Tek Techno Minimal, Death Metal, Dorien)
+- Lecture audio des accords et des notes au clic
+- Export MIDI par accord individuel (bouton ⬇ sur chaque ligne)
 
-### 🔄 Cercle des Quintes
+**Arpégiateur**
+- Vitesse synchronisée au BPM (1/4, 1/8, 1/16, 1/8T)
+- Sens : montant, descendant, alterné, aléatoire
+- 1 à 3 octaves
+- Play / Stop
+- Export MIDI du pattern arpégé
+
+**Cercle des Quintes**
 - Visualisation SVG interactive — clic pour naviguer vers une tonalité
-- Anneau extérieur : majeur / Anneau intérieur : mineur relatif
-- Panel modulations : notes communes, notes qui changent, distance en quintes
-- Relations modales : relative majeure, parallèle, échange modal dorien
-- Accords pivot communs entre tonalités adjacentes
+- Surbrillance automatique de la relative mineure/majeure
+- Panel modulations : notes communes et notes qui changent par destination
+- Relations modales : relative, parallèle
+- Détection d'accords pivot entre tonalités adjacentes
+- Responsive mobile
 
-### ⏱️ BPM et Studio
-- Calculateur de delay synchronisé BPM (10 subdivisions : 1/1 à 1/32, pointées, triolets)
-- Feedback delay : calcul du nombre de répétitions audibles et durée de décroissance
-- Tableau reverb : pre-delay et RT60 par type (Room, Hall, Plate, Spring, Chamber, Ambience)
-- Timings compresseur synchronisés BPM (attack/release en ms par subdivision)
-- Guide saturation : Tape, Tube, Hard Clip, Transformer, Bitcrusher — comportement par niveau de drive
+**Compatibilité harmonique**
+- Comparaison de deux tonalités avec score de compatibilité en %
+- Notes communes, notes exclusives à chaque tonalité
+- Accords pivot communs aux deux tonalités
 
-### 🎚️ Transposition
-- Calculateur de pitch shift : note source → note cible
-- Résultats : demi-tons, cents, ratio de fréquence, changement de vitesse
+---
+
+### ⏱️ Tempo & Rythme
+- Calculateur BPM avec slider et saisie manuelle
+- Tap Tempo (bouton ou barre espace)
+- Tableau de subdivisions (ronde → triple croche, pointées, triolets) en ms
+- Référentiel de genres par BPM (DnB, Neurofunk, Hi-Tek Minimal, Techno, House, Trance, Death Metal) avec mise en surbrillance automatique selon le BPM courant
+
+---
+
+### 🎚️ FX Studio
+
+**Delay**
+- 8 subdivisions disponibles (1/4, 1/8, 1/16, 1/4., 1/8., 1/4T, 1/8T, 1/2)
+- Temps de delay et ping-pong offset en ms synchronisés au BPM
+- Feedback : calcul du nombre de répétitions audibles et durée de décroissance totale
+- Tableau de référence par type de delay (Slapback, Echo, Ping-Pong, Tape, Chorus)
+
+**Reverb**
+- Pre-delay et RT60 par type (Room, Hall, Plate, Spring, Chamber, Ambience)
+- Pre-delay BPM sync (1/32, 1/16, 1/8)
+- Guide mix wet par instrument
+
+**Compresseur**
+- Timings attack/release synchronisés BPM pour chaque subdivision
+- Presets par usage (sidechain, kick, bus basses, bus drums, voix)
+
+**Saturation**
+- 5 types : Tape, Tube, Hard Clip, Transformer, Bitcrusher
+- Guide comportement par niveau de drive
+- Guide positionnement dans la chaîne (avant EQ, après EQ, parallèle)
+
+**Sidechain Pumping**
+- Valeurs d'attack et release synchronisées au BPM par genre
+- 6 genres : Drum & Bass, Neurofunk, Techno, Hi-Tek Minimal, House, Trance
+- Ratio, threshold, knee et routing FL Studio par genre
+- Alternative recommandée pour chaque genre
+
+---
+
+### 🔊 Sound Design
+
+**Fréquences des notes**
+- Tableau Hz et période (ms) pour chaque note, octave 0 à 8
+- Diapason A4 réglable (440 Hz standard)
+- Boutons copie rapide sur chaque fréquence
+- Zones spectrales (Sub, Basse, Bas-médium, Médium, Présence, Air)
+
+**Harmoniques & conflits**
+- Calcul des harmoniques et sous-harmoniques de la basse fondamentale
+- Détection des conflits fréquentiels avec le kick
+- Identification de la note correspondante et des cents d'écart
+- Solutions proposées : transposition ou notch EQ
+
+**Transposition de sample**
+- Note source → note cible : calcul en demi-tons, cents, ratio fréquentiel
+- Champ désaccordage initial en cents (micro-tuning)
 - Recommandation d'algorithme FL Studio par type de contenu (Drums, Basse, Mélodique mono, Polyphonique, Voix)
 - Correction de formants : quand l'activer selon l'amplitude du shift
 - Mapping des notes de la gamme après transposition
 
 ---
 
-## Stack
+### 🛠️ Outils
+- Export MIDI de tous les accords de la gamme courante
+- Export MIDI de l'arpège courant
+- Synchronisation globale : tous les outils suivent la tonalité et le BPM courants
 
+---
+
+## Tips interactifs
+- Icône `?` à côté de chaque section — survolez pour afficher l'explication contextuelle
+- Infobulles inline, sans positionnement flottant
+
+---
+
+## Stack
 - HTML / CSS / JavaScript vanilla — zéro dépendance, zéro framework
-- Fonctionne entièrement dans le navigateur (offline après premier chargement)
-- Compatible PC et mobile
+- Polices embarquées en base64 (Syne, JetBrains Mono, DM Sans) — fonctionne 100% offline
+- Web Audio API pour la lecture audio native
+- Compatible PC, mobile et tablette
 
 ---
 
@@ -59,6 +135,4 @@ Ou télécharger `index.html` et double-cliquer — fonctionne sans connexion in
 
 ---
 
-## Auteur
-
-**Jérémy Delrieux**
+*Projet personnel — usage libre*
