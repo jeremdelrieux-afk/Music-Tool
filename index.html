@@ -1317,7 +1317,7 @@ function syncENVtoBPM(){
 }
 
 function syncLFOtoBPM(div){
-  const beat=60/S.bpm;
+  const beat=60/(S.bpm||174);
   const muls={'1/1':4,'1/2':2,'1/4':1,'1/8':.5,'1/16':.25};
   const hz=1/(beat*(muls[div]||1));
   SYNTH.lfoRate=hz;
@@ -1727,7 +1727,7 @@ function stab(pnl,id,btn){
   document.getElementById(prefix+id).classList.add('on');
   btn.classList.add('on');
   if(id==='cercle'){renderCoF();renderModInfo(noteArr()[S.root]);}
-  if(id==='synth'){initSynth();renderLFOModTable();}
+  if(id==='synth'){if(!window._synthInited){initSynth();window._synthInited=true;}renderLFOModTable();}
   if(id==='compat')analyzeCompat();
 }
 document.addEventListener('click', function(e) {
