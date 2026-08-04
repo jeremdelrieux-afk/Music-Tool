@@ -1729,6 +1729,10 @@ function stab(pnl,id,btn){
   if(id==='cercle'){renderCoF();renderModInfo(noteArr()[S.root]);}
   if(id==='synth'){if(!window._synthInited){initSynth();window._synthInited=true;}renderLFOModTable();}
   if(id==='compat')analyzeCompat();
+  if(id==='flow'&&window._synthInited){document.getElementById('synth-flow-chain').innerHTML='';initSynthFlow();}
+  if(id==='lfomod')renderLFOModTable();
+  if(id==='flow'&&window._synthInited){document.getElementById('synth-flow-chain').innerHTML='';initSynthFlow();}
+  if(id==='lfomod')renderLFOModTable();
 }
 document.addEventListener('click', function(e) {
   const icon = e.target.closest('.tip-icon');
