@@ -1727,12 +1727,12 @@ function stab(pnl,id,btn){
   document.getElementById(prefix+id).classList.add('on');
   btn.classList.add('on');
   if(id==='cercle'){renderCoF();renderModInfo(noteArr()[S.root]);}
-  if(id==='synth'){if(!window._synthInited){initSynth();window._synthInited=true;}renderLFOModTable();}
   if(id==='compat')analyzeCompat();
-  if(id==='flow'&&window._synthInited){document.getElementById('synth-flow-chain').innerHTML='';initSynthFlow();}
-  if(id==='lfomod')renderLFOModTable();
-  if(id==='flow'&&window._synthInited){document.getElementById('synth-flow-chain').innerHTML='';initSynthFlow();}
-  if(id==='lfomod')renderLFOModTable();
+  if(id==='minisynth'||id==='flow'||id==='presets'||id==='lfomod'){
+    if(!window._synthInited){initSynth();window._synthInited=true;}
+  }
+  if(id==='flow'){document.getElementById('synth-flow-chain').innerHTML='';initSynthFlow();}
+  if(id==='lfomod'){drawLFOModWave('sine');renderLFOModTable();}
 }
 document.addEventListener('click', function(e) {
   const icon = e.target.closest('.tip-icon');
