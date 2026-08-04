@@ -238,7 +238,11 @@ tr:hover td{background:rgba(124,92,252,.04)}
     <span class="hd-key" id="hk-key">D</span>
     <span class="hd-mode" id="hk-mode">Mineur Naturel</span>
     <span style="color:var(--b2)">|</span>
-    <span class="hd-bpm" id="hk-bpm">174 BPM</span>
+    <div style="display:flex;align-items:center;gap:6px">
+      <button onclick="setBPM(S.bpm-1)" style="background:var(--b2);border:1px solid var(--b);color:var(--mu2);width:22px;height:22px;border-radius:4px;cursor:pointer;font-size:14px;line-height:1;display:flex;align-items:center;justify-content:center">−</button>
+      <span class="hd-bpm" id="hk-bpm" style="cursor:pointer;min-width:70px;text-align:center" onclick="this.contentEditable='true';this.focus();this.select&&document.execCommand('selectAll')" onblur="setBPM(parseInt(this.textContent)||174);this.contentEditable='false'" onkeydown="if(event.key==='Enter'){setBPM(parseInt(this.textContent)||174);this.contentEditable='false';this.blur()}">174 BPM</span>
+      <button onclick="setBPM(S.bpm+1)" style="background:var(--b2);border:1px solid var(--b);color:var(--mu2);width:22px;height:22px;border-radius:4px;cursor:pointer;font-size:14px;line-height:1;display:flex;align-items:center;justify-content:center">+</button>
+    </div>
 
   </div>
 </div>
@@ -1097,7 +1101,7 @@ function setBPM(v){
   document.getElementById('bpmDisplay').textContent=v;
   document.getElementById('bpmSlider').value=v;
   document.getElementById('bpmInput').value=v;
-  document.getElementById('hk-bpm').textContent=v+' BPM';
+  document.getElementById('hk-bpm').textContent=v+' BPM';document.getElementById('hk-bpm').contentEditable='false';
   updateSubdiv();updateDelayDisplay();updateReverb();updateComp();renderSidechain();
   // Genre highlight
   const genres=[
