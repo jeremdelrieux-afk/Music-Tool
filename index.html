@@ -1051,7 +1051,7 @@ tr:hover td{background:rgba(124,92,252,.04)}
 <!-- ══ CALIBRAGE ══ -->
 <div class="pdpnl on" id="p0">
   <div class="card">
-    <h2>Calibrage vocal</h2>
+    <h2>Calibrage vocal <span class="tip-icon" tabindex="0">?</span><div class="tooltip">L'outil joue 4 notes de référence (La3, Mi4, La4, Mi5) — chantez-les à votre tour, sans besoin de connaître le solfège. Ça détermine votre plage vocale, votre type de voix et un offset de calibration pour affiner la détection ensuite.</div></h2>
     <div class="tip" style="margin-bottom:14px">L'outil va jouer 4 notes de référence — imitez-les en chantant. Pas besoin de connaître les notes : écoutez et reproduisez. Tenez chaque note environ 2 secondes.</div>
     <div id="cb-start">
       <button class="btn btn-primary" onclick="startCalib()">🎤 Démarrer le calibrage</button>
@@ -1088,7 +1088,7 @@ tr:hover td{background:rgba(124,92,252,.04)}
 <div class="pdpnl" id="p1">
   <div class="g2">
     <div class="card">
-      <h2>Détection en temps réel</h2>
+      <h2>Détection en temps réel <span class="tip-icon" tabindex="0">?</span><div class="tooltip">Chantez : la note détectée s'affiche avec sa fréquence et son écart en cents par rapport à la note juste. Le tuner (barre horizontale) indique si vous êtes trop grave (gauche) ou trop aigu (droite). Réglez le volume de lecture avec le curseur.</div></h2>
       <div class="ndisp" id="nd">
         <div class="nname" id="ln">—</div>
         <div class="nfreq" id="lf">— Hz</div>
@@ -1107,7 +1107,7 @@ tr:hover td{background:rgba(124,92,252,.04)}
       </div>
     </div>
     <div class="card">
-      <h2>Enregistrement</h2>
+      <h2>Enregistrement <span class="tip-icon" tabindex="0">?</span><div class="tooltip">Cliquez ⏺ pour capturer votre mélodie chantée note par note. Le seuil de confiance filtre les fausses détections — augmentez-le si des notes parasites apparaissent, notamment pour les voix aiguës.</div></h2>
       <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
         <button class="btn btn-primary" id="rec-btn" onclick="toggleRec()">⏺ Enregistrer</button>
         <button class="btn" onclick="clearSeq()">✕ Effacer</button>
@@ -1132,7 +1132,7 @@ tr:hover td{background:rgba(124,92,252,.04)}
 <!-- ══ PIANO ROLL ══ -->
 <div class="pdpnl" id="p2">
   <div class="card">
-    <h2>Piano Roll <span style="font-size:11px;color:var(--mu2);text-transform:none;letter-spacing:0;font-weight:400">— cliquez pour sélectionner, glissez verticalement pour changer la note</span></h2>
+    <h2>Piano Roll <span style="font-size:11px;color:var(--mu2);text-transform:none;letter-spacing:0;font-weight:400">— cliquez pour sélectionner, glissez verticalement pour changer la note</span> <span class="tip-icon" tabindex="0">?</span><div class="tooltip">Votre mélodie chantée transcrite en notes éditables. Cliquez un bloc pour le sélectionner, glissez verticalement pour changer sa hauteur, ou utilisez les boutons de transposition (±1 demi-ton, ±octave).</div></h2>
     <div class="pr-wrap" id="pr-wrap" style="height:300px"><canvas id="pr"></canvas></div>
     <div style="display:flex;gap:6px;align-items:center;margin-top:10px;flex-wrap:wrap">
       <button class="btn btn-danger" id="pr-del" style="display:none" onclick="delSel()">🗑</button>
@@ -1144,7 +1144,7 @@ tr:hover td{background:rgba(124,92,252,.04)}
     </div>
   </div>
   <div class="card">
-    <h2>Export & Lecture</h2>
+    <h2>Export & Lecture <span class="tip-icon" tabindex="0">?</span><div class="tooltip">Exportez votre mélodie en MIDI (pour l'importer dans FL Studio) ou en WAV (synthèse onde sine, utile pour vérifier rapidement la mélodie sans quitter le navigateur).</div></h2>
     <!-- VOLUME EXPORT -->
     <div class="row" style="margin-bottom:14px">
       <label>🔊 Volume lecture/export</label>
