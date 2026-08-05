@@ -1,131 +1,120 @@
-# HarmonyLab 🎛️
+# tracker-candidatures
 
-> Outil de théorie musicale et de production — 100% offline, aucune installation requise.
+Suivi de candidatures + veille automatisée sur l'API France Travail (offres d'emploi v2) — un outil personnel construit de A à Z : script Node.js, authentification OAuth2, interface interactive, hébergement GitHub Pages, sécurisé après plusieurs revues de code.
 
-**[→ Ouvrir HarmonyLab](https://jeremdelrieux-afk.github.io/Music-Tool/)**
+**[Voir la démo en ligne →](https://jeremdelrieux-afk.github.io/Tracker_candidatures/)**
 
----
+> La démo affiche les offres correspondant à mes propres critères de recherche : un rayon de 40 km autour de Saint-Raphaël (83) et de 20 km autour de Cannes (06) — pas l'intégralité des deux départements. Tu peux étendre la recherche à d'autres villes ou régions en ajoutant des lignes dans `scripts/search-offres.mjs` (section « Lancer la veille » ci-dessous) : chaque ligne définit une recherche par mots-clés, autour d'une ville précise (code INSEE), avec un rayon en kilomètres. Il n'y a pas de limite au nombre de villes ajoutées.
 
-## À propos
+> Guide complet pas-à-pas pour débutant (création des comptes, installation, dépannage, revue de sécurité) disponible séparément — ce README est une référence rapide qui suppose les prérequis ci-dessous déjà en place.
 
-HarmonyLab est un outil de production musicale et de théorie harmonique développé en collaboration avec [Claude](https://claude.ai) (Anthropic). L'ensemble du code HTML, CSS et JavaScript a été écrit et itéré via des sessions de pair-programming avec Claude, à partir des besoins et du workflow d'un producteur de DnB, Neurofunk et Hi-Tek Minimal.
+## Ce que fait l'outil
 
----
+- **Onglet Tracker** — suivi manuel des candidatures (statut, dates, relances, notes), avec historique des changements de statut par candidature.
+- **Onglet Veille** — récupère automatiquement les offres correspondant à des critères définis (mots-clés, zone géographique), avec :
+  - filtres par colonne cliquables à la souris (intitulé, entreprise, lieu, contrat)
+  - tri par colonne
+  - badges colorés par type de contrat, date relative, repère "nouveau" (< 48h)
+  - modale de détails avec description complète de l'offre
+  - ajout en un clic vers le tracker, avec état "✓ Ajouté" persistant
 
-## Fonctionnalités
+## Prérequis
 
-### 🎵 Harmonie
+- Node.js et npm installés ([nodejs.org](https://nodejs.org))
+- Git installé
+- Un compte développeur sur [francetravail.io](https://francetravail.io), avec une application créée et souscrite à l'API **Offres d'emploi v2**
+- Ton Client ID et Client Secret France Travail (page de ton application, onglet clés d'accès)
 
-**Gamme & Accords**
-- Sélection de tonique (12 notes) et de mode (Mineur naturel, Majeur, Dorien, Phrygien, Lydien, Mixolydien, Mineur harmonique, Mineur mélodique, Locrien)
-- Clavier interactif avec notes affichées sur toutes les touches — couleurs par rôle (gamme, accord, tonique, hors gamme)
-- Guide mélodie : notes classées par tension harmonique (stable / couleur / tension) sur l'accord sélectionné
-- Accords empruntés (mode parallèle, mineur harmonique, napolitain)
-- Suites d'accords par genre (DnB, Hi-Tek Techno Minimal, Death Metal, Dorien)
-- Lecture audio des accords et des notes au clic
-- Export MIDI par accord individuel
-
-**Arpégiateur**
-- Vitesse synchronisée au BPM (1/4, 1/8, 1/16, 1/8T)
-- Sens : montant, descendant, alterné, aléatoire — 1 à 3 octaves
-- Export MIDI du pattern arpégé
-
-**Cercle des Quintes**
-- Visualisation SVG interactive — clic pour naviguer vers une tonalité
-- Surbrillance automatique de la relative mineure/majeure
-- Modulations : notes communes et notes qui changent par destination
-- Relations modales : relative, parallèle
-- Accords pivot entre tonalités adjacentes
-
-**Compatibilité harmonique**
-- Score de compatibilité en % entre deux tonalités
-- Notes communes, notes exclusives, accords pivot communs
-
----
-
-### ⏱️ Tempo & Rythme
-- BPM global éditable depuis le header (boutons +/- ou clic direct)
-- Tap Tempo (bouton ou barre espace)
-- Tableau de subdivisions (ronde → triple croche, pointées, triolets) en ms
-- Référentiel de genres par BPM avec mise en surbrillance automatique
-
----
-
-### 🎚️ FX Studio
-
-**Delay** — temps synchronisé BPM, ping-pong offset, feedback, référence types de delay
-
-**Reverb** — pre-delay et RT60 par type, pré-delay BPM sync (1/32, 1/16, 1/8), guide wet par instrument
-
-**Compresseur** — timings attack/release BPM sync, presets par usage (sidechain, kick, bus basses, bus drums, voix)
-
-**Saturation** — 5 types (Tape, Tube, Hard Clip, Transformer, Bitcrusher), guide drive et positionnement dans la chaîne
-
-**Sidechain Pumping** — attack/release BPM sync par genre (DnB, Neurofunk, Techno, Hi-Tek Minimal, House, Trance), routing FL Studio et alternative recommandée
-
----
-
-### 🔊 Sound Design
-
-**Fréquences des notes** — tableau Hz et période par note et octave (0-8), diapason A4 réglable, zones spectrales
-
-**Harmoniques & conflits** — calcul des harmoniques de la basse et du kick, détection des conflits fréquentiels, solutions proposées
-
-**Transposition de sample** — note source → note cible, micro-tuning (désaccordage initial en cents), recommandation d'algorithme FL Studio par type de contenu, mapping gamme après transposition
-
----
-
-### 🎹 Synthèse
-
-**Mini Synthé jouable**
-- OSC (Sine/Saw/Square/Triangle), octave ±2, détune
-- Filter (LP/HP/BP/Notch), cutoff, resonance, drive
-- Enveloppe ADSR avec sync au BPM
-- LFO avec forme d'onde, rate, depth et destination (filtre/pitch/volume) — sync au BPM
-- Clavier jouable synchronisé à la gamme et tonalité courantes
-- Play continu avec mise à jour des paramètres en temps réel
-- Visualiseur de signal (oscilloscope)
-
-**Signal Flow** — modules OSC → FILTER → ENV → LFO → VCA cliquables avec explications et correspondances Serum 2
-
-**LFO & Modulation** — visualiseur de formes d'onde, tableau Hz/BPM sync, sources et destinations dans Serum 2
-
----
-
-### 🛠️ Outils
-- Export MIDI de tous les accords de la gamme courante
-- Export MIDI de l'arpège courant
-- Synchronisation globale : tous les outils suivent la tonalité et le BPM courants
-
----
-
-## Tips interactifs
-- Icône `?` à côté de chaque section — survolez pour afficher l'explication contextuelle
-
----
-
-## Stack
-- HTML / CSS / JavaScript vanilla — zéro dépendance, zéro framework
-- Polices embarquées en base64 (Syne, JetBrains Mono, DM Sans) — fonctionne 100% offline
-- Web Audio API pour la lecture audio et le mini synthé
-- Compatible PC, mobile et tablette
-
----
-
-## Développement
-
-Ce projet a été entièrement développé en pair-programming avec **Claude** (Anthropic) — de la conception de l'architecture à l'écriture du code, en passant par le débogage et les itérations UX. Les sessions de développement ont eu lieu sur [claude.ai](https://claude.ai).
-
----
-
-## Usage
+## Structure
 
 ```
-https://jeremdelrieux-afk.github.io/Music-Tool/
+tracker-candidatures/
+├── .env.example
+├── .gitignore
+├── package.json
+├── refresh.sh              # veille + publication en une commande
+├── docs/
+│   └── index.html          # interface, servie par GitHub Pages
+├── scripts/
+│   ├── lib/auth.mjs
+│   ├── test-api-francetravail.mjs
+│   └── search-offres.mjs
+└── data/
+    └── offres_veille.json
 ```
 
-Ou téléchargez `index.html` et double-cliquez — fonctionne sans connexion internet.
+## Installation
 
----
+```bash
+npm install
+cp .env.example .env
+```
 
-*Projet personnel — usage libre*
+Remplis `.env` avec ton Client ID / Client Secret.
+
+## Test de connexion
+
+```bash
+npm run test-api
+```
+
+Réponse attendue : une liste d'offres pour "informatique" dans le 83. Si tu obtiens une erreur `invalid_client`, vérifie que ton application a bien souscrit à l'API "Offres d'emploi v2" sur francetravail.io — les identifiants seuls ne suffisent pas sans cette souscription.
+
+## Lancer la veille
+
+Personnalise tes critères dans `scripts/search-offres.mjs` (section `CRITERES` en haut) : `motsCles`, `commune`, `distance` en km.
+
+Le paramètre `commune` attend un **code INSEE**, pas un code postal (une commune peut avoir plusieurs codes postaux mais un seul code INSEE). Trouve le tien par recherche « code INSEE + nom de ta ville ». Le paramètre `distance` n'a d'effet que combiné à `commune` : sans point central précis, l'API renvoie tout le département.
+
+```bash
+npm run veille
+```
+
+Écrit/complète `data/offres_veille.json`. Déduplique par ID d'offre et par paire entreprise+intitulé (pour éviter le bruit des diffusions multi-villes).
+
+## Automatisation complète (veille + publication en ligne)
+
+Le script `refresh.sh` enchaîne veille, copie vers `docs/`, et envoi Git en une seule commande — il ne pousse que s'il y a réellement de nouvelles offres :
+
+```bash
+./refresh.sh
+```
+
+Pour l'exécuter automatiquement chaque jour via `cron` :
+
+```bash
+crontab -e
+# tous les jours à 11h :
+0 11 * * * /chemin/vers/tracker-candidatures/refresh.sh >> /chemin/vers/tracker-candidatures/refresh.log 2>&1
+```
+
+## Interface
+
+En local : ouvre `docs/index.html` dans un navigateur (le chargement automatique des offres nécessite un vrai serveur — utilise le bouton "Charger" en local, ou consulte directement la [démo en ligne](https://jeremdelrieux-afk.github.io/Tracker_candidatures/)).
+
+- **Onglet Tracker** : sauvegarde locale navigateur (`localStorage`, propre à cet ordinateur et ce navigateur). Exporte régulièrement en `.json`.
+- **Onglet Veille** : charge `data/offres_veille.json` automatiquement en ligne, ou via le bouton en local.
+
+## Dépannage rapide
+
+| Erreur | Cause probable |
+|---|---|
+| `npm : commande introuvable` | Node.js/npm non installés, ou commande lancée hors du dossier du projet |
+| `invalid_client` (400) | API "Offres d'emploi v2" pas encore souscrite sur francetravail.io |
+| Résultats trop éloignés géographiquement | `distance` utilisé sans `commune`, ou mauvais code INSEE |
+| Page blanche / erreurs en local | Le chargement automatique nécessite un vrai serveur — utilise le bouton "Charger" en local |
+
+## Sécurité
+
+- `.env` exclu via `.gitignore`, jamais commité.
+- Ne partage jamais ton Client Secret.
+- Un secret exposé accidentellement doit être régénéré sur francetravail.io, pas juste supprimé du dernier commit (reste dans l'historique git).
+- Code passé par plusieurs revues de sécurité successives (échappement HTML, protection contre la pollution de prototype, validation des protocoles d'URL) — détail complet dans le guide.
+
+## Pile technique
+
+Node.js · API REST (OAuth2 client_credentials) · JavaScript vanilla (aucun framework front) · GitHub Pages · Git/GitHub
+
+## Méthode de développement
+
+Projet réalisé en pair programming avec Claude (Anthropic) : l'écriture du code, le débogage et les revues de sécurité successives ont été faits avec son assistance, sous mon pilotage pour l'architecture, les choix fonctionnels, les tests et les décisions finales.
