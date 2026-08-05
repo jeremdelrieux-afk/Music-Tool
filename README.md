@@ -6,100 +6,89 @@
 
 ---
 
+## À propos
+
+HarmonyLab est un outil de production musicale et de théorie harmonique développé en collaboration avec [Claude](https://claude.ai) (Anthropic). L'ensemble du code HTML, CSS et JavaScript a été écrit et itéré via des sessions de pair-programming avec Claude, à partir des besoins et du workflow d'un producteur de DnB, Neurofunk et Hi-Tek Minimal.
+
+---
+
 ## Fonctionnalités
 
 ### 🎵 Harmonie
 
 **Gamme & Accords**
-- Sélection de tonique (12 notes) et de mode (Mineur naturel, Majeur, Dorien, Phrygien, Lydien, Mixolydien, Mineur harmonique, Mineur mélodique, Phrygien dominant, Locrien)
-- Clavier interactif : notes de la gamme en bleu, accord sélectionné en violet, tonique en orange, hors gamme en sombre
-- Notes affichées sur toutes les touches du clavier
+- Sélection de tonique (12 notes) et de mode (Mineur naturel, Majeur, Dorien, Phrygien, Lydien, Mixolydien, Mineur harmonique, Mineur mélodique, Locrien)
+- Clavier interactif avec notes affichées sur toutes les touches — couleurs par rôle (gamme, accord, tonique, hors gamme)
 - Guide mélodie : notes classées par tension harmonique (stable / couleur / tension) sur l'accord sélectionné
 - Accords empruntés (mode parallèle, mineur harmonique, napolitain)
 - Suites d'accords par genre (DnB, Hi-Tek Techno Minimal, Death Metal, Dorien)
 - Lecture audio des accords et des notes au clic
-- Export MIDI par accord individuel (bouton ⬇ sur chaque ligne)
+- Export MIDI par accord individuel
 
 **Arpégiateur**
 - Vitesse synchronisée au BPM (1/4, 1/8, 1/16, 1/8T)
-- Sens : montant, descendant, alterné, aléatoire
-- 1 à 3 octaves
-- Play / Stop
+- Sens : montant, descendant, alterné, aléatoire — 1 à 3 octaves
 - Export MIDI du pattern arpégé
 
 **Cercle des Quintes**
 - Visualisation SVG interactive — clic pour naviguer vers une tonalité
 - Surbrillance automatique de la relative mineure/majeure
-- Panel modulations : notes communes et notes qui changent par destination
+- Modulations : notes communes et notes qui changent par destination
 - Relations modales : relative, parallèle
-- Détection d'accords pivot entre tonalités adjacentes
-- Responsive mobile
+- Accords pivot entre tonalités adjacentes
 
 **Compatibilité harmonique**
-- Comparaison de deux tonalités avec score de compatibilité en %
-- Notes communes, notes exclusives à chaque tonalité
-- Accords pivot communs aux deux tonalités
+- Score de compatibilité en % entre deux tonalités
+- Notes communes, notes exclusives, accords pivot communs
 
 ---
 
 ### ⏱️ Tempo & Rythme
-- Calculateur BPM avec slider et saisie manuelle
+- BPM global éditable depuis le header (boutons +/- ou clic direct)
 - Tap Tempo (bouton ou barre espace)
 - Tableau de subdivisions (ronde → triple croche, pointées, triolets) en ms
-- Référentiel de genres par BPM (DnB, Neurofunk, Hi-Tek Minimal, Techno, House, Trance, Death Metal) avec mise en surbrillance automatique selon le BPM courant
+- Référentiel de genres par BPM avec mise en surbrillance automatique
 
 ---
 
 ### 🎚️ FX Studio
 
-**Delay**
-- 8 subdivisions disponibles (1/4, 1/8, 1/16, 1/4., 1/8., 1/4T, 1/8T, 1/2)
-- Temps de delay et ping-pong offset en ms synchronisés au BPM
-- Feedback : calcul du nombre de répétitions audibles et durée de décroissance totale
-- Tableau de référence par type de delay (Slapback, Echo, Ping-Pong, Tape, Chorus)
+**Delay** — temps synchronisé BPM, ping-pong offset, feedback, référence types de delay
 
-**Reverb**
-- Pre-delay et RT60 par type (Room, Hall, Plate, Spring, Chamber, Ambience)
-- Pre-delay BPM sync (1/32, 1/16, 1/8)
-- Guide mix wet par instrument
+**Reverb** — pre-delay et RT60 par type, pré-delay BPM sync (1/32, 1/16, 1/8), guide wet par instrument
 
-**Compresseur**
-- Timings attack/release synchronisés BPM pour chaque subdivision
-- Presets par usage (sidechain, kick, bus basses, bus drums, voix)
+**Compresseur** — timings attack/release BPM sync, presets par usage (sidechain, kick, bus basses, bus drums, voix)
 
-**Saturation**
-- 5 types : Tape, Tube, Hard Clip, Transformer, Bitcrusher
-- Guide comportement par niveau de drive
-- Guide positionnement dans la chaîne (avant EQ, après EQ, parallèle)
+**Saturation** — 5 types (Tape, Tube, Hard Clip, Transformer, Bitcrusher), guide drive et positionnement dans la chaîne
 
-**Sidechain Pumping**
-- Valeurs d'attack et release synchronisées au BPM par genre
-- 6 genres : Drum & Bass, Neurofunk, Techno, Hi-Tek Minimal, House, Trance
-- Ratio, threshold, knee et routing FL Studio par genre
-- Alternative recommandée pour chaque genre
+**Sidechain Pumping** — attack/release BPM sync par genre (DnB, Neurofunk, Techno, Hi-Tek Minimal, House, Trance), routing FL Studio et alternative recommandée
 
 ---
 
 ### 🔊 Sound Design
 
-**Fréquences des notes**
-- Tableau Hz et période (ms) pour chaque note, octave 0 à 8
-- Diapason A4 réglable (440 Hz standard)
-- Boutons copie rapide sur chaque fréquence
-- Zones spectrales (Sub, Basse, Bas-médium, Médium, Présence, Air)
+**Fréquences des notes** — tableau Hz et période par note et octave (0-8), diapason A4 réglable, zones spectrales
 
-**Harmoniques & conflits**
-- Calcul des harmoniques et sous-harmoniques de la basse fondamentale
-- Détection des conflits fréquentiels avec le kick
-- Identification de la note correspondante et des cents d'écart
-- Solutions proposées : transposition ou notch EQ
+**Harmoniques & conflits** — calcul des harmoniques de la basse et du kick, détection des conflits fréquentiels, solutions proposées
 
-**Transposition de sample**
-- Note source → note cible : calcul en demi-tons, cents, ratio fréquentiel
-- Champ désaccordage initial en cents (micro-tuning)
-- Recommandation d'algorithme FL Studio par type de contenu (Drums, Basse, Mélodique mono, Polyphonique, Voix)
-- Correction de formants : quand l'activer selon l'amplitude du shift
-- Mapping des notes de la gamme après transposition
+**Transposition de sample** — note source → note cible, micro-tuning (désaccordage initial en cents), recommandation d'algorithme FL Studio par type de contenu, mapping gamme après transposition
+
+---
+
+### 🎹 Synthèse
+
+**Mini Synthé jouable**
+- OSC (Sine/Saw/Square/Triangle), octave ±2, détune
+- Filter (LP/HP/BP/Notch), cutoff, resonance, drive
+- Enveloppe ADSR avec sync au BPM
+- LFO avec forme d'onde, rate, depth et destination (filtre/pitch/volume) — sync au BPM
+- Clavier jouable synchronisé à la gamme et tonalité courantes
+- Play continu avec mise à jour des paramètres en temps réel
+- Visualiseur de signal (oscilloscope)
+
+**Signal Flow** — modules OSC → FILTER → ENV → LFO → VCA cliquables avec explications et correspondances Serum 2
+
+**LFO & Modulation** — visualiseur de formes d'onde, tableau Hz/BPM sync, sources et destinations dans Serum 2
 
 ---
 
@@ -112,26 +101,30 @@
 
 ## Tips interactifs
 - Icône `?` à côté de chaque section — survolez pour afficher l'explication contextuelle
-- Infobulles inline, sans positionnement flottant
 
 ---
 
 ## Stack
 - HTML / CSS / JavaScript vanilla — zéro dépendance, zéro framework
 - Polices embarquées en base64 (Syne, JetBrains Mono, DM Sans) — fonctionne 100% offline
-- Web Audio API pour la lecture audio native
+- Web Audio API pour la lecture audio et le mini synthé
 - Compatible PC, mobile et tablette
+
+---
+
+## Développement
+
+Ce projet a été entièrement développé en pair-programming avec **Claude** (Anthropic) — de la conception de l'architecture à l'écriture du code, en passant par le débogage et les itérations UX. Les sessions de développement ont eu lieu sur [claude.ai](https://claude.ai).
 
 ---
 
 ## Usage
 
-Ouvrir directement dans le navigateur :
 ```
 https://jeremdelrieux-afk.github.io/Music-Tool/
 ```
 
-Ou télécharger `index.html` et double-cliquer — fonctionne sans connexion internet.
+Ou téléchargez `index.html` et double-cliquez — fonctionne sans connexion internet.
 
 ---
 
