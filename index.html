@@ -38,6 +38,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 /* LAYOUT */
 .cnt{max-width:1200px;margin:0 auto;padding:20px}
 .pnl{display:none}.pnl.on{display:block}
+.pdpnl{display:none}.pdpnl.on{display:block}
 .spnl{display:none}.spnl.on{display:block}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
@@ -1048,7 +1049,7 @@ tr:hover td{background:rgba(124,92,252,.04)}
 </div>
 
 <!-- ══ CALIBRAGE ══ -->
-<div class="pnl on" id="p0">
+<div class="pdpnl on" id="p0">
   <div class="card">
     <h2>Calibrage vocal</h2>
     <div class="tip" style="margin-bottom:14px">L'outil va jouer 4 notes de référence — imitez-les en chantant. Pas besoin de connaître les notes : écoutez et reproduisez. Tenez chaque note environ 2 secondes.</div>
@@ -1084,7 +1085,7 @@ tr:hover td{background:rgba(124,92,252,.04)}
 </div>
 
 <!-- ══ CHANTER ══ -->
-<div class="pnl" id="p1">
+<div class="pdpnl" id="p1">
   <div class="g2">
     <div class="card">
       <h2>Détection en temps réel</h2>
@@ -1129,7 +1130,7 @@ tr:hover td{background:rgba(124,92,252,.04)}
 </div>
 
 <!-- ══ PIANO ROLL ══ -->
-<div class="pnl" id="p2">
+<div class="pdpnl" id="p2">
   <div class="card">
     <h2>Piano Roll <span style="font-size:11px;color:var(--mu2);text-transform:none;letter-spacing:0;font-weight:400">— cliquez pour sélectionner, glissez verticalement pour changer la note</span></h2>
     <div class="pr-wrap" id="pr-wrap" style="height:300px"><canvas id="pr"></canvas></div>
